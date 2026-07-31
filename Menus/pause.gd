@@ -23,4 +23,7 @@ func _on_resume_pressed() -> void:
 	PauseManager.unpause_game()
 
 func _on_quit_pressed() -> void:
-	get_tree().quit()
+	#get_tree().quit() #If you want to directly exit the game
+	PauseManager.unpause_game()
+	PauseManager.disable_pause()
+	get_tree().reload_current_scene()
