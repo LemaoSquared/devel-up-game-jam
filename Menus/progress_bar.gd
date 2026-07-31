@@ -18,7 +18,7 @@ func start_countdown() -> void:
 	timer.start()
 	set_process(true)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	var elapsed: float = COUNTDOWN_TIME - timer.time_left
 	value = (elapsed / COUNTDOWN_TIME) * 100.0
 
