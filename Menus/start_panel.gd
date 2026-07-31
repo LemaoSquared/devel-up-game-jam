@@ -2,12 +2,13 @@ extends TextureRect
 
 signal game_started
 
+const OBJECT_SCENE := preload("res://Menus/object.tscn")
+
 var is_transitioning: bool = false
 
 func _ready() -> void:
 	pass
-
-
+	
 func _on_start_pressed() -> void:
 	if is_transitioning:
 		return
@@ -15,6 +16,15 @@ func _on_start_pressed() -> void:
 
 	$Start.disabled = true
 	game_started.emit()
+
+	var obj = OBJECT_SCENE.instantiate()
+	get_tree().current_scene.add_child(obj)
+	obj.global_position = $Start.global_position
+	
+	var obj_tween = create_tween()
+	obj_tween.set_trans(Tween.TRANS_CUBIC)
+	obj_tween.set_ease(Tween.EASE_OUT)
+	obj_tween.tween_callback(obj.queue_free)
 
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_CUBIC)
