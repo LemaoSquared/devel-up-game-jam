@@ -1,3 +1,86 @@
 [gd_scene format=3 uid="uid://fldj3nccgla6"]
 
+[ext_resource type="Script" uid="uid://bvx3hnsh1vv8d" path="res://Menus/entity.gd" id="1_2jii7"]
+[ext_resource type="Script" uid="uid://8gxpdvbrm070" path="res://Menus/main.gd" id="1_7x3k8"]
+[ext_resource type="Script" uid="uid://bbvnulhsuhib3" path="res://Menus/background.gd" id="1_j1rpa"]
+[ext_resource type="Script" uid="uid://b04ica55q3fe3" path="res://Menus/start_panel.gd" id="3_xd1g5"]
+
+[sub_resource type="Gradient" id="Gradient_l0led"]
+colors = PackedColorArray(1, 1, 1, 1, 0.28485027, 0.28485027, 0.28485027, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_oi3uc"]
+gradient = SubResource("Gradient_l0led")
+
 [node name="Main" type="Node2D" unique_id=1521551065]
+script = ExtResource("1_7x3k8")
+
+[node name="Background" type="ColorRect" parent="." unique_id=186063241]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1150.0
+offset_bottom = 650.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_j1rpa")
+
+[node name="BlackPanelUP" type="ColorRect" parent="Background" unique_id=1603293193]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = -105.0
+offset_right = 10.0
+offset_bottom = -5.0
+grow_horizontal = 2
+color = Color(0, 0, 0, 1)
+
+[node name="BlackPanelDown" type="ColorRect" parent="Background" unique_id=1479045947]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 652.0
+offset_right = 10.0
+offset_bottom = 752.0
+grow_horizontal = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Entity" type="ColorRect" parent="." unique_id=1836806612]
+offset_left = 131.0
+offset_top = 235.0
+offset_right = 231.0
+offset_bottom = 435.0
+color = Color(0.5705783, 0.57057834, 0.57057834, 1)
+script = ExtResource("1_2jii7")
+
+[node name="StartPanel" type="TextureRect" parent="." unique_id=164502693]
+offset_left = 502.0
+offset_top = -3.0
+offset_right = 1152.0
+offset_bottom = 657.0
+texture = SubResource("GradientTexture1D_oi3uc")
+script = ExtResource("3_xd1g5")
+
+[node name="Title" type="Label" parent="StartPanel" unique_id=979853771]
+layout_mode = 0
+offset_left = 238.0
+offset_top = 157.0
+offset_right = 441.0
+offset_bottom = 267.0
+theme_override_colors/font_color = Color(0.009317499, 0.009317501, 0.009317499, 1)
+theme_override_font_sizes/font_size = 80
+text = "TITLE"
+
+[node name="Start" type="Button" parent="StartPanel" unique_id=1572546083]
+layout_mode = 0
+offset_left = 292.0
+offset_top = 302.0
+offset_right = 392.0
+offset_bottom = 402.0
+
+[node name="ProgressBar" type="TextureProgressBar" parent="." unique_id=174117742]
+offset_right = 1150.0
+offset_bottom = 30.0
+
+[node name="Timer" type="Timer" parent="ProgressBar" unique_id=2042900797]
+
+[connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]
