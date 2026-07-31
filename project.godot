@@ -13,9 +13,14 @@ config_version=5
 config/name="DevelUP Game Jam"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
+[audio]
+
+buses/default_bus_layout="uid://d3nsdi1ubvi48"
+
 [autoload]
 
 PauseManager="*uid://pl8i67h01j3q"
+AudioManager="*uid://cbupjjnoycbp0"
 
 [display]
 

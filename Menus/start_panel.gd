@@ -3,6 +3,7 @@ extends TextureRect
 signal game_started
 
 const OBJECT_SCENE := preload("res://Menus/object.tscn")
+const START_SOUND := preload("res://BGM/Oreo.wav")
 
 var is_transitioning: bool = false
 
@@ -16,7 +17,9 @@ func _on_start_pressed() -> void:
 
 	$Start.disabled = true
 	game_started.emit()
-
+	
+	AudioManager.play_music(START_SOUND)
+	
 	var obj = OBJECT_SCENE.instantiate()
 	get_tree().current_scene.add_child(obj)
 	obj.global_position = $Start.global_position

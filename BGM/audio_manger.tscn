@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://cbupjjnoycbp0"]
+
+[ext_resource type="Script" uid="uid://d0bvnkgpx7bcv" path="res://Globals/AudioManager.gd" id="1_2uve6"]
+[ext_resource type="AudioStream" uid="uid://3nrgsys4i543" path="res://BGM/Oreo.wav" id="2_y2ki5"]
+
+[node name="AudioManger" type="Node2D" unique_id=559335577]
+script = ExtResource("1_2uve6")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1209562934]
+stream = ExtResource("2_y2ki5")
