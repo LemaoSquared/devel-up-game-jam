@@ -224,8 +224,8 @@ func play_pattern(number:int):
 	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Sack, Toy]
 	var item_count = []
 	match number:
-		1: item_count = [10,0,0,0,0,0,0,0]
-		2: item_count = [0,10,0,0,0,0,0,0]
+		1: item_count = [0,0,0,0,0,5,0,0]
+		2: item_count = [0,0,0,0,0,0,1,0]
 		3: item_count = [5,5,0,0,0,0,0,0]
 		4: item_count = [10,0,0,0,10,0,0,0]
 		5: item_count = [0,0,0,0,0,5,0,0]
@@ -238,7 +238,7 @@ func play_pattern(number:int):
 				1: _spawn_drop_grid(Item.YARN,count,current_parent) #Yarns will Drop Spawn
 				4: _spawn_drop_grid(Item.SHOES,count,current_parent) #Shoes will Drop Spawn
 				5: spawn_random_pop_in_rect(Item.SARDINE,count,current_parent)
-				7: spawn_random_pop_in_rect(Item.SACK,count, current_parent) #Sack will Pop Spawn
+				6: spawn_random_pop_in_rect(Item.SACK,count, current_parent) #Sack will Pop Spawn
 
 # --- NEW INDEPENDENT TIMER SETUP ---
 	# Disconnect old timers by using a clean scene tree timer
