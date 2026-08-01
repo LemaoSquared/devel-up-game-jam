@@ -3,6 +3,7 @@ extends Node
 @export var cat_treat: PackedScene = preload("res://Menus/item_cat_treat.tscn")
 @export var yarn: PackedScene = preload("res://Menus/item_yarn.tscn")
 @export var shoes: PackedScene = preload("res://Menus/item_shoes.tscn")
+@export var sardine: PackedScene = preload("res://Menus/Can_Food.tscn")
 @export var sack: PackedScene = preload("res://Menus/item_sack.tscn")
 
 
@@ -132,7 +133,7 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 		Item.TREAT: obj = cat_treat.instantiate()
 		Item.GARBAGE: obj = cat_treat.instantiate()
 		Item.CAMERA: obj = cat_treat.instantiate()
-		Item.SARDINE: obj = cat_treat.instantiate()
+		Item.SARDINE: obj = sardine.instantiate()
 		Item.RAT: obj = cat_treat.instantiate()
 		Item.SACK: obj = sack.instantiate()
 	target_parent.add_child(obj)
@@ -223,10 +224,11 @@ func play_pattern(number:int):
 	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Sack, Toy]
 	var item_count = []
 	match number:
-		1: item_count = [10,0,0,0,0,0,0,10]
+		1: item_count = [10,0,0,0,0,0,0,0]
 		2: item_count = [0,10,0,0,0,0,0,0]
 		3: item_count = [5,5,0,0,0,0,0,0]
 		4: item_count = [10,0,0,0,10,0,0,0]
+		5: item_count = [0,0,0,0,0,5,0,0]
 		
 	for i in range(item_count.size()):
 		var count = item_count[i]
@@ -235,6 +237,7 @@ func play_pattern(number:int):
 				0: spawn_random_pop_in_rect(Item.TREAT,count, current_parent) #Treats will Pop Spawn
 				1: _spawn_drop_grid(Item.YARN,count,current_parent) #Yarns will Drop Spawn
 				4: _spawn_drop_grid(Item.SHOES,count,current_parent) #Shoes will Drop Spawn
+				5: spawn_random_pop_in_rect(Item.SARDINE,count,current_parent)
 				7: spawn_random_pop_in_rect(Item.SACK,count, current_parent) #Sack will Pop Spawn
 
 # --- NEW INDEPENDENT TIMER SETUP ---
