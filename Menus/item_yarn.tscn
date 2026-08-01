@@ -1,7 +1,12 @@
 [gd_scene format=3 uid="uid://cgbbkrcpsj0dq"]
 
+<<<<<<<< HEAD:Menus/item_yarn.tscn
 [ext_resource type="Script" uid="uid://dg2mi103e3a5s" path="res://Menus/item_yarn.gd" id="1_mf3qn"]
 [ext_resource type="Texture2D" uid="uid://b0m2w2mm7nwef" path="res://Assets/Object Assets/Yarn.png" id="2_of6pb"]
+========
+[ext_resource type="Script" uid="uid://dg2mi103e3a5s" path="res://Objects/yarn.gd" id="1_o8vhx"]
+[ext_resource type="Texture2D" uid="uid://b0m2w2mm7nwef" path="res://Assets/Object Assets/Yarn.png" id="2_osmv4"]
+>>>>>>>> WEBSTER:Objects/Yarn.tscn
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
 
@@ -11,7 +16,7 @@ script = ExtResource("1_mf3qn")
 [node name="Yarn" type="Area2D" parent="." unique_id=917850277]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Yarn" unique_id=800203798]
-scale = Vector2(2, 2)
+scale = Vector2(4.36, 4.36)
 shape = SubResource("CircleShape2D_frjpc")
 debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
 
