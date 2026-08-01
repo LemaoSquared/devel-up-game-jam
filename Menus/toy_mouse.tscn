@@ -1,21 +1,28 @@
 [gd_scene format=3 uid="uid://bp1cyo6ql5jf2"]
 
-[ext_resource type="Script" uid="uid://bocxi5dahboo" path="res://Menus/item_shoes.gd" id="1_v4so6"]
-[ext_resource type="Texture2D" uid="uid://b0m2w2mm7nwef" path="res://Assets/Object Assets/Yarn.png" id="2_5i4as"]
+[ext_resource type="Script" uid="uid://bqnoipipl0bdr" path="res://Menus/toy_mouse.gd" id="1_v4so6"]
+[ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_v4so6"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
 
-[node name="Shoes" type="Node2D" unique_id=46643488]
+[sub_resource type="AtlasTexture" id="AtlasTexture_3g4cc"]
+atlas = ExtResource("2_v4so6")
+region = Rect2(0, 0, 32.30002, 32.299988)
+
+[node name="Toy_Mouse" type="Node2D" unique_id=46643488]
 script = ExtResource("1_v4so6")
 
-[node name="Shoes" type="Area2D" parent="." unique_id=917850277]
+[node name="Toy_Mouse" type="Area2D" parent="." unique_id=917850277]
+top_level = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Shoes" unique_id=800203798]
-scale = Vector2(2, 2)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Toy_Mouse" unique_id=800203798]
+top_level = true
+scale = Vector2(3, 3)
 shape = SubResource("CircleShape2D_frjpc")
 debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
 
-[node name="Sprite2D" type="Sprite2D" parent="Shoes" unique_id=1377271426]
-modulate = Color(0.19407544, 0.34882215, 0, 1)
-scale = Vector2(2, 2)
-texture = ExtResource("2_5i4as")
+[node name="Sprite2D" type="Sprite2D" parent="Toy_Mouse" unique_id=1377271426]
+top_level = true
+position = Vector2(-7.2717667e-06, -9.536743e-07)
+scale = Vector2(1.5529158, 1.8743169)
+texture = SubResource("AtlasTexture_3g4cc")
