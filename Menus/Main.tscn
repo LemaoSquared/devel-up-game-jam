@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://fldj3nccgla6"]
 
-[ext_resource type="Script" uid="uid://bvx3hnsh1vv8d" path="res://Menus/entity.gd" id="1_2jii7"]
 [ext_resource type="Script" uid="uid://8gxpdvbrm070" path="res://Menus/main.gd" id="1_7x3k8"]
 [ext_resource type="Script" uid="uid://bbvnulhsuhib3" path="res://Menus/background.gd" id="1_j1rpa"]
 [ext_resource type="Script" uid="uid://b04ica55q3fe3" path="res://Menus/start_panel.gd" id="3_xd1g5"]
+[ext_resource type="Texture2D" uid="uid://dnue8lcwbmow0" path="res://Assets/Object Assets/Yarn.png" id="5_unj6y"]
 [ext_resource type="Script" uid="uid://p6cxsl6y2wbp" path="res://Menus/progress_bar.gd" id="5_vocn1"]
 [ext_resource type="Script" uid="uid://73b5003yewl7" path="res://Menus/pause.gd" id="6_dy2tn"]
 
@@ -58,15 +58,24 @@ offset_top = 235.0
 offset_right = 231.0
 offset_bottom = 435.0
 color = Color(0.5705783, 0.57057834, 0.57057834, 1)
-script = ExtResource("1_2jii7")
 
-[node name="StartPanel" type="TextureRect" parent="." unique_id=164502693]
+[node name="ReferenceRect" type="ReferenceRect" parent="." unique_id=690342108]
+offset_left = 255.0
+offset_top = 141.0
+offset_right = 1155.0
+offset_bottom = 541.0
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+border_width = 5.0
+
+[node name="StartPanel" type="TextureRect" parent="." unique_id=164502693 node_paths=PackedStringArray("spawn_area")]
 offset_left = 502.0
 offset_top = -3.0
 offset_right = 1152.0
 offset_bottom = 657.0
 texture = SubResource("GradientTexture1D_oi3uc")
 script = ExtResource("3_xd1g5")
+spawn_area = NodePath("../ReferenceRect")
 
 [node name="Title" type="Label" parent="StartPanel" unique_id=979853771]
 layout_mode = 0
@@ -78,12 +87,14 @@ theme_override_colors/font_color = Color(0.009317499, 0.009317501, 0.009317499, 
 theme_override_font_sizes/font_size = 80
 text = "TITLE"
 
-[node name="Start" type="Button" parent="StartPanel" unique_id=1572546083]
+[node name="Start" type="TextureButton" parent="StartPanel" unique_id=1916219]
 layout_mode = 0
-offset_left = 292.0
-offset_top = 302.0
-offset_right = 392.0
-offset_bottom = 402.0
+offset_left = 281.0
+offset_top = 288.0
+offset_right = 313.0
+offset_bottom = 320.0
+scale = Vector2(4, 4)
+texture_normal = ExtResource("5_unj6y")
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=170122126]
 offset_left = -18.0
