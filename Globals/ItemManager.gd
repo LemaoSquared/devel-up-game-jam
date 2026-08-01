@@ -1,63 +1,73 @@
 extends Node
 
-@export var object_scene: PackedScene = preload("res://Menus/object.tscn")
+@export var cat_treat: PackedScene = preload("res://Menus/item_cat_treat.tscn")
+@export var yarn: PackedScene = preload("res://Menus/item_yarn.tscn")
+@export var shoes: PackedScene = preload("res://Menus/item_shoes.tscn")
+
+
 @export var min_spawn_distance: float = 64.0
 @export var max_placement_attempts: int = 30
 
-enum SpawnPattern { RANDOM, GRID }
-enum SpawnAnimation { POP_SCALE, DROP_IN }
-
-@export_group("Pattern Settings")
-@export var spawn_pattern_type: SpawnPattern = SpawnPattern.GRID
-@export var spawn_count: int = 5
-@export var pattern_columns: int = 7
-@export var pattern_rows: int = 5
-
+enum SpawnType { RANDOM, GRID } #How the Item Spawn
+enum SpawnAnimation { POP_SCALE, DROP_IN } #Animation of Item Spawning
+enum Item{
+	TREAT,
+	YARN,
+	GARBAGE,
+	CAMERA,
+	SHOES,
+	SARDINE,
+	RAT,
+	SACK
+}
 @export_group("Animation Settings")
 @export var spawn_animation: SpawnAnimation = SpawnAnimation.POP_SCALE
 @export var drop_start_height: float = 100.0
 @export var drop_duration: float = 0.5
 
-@export_group("Sequential Yarn Wave")
-@export var enable_yarn_wave: bool = true
-@export var yarn_scene: PackedScene = preload("uid://cgbbkrcpsj0dq")
-@export var yarn_count: int = 5
-@export var time_duration_perBatch: float = 6.0   # minimum total time this batch must occupy
+@export_group("Spawn Settings")
+@export var spawn_type: SpawnType = SpawnType.GRID
+@export var pattern_columns: int = 12
+@export var pattern_rows: int = 12
+@export var enable_drop_wave: bool = true
+@export var spawn_count: int = 10
 
+
+
+var time_duration_perBatch: float = 6.0   # minimum total time this batch must occupy
 var spawned_objects: Array[Node] = []
 var wave_one_objects: Array[Node] = []
-var yarn_wave_triggered: bool = false
+var drop_wave_triggered: bool = false
 var batch_start_time: float = 0.0                 
 var current_area: Control
 var current_parent: Node
-
+var current_pattern
+var area
 
 func _ready() -> void:
+	current_pattern = 1
 	pass
 
 
-func spawn_random_pop_in_rect(area: Control, count: int = -1, parent: Node = null) -> void:
+func spawn_random_pop_in_rect(obj_type, count: int = -1, parent: Node = null) -> void:
 	var target_parent = parent if parent else get_tree().current_scene
 	var final_count = count if count >= 0 else spawn_count
 
 	current_area = area
 	current_parent = target_parent
 	wave_one_objects.clear()
-	yarn_wave_triggered = false
+	drop_wave_triggered = false
 	batch_start_time = Time.get_ticks_msec() / 1000.0   # record batch start, in seconds
+	
+	match spawn_type:
+		SpawnType.RANDOM:
+			pass
+		SpawnType.GRID:
+			_spawn_grid(area, final_count, target_parent,obj_type)
 
-	match spawn_pattern_type:
-		SpawnPattern.RANDOM:
-			_spawn_random(area, final_count, target_parent)
-		SpawnPattern.GRID:
-			_spawn_grid(area, final_count, target_parent)
 
-
-func _spawn_yarn_grid(area: Control, count: int, target_parent: Node) -> void:
-	if not yarn_scene:
-		push_warning("ItemManager: yarn_scene is not assigned, skipping yarn wave.")
-		return
-
+		
+func _spawn_drop_grid(obj_type,count: int=-1, target_parent: Node=null) -> void:
 	var cell_size = Vector2(area.size.x / pattern_columns, area.size.y / pattern_rows)
 	var anchor_y = area.global_position.y - drop_start_height
 
@@ -76,7 +86,12 @@ func _spawn_yarn_grid(area: Control, count: int, target_parent: Node) -> void:
 		var pos = cell_origin + cell_size / 2.0
 		var anchor_pos = Vector2(pos.x, anchor_y)
 
-		var obj = yarn_scene.instantiate()
+		#THIS FUNCTION IS FOR DROP ITEMS ONLY
+		var obj
+		match obj_type:
+			Item.YARN: obj = yarn.instantiate()
+			Item.SHOES: obj = shoes.instantiate()
+
 		target_parent.add_child(obj)
 		obj.popped_out.connect(_on_object_popped_out)
 		spawned_objects.append(obj)
@@ -87,17 +102,7 @@ func _spawn_yarn_grid(area: Control, count: int, target_parent: Node) -> void:
 			push_warning("ItemManager: yarn_scene has no spawn_drop_and_hang method.")
 
 
-func _spawn_random(area: Control, count: int, target_parent: Node) -> void:
-	var placed_positions: Array[Vector2] = []
-	for i in range(count):
-		var pos = _find_valid_position(area, placed_positions)
-		if pos == null:
-			continue
-		placed_positions.append(pos)
-		_instantiate_object(pos, target_parent, i)
-
-
-func _spawn_grid(area: Control, count: int, target_parent: Node) -> void:
+func _spawn_grid(area: Control, count: int, target_parent: Node,obj_type) -> void:
 	var cell_size = Vector2(area.size.x / pattern_columns, area.size.y / pattern_rows)
 	var total_cells = pattern_columns * pattern_rows
 	var spawn_total = min(count, total_cells)
@@ -115,11 +120,20 @@ func _spawn_grid(area: Control, count: int, target_parent: Node) -> void:
 
 		var cell_origin = area.global_position + Vector2(c * cell_size.x, r * cell_size.y)
 		var pos = cell_origin + cell_size / 2.0
-		_instantiate_object(pos, target_parent, index)
+		_instantiate_object(pos, target_parent, index,obj_type)
 
 
-func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int) -> void:
-	var obj = object_scene.instantiate()
+func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, obj_type) -> void:
+	#THIS FUNCTION IS FOR POP ITEMS ONLY
+	# DROP ITEMS ARE ON _SPAWN_DROP_GRID FUNCTION
+	var obj
+	match obj_type:
+		Item.TREAT: obj = cat_treat.instantiate()
+		Item.GARBAGE: obj = cat_treat.instantiate()
+		Item.CAMERA: obj = cat_treat.instantiate()
+		Item.SARDINE: obj = cat_treat.instantiate()
+		Item.RAT: obj = cat_treat.instantiate()
+		Item.SACK: obj = cat_treat.instantiate()
 	target_parent.add_child(obj)
 	obj.popped_out.connect(_on_object_popped_out)
 	spawned_objects.append(obj)
@@ -159,7 +173,7 @@ func _animate_drop_in(obj: Node, pos: Vector2, delay_index: int) -> void:
 		tween.tween_property(obj, "global_position", pos, drop_duration).set_delay(delay_index * 0.05)
 
 
-func _find_valid_position(area: Control, existing: Array[Vector2]) -> Variant:
+func _find_valid_position(existing: Array[Vector2]) -> Variant:
 	for attempt in range(max_placement_attempts):
 		var rand_x = randf_range(0, area.size.x)
 		var rand_y = randf_range(0, area.size.y)
@@ -186,14 +200,42 @@ func _on_object_popped_out(obj: Node) -> void:
 	spawned_objects.erase(obj)
 	wave_one_objects.erase(obj)
 
-	if enable_yarn_wave and not yarn_wave_triggered and wave_one_objects.is_empty():
-		yarn_wave_triggered = true
-
+	# If you still want the drop wave sub-step to trigger inside the 6 seconds:
+	if enable_drop_wave and not drop_wave_triggered and wave_one_objects.is_empty():
+		drop_wave_triggered = true
+		
 		var elapsed = (Time.get_ticks_msec() / 1000.0) - batch_start_time
 		var remaining = max(0.0, time_duration_perBatch - elapsed)
 
+		# Optional: Spawn sub-wave if there is time left in the current 6 seconds
 		if remaining > 0.0:
-			var timer = get_tree().create_timer(remaining, true)   # pause-aware wait
-			timer.timeout.connect(func(): _spawn_yarn_grid(current_area, yarn_count, current_parent))
-		else:
-			_spawn_yarn_grid(current_area, yarn_count, current_parent)
+			# You can handle mid-wave sub-spawns here if your pattern rules require it.
+			pass
+
+func _on_wave_timeout() -> void:
+	current_pattern += 1
+	play_pattern(current_pattern)
+	
+func play_pattern(number:int):
+	print("PLAYING PATTERN " + str(current_pattern))
+	# Count of Items in a Wave
+	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Sack, Toy]
+	var item_count = []
+	match number:
+		1: item_count = [10,0,0,0,0,0,0,0]
+		2: item_count = [0,10,0,0,0,0,0,0]
+		3: item_count = [5,5,0,0,0,0,0,0]
+		4: item_count = [10,0,0,0,10,0,0,0]
+		
+	for i in range(item_count.size()):
+		var count = item_count[i]
+		if count > 0:
+			match i:
+				0: spawn_random_pop_in_rect(Item.TREAT,count, current_parent) #Treats will Pop Spawn
+				1: _spawn_drop_grid(Item.YARN,count,current_parent) #Yarns will Drop Spawn
+				4: _spawn_drop_grid(Item.SHOES,count,current_parent) #Shoes will Drop Spawn
+
+# --- NEW INDEPENDENT TIMER SETUP ---
+	# Disconnect old timers by using a clean scene tree timer
+	var wave_timer = get_tree().create_timer(time_duration_perBatch, true)
+	wave_timer.timeout.connect(_on_wave_timeout)

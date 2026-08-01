@@ -2,7 +2,7 @@ extends TextureRect
 
 signal game_started
 
-const OBJECT_SCENE := preload("res://Menus/object.tscn")
+const OBJECT_SCENE := preload("res://Menus/item_cat_treat.tscn")
 const START_SOUND = preload("uid://bnvtg6wxrfprs")
 
 @onready var entity: AnimatedSprite2D = $"../Entity"
@@ -26,7 +26,8 @@ func _on_start_pressed() -> void:
 	game_started.emit()
 	
 	AudioManager.play_music(START_SOUND)
-	ItemManager.spawn_random_pop_in_rect(spawn_area)
+	ItemManager.area = spawn_area
+	ItemManager.play_pattern(1)
 
 	
 	var obj = OBJECT_SCENE.instantiate()
