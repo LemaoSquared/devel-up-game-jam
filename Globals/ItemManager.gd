@@ -347,9 +347,9 @@ func play_pattern(number:int):
 	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Rat, Sack]
 	var item_count = []
 	match number:
-		1: item_count = [0,0,0,0,0,0,0,0]
-		2: item_count = [0,0,0,1,0,0,0,10]
-		3: item_count = [5,5,0,0,0,0,0,0]
+		1: item_count = [3,3,3,1,3,3,3,3]
+		2: item_count = [0,10,0,1,0,0,0,0]
+		3: item_count = [0,0,0,0,0,0,0,0]
 		4: item_count = [10,0,0,0,5,0,0,0]
 		5: item_count = [0,0,0,0,0,5,0,0]
 		
