@@ -20,7 +20,7 @@ enum SpawnAnimation { POP_SCALE, DROP_IN }
 
 @export_group("Sequential Yarn Wave")
 @export var enable_yarn_wave: bool = true
-@export var yarn_scene: PackedScene = preload("res://Menus/Yarn.tscn")
+@export var yarn_scene: PackedScene = preload("uid://cgbbkrcpsj0dq")
 @export var yarn_count: int = 5
 @export var time_duration_perBatch: float = 6.0   # minimum total time this batch must occupy
 
