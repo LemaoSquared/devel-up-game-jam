@@ -3,6 +3,10 @@ extends TextureRect
 signal game_started
 
 const OBJECT_SCENE := preload("res://Menus/object.tscn")
+const START_SOUND = preload("uid://bnvtg6wxrfprs")
+
+@export var spawn_area: Control
+
 
 var is_transitioning: bool = false
 
@@ -16,7 +20,11 @@ func _on_start_pressed() -> void:
 
 	$Start.disabled = true
 	game_started.emit()
+	
+	AudioManager.play_music(START_SOUND)
+	ItemManager.spawn_random_pop_in_rect(spawn_area)
 
+	
 	var obj = OBJECT_SCENE.instantiate()
 	get_tree().current_scene.add_child(obj)
 	obj.global_position = $Start.global_position
