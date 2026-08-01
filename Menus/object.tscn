@@ -2,9 +2,14 @@
 
 [ext_resource type="Script" uid="uid://bpeqboda0b8yx" path="res://Menus/object.gd" id="1_vclmc"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
+
 [node name="Object" type="Node2D" unique_id=46643488]
 script = ExtResource("1_vclmc")
 
-[node name="Box" type="ColorRect" parent="." unique_id=1180801783]
-offset_right = 100.0
-offset_bottom = 100.0
+[node name="Box" type="Area2D" parent="." unique_id=917850277]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Box" unique_id=800203798]
+scale = Vector2(4, 4)
+shape = SubResource("CircleShape2D_frjpc")
+debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
