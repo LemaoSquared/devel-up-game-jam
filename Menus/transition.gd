@@ -19,3 +19,4 @@ func Return(duration: float = 1.0) -> void:
 	tween.tween_property(self, "modulate:a", 0.0, duration)
 	await tween.finished
 	visible = false
+	AudioManager.stop_music()

@@ -6,7 +6,7 @@ func _ready() -> void:
 	retry_button.pressed.connect(_retry_button_pressed)
 
 func _retry_button_pressed() -> void:
-	AudioManager.stop_music()
+	#AudioManager.stop_music()
 	PauseManager.unpause_game()
 	PauseManager.enable_pause()
 	get_tree().reload_current_scene()
