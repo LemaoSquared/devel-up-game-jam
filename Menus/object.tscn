@@ -1,9 +1,10 @@
 [gd_scene format=3 uid="uid://dopbjbokm0whf"]
 
 [ext_resource type="Script" uid="uid://bpeqboda0b8yx" path="res://Menus/object.gd" id="1_vclmc"]
-[ext_resource type="Texture2D" uid="uid://dnue8lcwbmow0" path="res://Assets/Object Assets/Yarn.png" id="2_w431h"]
+[ext_resource type="Texture2D" uid="uid://b0m2w2mm7nwef" path="res://Assets/Object Assets/Yarn.png" id="2_w431h"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
+radius = 19.525623
 
 [node name="Object" type="Node2D" unique_id=46643488]
 script = ExtResource("1_vclmc")
