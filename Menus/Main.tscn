@@ -172,8 +172,8 @@ scale = Vector2(0.2796875, 0.2796875)
 sprite_frames = SubResource("SpriteFrames_kgah6")
 
 [node name="ReferenceRect" type="ReferenceRect" parent="." unique_id=690342108]
-offset_left = 255.0
-offset_top = 141.0
+offset_left = 256.0
+offset_top = 149.0
 offset_right = 1155.0
 offset_bottom = 541.0
 mouse_filter = 1
