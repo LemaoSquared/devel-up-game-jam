@@ -3,7 +3,7 @@ extends TextureRect
 signal game_started
 
 const OBJECT_SCENE := preload("res://Menus/object.tscn")
-const START_SOUND := preload("res://BGM/Oreo.wav")
+const START_SOUND = preload("uid://bnvtg6wxrfprs")
 
 @export var spawn_area: Control
 
