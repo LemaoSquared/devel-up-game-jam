@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://c5taqxs74p4e5"]
+
+[ext_resource type="Script" uid="uid://buq2iw0bd4yxs" path="res://Menus/can_food.gd" id="1_0v02n"]
+[ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_3fdt8"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mjxx2"]
+atlas = ExtResource("2_3fdt8")
+region = Rect2(119, 0, 39, 35)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ht6uq"]
+atlas = ExtResource("2_3fdt8")
+region = Rect2(158, 0, 39, 35)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kqtka"]
+atlas = ExtResource("2_3fdt8")
+region = Rect2(197, 0, 39, 35)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_peras"]
+atlas = ExtResource("2_3fdt8")
+region = Rect2(236, 0, 39, 35)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_oi3uc"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mjxx2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ht6uq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kqtka")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_peras")
+}],
+"loop": 1,
+"name": &"Can_Foood",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Can_Food" type="Node2D" unique_id=46643488]
+script = ExtResource("1_0v02n")
+
+[node name="Can_Food" type="Area2D" parent="." unique_id=917850277]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Can_Food" unique_id=800203798]
+scale = Vector2(2, 2)
+shape = SubResource("CircleShape2D_frjpc")
+debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="Can_Food" unique_id=532998280]
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_oi3uc")
+animation = &"Can_Foood"
+frame_progress = 0.35269538
