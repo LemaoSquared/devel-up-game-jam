@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://cpxh8oj6crlks"]
+
+[ext_resource type="Script" uid="uid://20qy71q3r2mw" path="res://Globals/ItemManager.gd" id="1_uh13p"]
+
+[node name="ItemManager" type="Node2D" unique_id=1577767234]
+script = ExtResource("1_uh13p")
+drop_start_height = 200.0
+drop_duration = 0.6
+pattern_rows = 4
