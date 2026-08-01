@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://b7tmrtam2vt1"]
+
+[ext_resource type="Script" path="res://Objects/yarn.gd" id="1_8f0kc"]
+[ext_resource type="Texture2D" uid="uid://b0m2w2mm7nwef" path="res://Assets/Object Assets/Yarn.png" id="2_bwcgv"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
+
+[node name="Yarn" type="Node2D" unique_id=46643488]
+script = ExtResource("1_8f0kc")
+
+[node name="Yarn" type="Area2D" parent="." unique_id=917850277]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Yarn" unique_id=800203798]
+scale = Vector2(4.36, 4.36)
+shape = SubResource("CircleShape2D_frjpc")
+debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
+
+[node name="Sprite2D" type="Sprite2D" parent="Yarn" unique_id=1377271426]
+scale = Vector2(2, 2)
+texture = ExtResource("2_bwcgv")
