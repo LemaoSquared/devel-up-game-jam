@@ -6,4 +6,3 @@
 script = ExtResource("1_uh13p")
 drop_start_height = 200.0
 drop_duration = 0.6
-pattern_rows = 4

@@ -21,6 +21,37 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="Curve" id="Curve_7bpuo"]
+_limits = [-200.0, 200.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, -95.38461), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ijthc"]
+curve = SubResource("Curve_7bpuo")
+
+[sub_resource type="Curve" id="Curve_qa5vg"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.3670412, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_wqigk"]
+curve = SubResource("Curve_qa5vg")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_36c8c"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(42.74, 49.56, 1)
+emission_shape = 1
+emission_sphere_radius = 1.0
+spread = 180.0
+initial_velocity_min = 8.2
+initial_velocity_max = 40.989998
+gravity = Vector3(0, 0, 0)
+radial_accel_min = 7.3699975
+radial_accel_max = 13.929997
+radial_accel_curve = SubResource("CurveTexture_ijthc")
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_wqigk")
+color = Color(0, 0, 0, 1)
+
 [node name="Object" type="Node2D" unique_id=46643488]
 script = ExtResource("1_7bpuo")
 
@@ -36,3 +67,9 @@ self_modulate = Color(0.5443015, 0.68924344, 0.5232084, 1)
 position = Vector2(4.9999995, -6)
 scale = Vector2(1.7086781, 1.7086781)
 sprite_frames = SubResource("SpriteFrames_7bpuo")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Garbage" unique_id=1572950505]
+position = Vector2(2, 2)
+amount = 16
+lifetime = 2.1599999999999997
+process_material = SubResource("ParticleProcessMaterial_36c8c")
