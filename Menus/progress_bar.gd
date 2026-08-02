@@ -2,7 +2,7 @@ extends ProgressBar
 
 signal countdown_finished
 
-const COUNTDOWN_TIME: float = 90.0  # 1min 20 sec
+const COUNTDOWN_TIME: float = 80.0  # 1min 20 sec
 
 @onready var timer: Timer = $Timer
 
@@ -22,7 +22,10 @@ func _process(_delta: float) -> void:
 	var elapsed: float = COUNTDOWN_TIME - timer.time_left
 	value = (elapsed / COUNTDOWN_TIME) * 100.0
 
+
 func _on_timer_timeout() -> void:
 	value = 100.0
 	set_process(false)
 	countdown_finished.emit()
+	PauseManager.disable_pause() 
+	PauseManager.pause_game()      

@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://dh364flg18d2j"]
+
+[ext_resource type="Script" uid="uid://ojjwxrf0v2oo" path="res://Menus/GameOver_screen.gd" id="1_ikqa8"]
+
+[node name="GameOver Screen" type="Node2D" unique_id=341467045]
+process_mode = 3
+script = ExtResource("1_ikqa8")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1688136868]
+process_mode = 3
+offset_right = 1150.0
+offset_bottom = 650.0
+color = Color(0.36810192, 0.36810198, 0.36810192, 1)
+
+[node name="Label" type="Label" parent="ColorRect" unique_id=503026923]
+layout_mode = 0
+offset_left = 288.0
+offset_top = 43.0
+offset_right = 825.0
+offset_bottom = 126.0
+theme_override_font_sizes/font_size = 60
+text = "Game Over Screen"
+
+[node name="retry" type="Button" parent="ColorRect" unique_id=370138902]
+process_mode = 3
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -125.0
+offset_top = -40.0
+offset_right = 125.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 40
+text = "Retry"
+
+[connection signal="pressed" from="ColorRect/retry" to="." method="_on_button_pressed"]

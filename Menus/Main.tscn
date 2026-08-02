@@ -2,21 +2,28 @@
 
 [ext_resource type="Script" uid="uid://8gxpdvbrm070" path="res://Menus/main.gd" id="1_7x3k8"]
 [ext_resource type="Script" uid="uid://bbvnulhsuhib3" path="res://Menus/background.gd" id="1_j1rpa"]
-[ext_resource type="Texture2D" uid="uid://byhccumq5oxra" path="res://Assets/MiddleRound_OutsideStore/L1_Background.png" id="3_tk0da"]
+[ext_resource type="Script" uid="uid://dk3qdwxlcem7l" path="res://Menus/backgroundmanager.gd" id="2_k4a18"]
+[ext_resource type="Script" uid="uid://cllbt1vf6mkcu" path="res://Menus/parallax_layer_script.gd" id="2_u4s41"]
+[ext_resource type="Shader" uid="uid://d2jeis1lksurj" path="res://Shaders/pixelater.gdshader" id="2_yng6g"]
+[ext_resource type="Texture2D" uid="uid://d1fgm3m1aevej" path="res://Assets/Store Background/store foreground2.png" id="3_k4a18"]
 [ext_resource type="Texture2D" uid="uid://cplrlf1jlrjdu" path="res://Assets/Store Background/store background.png" id="3_u4s41"]
 [ext_resource type="Script" uid="uid://b04ica55q3fe3" path="res://Menus/start_panel.gd" id="3_xd1g5"]
-[ext_resource type="Texture2D" uid="uid://d1fgm3m1aevej" path="res://Assets/Store Background/store foreground2.png" id="4_k4a18"]
-[ext_resource type="Texture2D" uid="uid://dxr0vy2yuu7hr" path="res://Assets/MiddleRound_OutsideStore/L2_MountainsBig.png" id="4_vl1oa"]
-[ext_resource type="Texture2D" uid="uid://dr62whdowon4v" path="res://Assets/Store Background/store foreground1.png" id="5_qw7mv"]
-[ext_resource type="Texture2D" uid="uid://t6ee6brvctdr" path="res://Assets/MiddleRound_OutsideStore/L3_MountainsSmall.png" id="5_sp0w5"]
+[ext_resource type="Texture2D" uid="uid://dr62whdowon4v" path="res://Assets/Store Background/store foreground1.png" id="4_u4s41"]
 [ext_resource type="Texture2D" uid="uid://b0m2w2mm7nwef" path="res://Assets/Object Assets/Yarn.png" id="5_unj6y"]
 [ext_resource type="Script" uid="uid://p6cxsl6y2wbp" path="res://Menus/progress_bar.gd" id="5_vocn1"]
-[ext_resource type="Texture2D" uid="uid://ctp2rhcdq0lwd" path="res://Assets/MiddleRound_OutsideStore/L4_Trees.png" id="6_2gj65"]
 [ext_resource type="Script" uid="uid://73b5003yewl7" path="res://Menus/pause.gd" id="6_dy2tn"]
 [ext_resource type="Texture2D" uid="uid://dqohswdgofm1e" path="res://Assets/Character Sprite/outside.png" id="6_k87b8"]
-[ext_resource type="Texture2D" uid="uid://denywa1lffa25" path="res://Assets/MiddleRound_OutsideStore/L5_Buildings1_start.png" id="7_1jmi0"]
-[ext_resource type="Texture2D" uid="uid://4ptraxkm8603" path="res://Assets/MiddleRound_OutsideStore/L8_Poste.png" id="8_5u0mb"]
-[ext_resource type="Texture2D" uid="uid://2d72gu86ppqg" path="res://Assets/MiddleRound_OutsideStore/L9_Ground.png" id="9_mbgq0"]
+[ext_resource type="Script" uid="uid://c38s48g8inaho" path="res://Menus/transition.gd" id="18_vl1oa"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_k87b8"]
+shader = ExtResource("2_yng6g")
+shader_parameter/pixelation = 4.000000142499999
+shader_parameter/controlEdges = false
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6fbi1"]
+shader = ExtResource("2_yng6g")
+shader_parameter/pixelation = 3.000000095
+shader_parameter/controlEdges = false
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6fbi1"]
 atlas = ExtResource("6_k87b8")
@@ -49,6 +56,71 @@ bg_color = Color(0, 0, 0, 1)
 [node name="Main" type="Node2D" unique_id=1521551065]
 script = ExtResource("1_7x3k8")
 
+[node name="BackgroundManager" type="Node2D" parent="." unique_id=742304184 node_paths=PackedStringArray("background_a")]
+script = ExtResource("2_k4a18")
+background_a = NodePath("StoreBackground")
+
+[node name="StoreBackground" type="Node2D" parent="BackgroundManager" unique_id=1692822279]
+
+[node name="Background" type="Node2D" parent="BackgroundManager/StoreBackground" unique_id=2000936904]
+material = SubResource("ShaderMaterial_k87b8")
+script = ExtResource("2_u4s41")
+random_textures = Array[Texture2D]([ExtResource("3_u4s41")])
+
+[node name="1" type="Sprite2D" parent="BackgroundManager/StoreBackground/Background" unique_id=79147195]
+use_parent_material = true
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("3_u4s41")
+centered = false
+
+[node name="2" type="Sprite2D" parent="BackgroundManager/StoreBackground/Background" unique_id=117202737]
+use_parent_material = true
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("3_u4s41")
+centered = false
+
+[node name="3" type="Sprite2D" parent="BackgroundManager/StoreBackground/Background" unique_id=1544720361]
+use_parent_material = true
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("3_u4s41")
+centered = false
+
+[node name="4" type="Sprite2D" parent="BackgroundManager/StoreBackground/Background" unique_id=747549351]
+use_parent_material = true
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("3_u4s41")
+centered = false
+
+[node name="5" type="Sprite2D" parent="BackgroundManager/StoreBackground/Background" unique_id=1732382976]
+use_parent_material = true
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("3_u4s41")
+centered = false
+
+[node name="Foreground" type="Node2D" parent="BackgroundManager/StoreBackground" unique_id=426375763]
+material = SubResource("ShaderMaterial_6fbi1")
+script = ExtResource("2_u4s41")
+random_textures = Array[Texture2D]([ExtResource("4_u4s41"), ExtResource("3_k4a18")])
+depth_multiplier = 3.0
+
+[node name="1" type="Sprite2D" parent="BackgroundManager/StoreBackground/Foreground" unique_id=449136910]
+use_parent_material = true
+scale = Vector2(0.6, 0.59999996)
+texture = ExtResource("4_u4s41")
+centered = false
+
+[node name="2" type="Sprite2D" parent="BackgroundManager/StoreBackground/Foreground" unique_id=58306823]
+use_parent_material = true
+scale = Vector2(0.6, 0.59999996)
+texture = ExtResource("4_u4s41")
+centered = false
+
+[node name="3" type="Sprite2D" parent="BackgroundManager/StoreBackground/Foreground" unique_id=823864918]
+use_parent_material = true
+scale = Vector2(0.6, 0.59999996)
+texture = ExtResource("4_u4s41")
+centered = false
+
 [node name="Background" type="ColorRect" parent="." unique_id=186063241]
 anchors_preset = 15
 anchor_right = 1.0
@@ -57,99 +129,16 @@ offset_right = 1150.0
 offset_bottom = 650.0
 grow_horizontal = 2
 grow_vertical = 2
+color = Color(1, 1, 1, 0)
 script = ExtResource("1_j1rpa")
-
-[node name="Street_Area" type="TextureRect" parent="Background" unique_id=1918388718]
-visible = false
-layout_mode = 0
-offset_right = 1150.2222
-offset_bottom = 647.0
-texture = ExtResource("3_tk0da")
-expand_mode = 1
-
-[node name="Foreground_1" type="TextureRect" parent="Background/Street_Area" unique_id=133541845]
-layout_mode = 0
-offset_left = -143.0
-offset_top = -280.0
-offset_right = 1534.1996
-offset_bottom = 662.0
-texture = ExtResource("4_vl1oa")
-expand_mode = 1
-
-[node name="Foreground_2" type="TextureRect" parent="Background/Street_Area" unique_id=1444369258]
-layout_mode = 0
-offset_left = -318.0
-offset_top = -363.0
-offset_right = 1376.1865
-offset_bottom = 615.0
-texture = ExtResource("5_sp0w5")
-expand_mode = 1
-
-[node name="Foreground_3" type="TextureRect" parent="Background/Street_Area" unique_id=167048484]
-layout_mode = 0
-offset_top = -891.0
-offset_right = 1628.0
-offset_bottom = 737.0
-texture = ExtResource("6_2gj65")
-expand_mode = 1
-
-[node name="Foreground_4" type="TextureRect" parent="Background/Street_Area" unique_id=1722870189]
-layout_mode = 0
-offset_left = -130.0
-offset_top = -315.0
-offset_right = 1532.9568
-offset_bottom = 649.0
-texture = ExtResource("7_1jmi0")
-expand_mode = 1
-
-[node name="Foreground_5" type="TextureRect" parent="Background/Street_Area" unique_id=1646925226]
-layout_mode = 0
-offset_left = -5.0
-offset_top = -254.0
-offset_right = 1657.9568
-offset_bottom = 710.0
-texture = ExtResource("8_5u0mb")
-expand_mode = 1
-
-[node name="Foreground_6" type="TextureRect" parent="Background/Street_Area" unique_id=1022904191]
-layout_mode = 0
-offset_top = -302.0
-offset_right = 1662.9568
-offset_bottom = 662.0
-texture = ExtResource("9_mbgq0")
-expand_mode = 1
-
-[node name="Shop_Area" type="TextureRect" parent="Background" unique_id=516513039]
-layout_mode = 0
-offset_right = 1150.2222
-offset_bottom = 647.0
-texture = ExtResource("3_u4s41")
-expand_mode = 1
-
-[node name="Foreground_1" type="TextureRect" parent="Background/Shop_Area" unique_id=683284379]
-layout_mode = 0
-offset_left = -3.0
-offset_top = -87.0
-offset_right = 742.0
-offset_bottom = 658.0
-texture = ExtResource("4_k4a18")
-expand_mode = 1
-
-[node name="Foreground_2" type="TextureRect" parent="Background/Shop_Area" unique_id=562528287]
-layout_mode = 0
-offset_left = 739.0
-offset_top = -87.0
-offset_right = 1484.0
-offset_bottom = 658.0
-texture = ExtResource("5_qw7mv")
-expand_mode = 1
+metadata/_edit_lock_ = true
 
 [node name="BlackPanelUP" type="ColorRect" parent="Background" unique_id=1603293193]
 top_level = true
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = -105.0
+offset_top = -80.0
 offset_right = 10.0
 offset_bottom = -5.0
 grow_horizontal = 2
@@ -162,13 +151,13 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_top = 652.0
 offset_right = 10.0
-offset_bottom = 752.0
+offset_bottom = 720.0
 grow_horizontal = 2
 color = Color(0, 0, 0, 1)
 
 [node name="Entity" type="AnimatedSprite2D" parent="." unique_id=1100770989]
-position = Vector2(180.00002, 382)
-scale = Vector2(0.2796875, 0.2796875)
+position = Vector2(96, 424)
+scale = Vector2(0.26484373, 0.24609374)
 sprite_frames = SubResource("SpriteFrames_kgah6")
 
 [node name="ReferenceRect" type="ReferenceRect" parent="." unique_id=690342108]
@@ -179,8 +168,10 @@ offset_bottom = 541.0
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 border_width = 5.0
+metadata/_edit_lock_ = true
 
 [node name="StartPanel" type="TextureRect" parent="." unique_id=164502693 node_paths=PackedStringArray("spawn_area")]
+visible = false
 offset_left = 502.0
 offset_top = -3.0
 offset_right = 1152.0
@@ -200,6 +191,7 @@ theme_override_font_sizes/font_size = 80
 text = "TITLE"
 
 [node name="Start" type="TextureButton" parent="StartPanel" unique_id=1916219]
+texture_filter = 1
 layout_mode = 0
 offset_left = 281.0
 offset_top = 288.0
@@ -219,6 +211,12 @@ show_percentage = false
 script = ExtResource("5_vocn1")
 
 [node name="Timer" type="Timer" parent="ProgressBar" unique_id=2042900797]
+
+[node name="Transition" type="ColorRect" parent="." unique_id=1234018471]
+visible = false
+offset_right = 1150.0
+offset_bottom = 650.0
+script = ExtResource("18_vl1oa")
 
 [node name="Pause" type="Panel" parent="." unique_id=1802693864]
 visible = false
@@ -270,4 +268,11 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 40
 text = "QUIT"
 
+[node name="RightSpawner" type="Marker2D" parent="." unique_id=877299189]
+position = Vector2(-63, 571)
+
+[node name="LeftMarker2D2" type="Marker2D" parent="." unique_id=737292320]
+position = Vector2(1216, 571)
+
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]
+[connection signal="timeout" from="ProgressBar/Timer" to="ProgressBar" method="_on_timer_timeout"]

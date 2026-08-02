@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://jwsabqug58lp"]
+
+[ext_resource type="Script" uid="uid://by6akcsurtg6n" path="res://Menus/item_sack.gd" id="1_htlur"]
+[ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="1_jnwkv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_htlur"]
+size = Vector2(35, 41)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8upip"]
+atlas = ExtResource("1_jnwkv")
+region = Rect2(49.82387, 0.022538185, 12.840122, 16.975079)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3owqy"]
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(0, -1, 0)
+direction = Vector3(0, -1, 0)
+spread = 25.0
+initial_velocity_min = 180.0
+initial_velocity_max = 180.0
+gravity = Vector3(0, 250, 0)
+
+[node name="Object" type="Node2D" unique_id=780172524]
+script = ExtResource("1_htlur")
+
+[node name="Sack" type="Area2D" parent="." unique_id=1417257225]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sack" unique_id=1127696186]
+position = Vector2(0, -7)
+scale = Vector2(2, 2)
+shape = SubResource("RectangleShape2D_htlur")
+debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
+
+[node name="Sprite2D" type="Sprite2D" parent="Sack" unique_id=235741175]
+position = Vector2(0.9016075, -7.4792647)
+scale = Vector2(1.2566683, 1.590026)
+texture = ExtResource("1_jnwkv")
+region_enabled = true
+region_rect = Rect2(20.038738, 36.142246, 67.85559, 56.829075)
+
+[node name="FishParticles" type="GPUParticles2D" parent="." unique_id=1924561704]
+position = Vector2(0, -49)
+emitting = false
+amount = 1
+texture = SubResource("AtlasTexture_8upip")
+lifetime = 0.8
+one_shot = true
+explosiveness = 1.0
+trail_lifetime = 0.8
+process_material = SubResource("ParticleProcessMaterial_3owqy")
