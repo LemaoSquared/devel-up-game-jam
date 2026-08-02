@@ -1,5 +1,8 @@
 extends Node2D
 signal popped_out(obj: Node)
+const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
+const GIFT = preload("uid://fojbgtm48t6b")
+
 var is_popping: bool = false
 var points_value: int = 0
 @onready var polaroid: Area2D = $Polaroid
@@ -26,6 +29,8 @@ func _on_area_input_event(
 		and event.pressed
 		and event.button_index == MOUSE_BUTTON_LEFT
 	):
+		AudioManager.play_sound(GIFT)
+		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
 		gift_animation.visible = true
 		gift_animation.play("default")
 		pop_out()

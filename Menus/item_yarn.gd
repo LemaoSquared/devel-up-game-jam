@@ -1,5 +1,7 @@
 extends Node2D
-signal popped_out(obj: Node, was_clicked: bool)
+signal popped_out(obj: Node)
+const GIFT = preload("uid://fojbgtm48t6b")
+const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 
 @export var polaroid_scene: PackedScene = preload(
 	"res://Menus/item_polaroid.tscn"
@@ -80,6 +82,8 @@ func _on_area_input_event(_viewport: Viewport, event: InputEvent, _shape_idx: in
 	if is_popping:
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		AudioManager.play_sound(GIFT)
+		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
 		pop_out()
 
 func _on_duration_expired() -> void:
@@ -93,7 +97,7 @@ func _on_duration_expired() -> void:
 	)
 
 
-func pop_out() -> void:
+func pop_out(is_clicked = false) -> void:
 	string.visible = false
 	is_popping = true
 	is_hanging = false
