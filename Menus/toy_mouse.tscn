@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://blo7t53touj7n" path="res://Menus/toy_mouse.gd" id="1_v4so6"]
 [ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_5i4as"]
+[ext_resource type="Texture2D" uid="uid://cwsffhfhs7eko" path="res://Assets/Object Assets/Gift_Sheet.png" id="3_5i4as"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_uh13p"]
 radius = 41.5
@@ -48,6 +49,42 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_14f3d"]
+atlas = ExtResource("3_5i4as")
+region = Rect2(0, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6omvq"]
+atlas = ExtResource("3_5i4as")
+region = Rect2(45, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wq2yx"]
+atlas = ExtResource("3_5i4as")
+region = Rect2(90, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_78d6f"]
+atlas = ExtResource("3_5i4as")
+region = Rect2(135, 0, 45, 70)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_43urd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_14f3d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6omvq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wq2yx")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_78d6f")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 10.0
+}]
+
 [node name="toy_mouse" type="Node2D" unique_id=46643488]
 script = ExtResource("1_v4so6")
 
@@ -65,3 +102,8 @@ sprite_frames = SubResource("SpriteFrames_frjpc")
 animation = &"rat_toy"
 frame = 3
 frame_progress = 1.0
+
+[node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=56499414]
+position = Vector2(8, -56)
+scale = Vector2(3.9555557, 3.9555552)
+sprite_frames = SubResource("SpriteFrames_43urd")

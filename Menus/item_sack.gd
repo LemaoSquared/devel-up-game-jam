@@ -10,6 +10,8 @@ signal popped_out(obj: Node)
 @export var polaroid_texture: Texture2D
 var is_transforming: bool = false
 
+@onready var gift_animation: AnimatedSprite2D = $GiftAnimation
+
 var is_gravity: bool = false
 var is_popping: bool = false
 
@@ -32,6 +34,7 @@ var hit_tween: Tween
 
 
 func _ready() -> void:
+	gift_animation.visible = false
 	add_to_group("camera_targets")
 
 	sack.input_event.connect(_on_area_input_event)
@@ -73,6 +76,11 @@ func hit_sack() -> void:
 	play_hit_animation()
 
 	if click_count >= REQUIRED_CLICKS:
+		var sprite_shrink = create_tween()
+		sprite_shrink.tween_property($Sack/Sprite2D, "scale", Vector2(1.419, 1.451), 0.5)
+		await sprite_shrink.finished
+		gift_animation.visible = true
+		gift_animation.play("default")
 		pop_out()
 		return
 

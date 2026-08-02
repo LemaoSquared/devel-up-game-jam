@@ -15,8 +15,10 @@ var click_count: int = 0
 var direction: int = 1   
 @onready var area: Area2D = $toy_mouse
 @onready var animated_sprite: AnimatedSprite2D = $toy_mouse/Sprite2D
+@onready var gift_animation: AnimatedSprite2D = $GiftAnimation
 
 func _ready() -> void:
+	gift_animation.visible = false
 	animated_sprite.sprite_frames.set_animation_loop("rat_toy", true)
 	animated_sprite.play("rat_toy")
 	area.input_pickable = true
@@ -50,6 +52,8 @@ func _on_clicked() -> void:
 	click_count += 1
 	speed += speed_increase
 	if click_count >= max_clicks:
+		gift_animation.visible = true
+		gift_animation.play("default")
 		_pop_and_disappear()
 	else:
 		_jump()
