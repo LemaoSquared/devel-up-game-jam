@@ -46,3 +46,4 @@ func throw_pictures_on_table() -> void:
 func _retry_button_pressed() -> void:
 	ScoreManager.reset_score()
 	SceneTransition.change_scene(MAIN)
+	ItemManager.current_pattern = 1

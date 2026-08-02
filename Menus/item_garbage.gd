@@ -2,6 +2,7 @@ extends Node2D
 
 signal popped_out(obj: Node)
 const TRASH = preload("uid://bnyi53tue8oe2")
+const TRASH_PARTICLE = preload("uid://bqldp717ro0a4")
 
 @export var polaroid_scene: PackedScene = preload(
 	"res://Menus/item_polaroid.tscn"
@@ -37,6 +38,7 @@ func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		AudioManager.play_sound(TRASH)
+		ParticleManager.spawn_particle(TRASH_PARTICLE,global_position)
 		pop_out(true)
 
 func _on_duration_expired() -> void:

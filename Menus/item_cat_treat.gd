@@ -22,6 +22,7 @@ const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 @onready var gift: AnimatedSprite2D = $GiftAnimation
 
 func _ready() -> void:
+	add_to_group("camera_targets")
 	$Treat.input_event.connect(_on_area_input_event)
 	$Treat.input_pickable = true
 	gift.visible = false

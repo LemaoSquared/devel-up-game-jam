@@ -4,6 +4,7 @@ signal popped_out(obj: Node)
 const SACK = preload("uid://844bkgax2wrd")
 const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 const SACK_OPEN = preload("uid://d3nlvoeoqtbyp")
+const SACK_PARTICLE = preload("uid://bncb0rx7oecq0")
 
 const POINTS_PER_CLICK: int = 10
 @onready var gift: AnimatedSprite2D = $GiftAnimation
@@ -85,6 +86,7 @@ func hit_sack() -> void:
 		is_popping = true              
 		sack.input_pickable = false   
 		AudioManager.play_sound(SACK_OPEN)
+		ParticleManager.spawn_particle(SACK_PARTICLE,global_position)
 		gift.visible = true
 		gift.play("default")
 		await gift.animation_finished
