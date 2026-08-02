@@ -27,5 +27,5 @@ func _on_timer_timeout() -> void:
 	value = 100.0
 	set_process(false)
 	countdown_finished.emit()
-	PauseManager.disable_pause() 
-	PauseManager.pause_game()      
+	#PauseManager.disable_pause() 
+	#PauseManager.pause_game()      

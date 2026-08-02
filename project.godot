@@ -25,6 +25,7 @@ AudioManager="*uid://cbupjjnoycbp0"
 ItemManager="*uid://cpxh8oj6crlks"
 ParticleManager="*uid://cj4m3gvncgfyn"
 ScoreManager="*uid://bj1sl56gfowe6"
+SceneTransition="*uid://l02c4gi6t62d"
 
 [display]
 
