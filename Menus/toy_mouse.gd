@@ -14,6 +14,11 @@ var click_count: int = 0
 var direction: int = 1   
 @onready var area: Area2D = $toy_mouse
 @onready var animated_sprite: AnimatedSprite2D = $toy_mouse/Sprite2D
+const MOUSE = preload("uid://dhpdocurfpk5e")
+const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
+const GIFT = preload("uid://fojbgtm48t6b")
+@onready var gift: AnimatedSprite2D = $GiftAnimation
+
 func _ready() -> void:
 	animated_sprite.sprite_frames.set_animation_loop("rat_toy", true)
 	animated_sprite.play("rat_toy")
@@ -37,15 +42,25 @@ func _process(delta: float) -> void:
 func _on_area_input_event(_viewport, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_on_clicked()
+		
 func _on_clicked() -> void:
 	if is_jumping or is_finished:
 		return
+	AudioManager.play_sound(MOUSE)
+	ParticleManager.spawn_particle(CLICK_PARTICLE, global_position)
 	click_count += 1
 	speed += speed_increase
 	if click_count >= max_clicks:
+		is_finished = true          
+		area.input_pickable = false 
+		AudioManager.play_sound(GIFT)
+		gift.visible = true
+		gift.play("default")
+		await gift.animation_finished
 		_pop_and_disappear()
 	else:
 		_jump()
+		
 func _jump() -> void:
 	is_jumping = true
 	var target_x = position.x + jump_distance * direction

@@ -1,8 +1,12 @@
 extends Node2D
 
-signal popped_out(obj: Node, was_clicked: bool)
+signal popped_out(obj: Node)
+const SACK = preload("uid://844bkgax2wrd")
+const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
+const SACK_OPEN = preload("uid://d3nlvoeoqtbyp")
 
 const POINTS_PER_CLICK: int = 10
+@onready var gift: AnimatedSprite2D = $GiftAnimation
 
 #POLAROID
 @export var polaroid_scene: PackedScene = preload(
@@ -14,7 +18,7 @@ var is_transforming: bool = false
 
 var is_gravity: bool = false
 var is_popping: bool = false
-
+var is_finishing: bool = false 
 const Duration: float = 15.0
 const REQUIRED_CLICKS: int = 10
 
@@ -67,7 +71,8 @@ func _on_area_input_event(
 func hit_sack() -> void:
 	if is_popping:
 		return
-
+	ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
+	AudioManager.play_sound(SACK)
 	click_count += 1
 	print("Sack clicked: ", click_count)
 	
@@ -77,6 +82,12 @@ func hit_sack() -> void:
 	play_hit_animation()
 
 	if click_count >= REQUIRED_CLICKS:
+		is_popping = true              
+		sack.input_pickable = false   
+		AudioManager.play_sound(SACK_OPEN)
+		gift.visible = true
+		gift.play("default")
+		await gift.animation_finished
 		pop_out(true)
 		return
 

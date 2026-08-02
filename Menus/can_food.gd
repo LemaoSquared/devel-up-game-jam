@@ -22,6 +22,10 @@ var sardine_offsets: Array[Vector2] = [
 	Vector2(0, -35),
 	Vector2(30, -20),
 ]
+
+const CAN_OPEN = preload("uid://dei326f80lxo0")
+const CAN = preload("uid://hufov8jcs0i2")
+
 func _ready() -> void:
 	gift.visible = false
 	add_to_group("camera_targets")
@@ -39,9 +43,11 @@ func _advance_frame() -> void:
 	if is_finished or click_count >= MAX_CLICKS:
 		return
 	click_count += 1
+	AudioManager.play_sound(CAN)
 	anim_sprite.frame = click_count
 	_click_feedback()
 	if click_count >= MAX_CLICKS:
+		AudioManager.play_sound(CAN_OPEN)
 		_spawn_sardines()
 func _click_feedback() -> void:
 	var tween = create_tween()

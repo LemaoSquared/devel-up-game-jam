@@ -3,6 +3,8 @@ extends Node2D
 signal popped_out(obj, was_clicked: bool)
 
 @export var lifetime: float = 6.0
+const GIFT = preload("uid://fojbgtm48t6b")
+const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 
 @export_group("Spread Settings")
 @export var spacing_x: float = 90.0
@@ -17,6 +19,7 @@ var total_sardines: int = 1
 var spawn_delay: float = 0.0
 
 @onready var sardine_area: Area2D = $Sardines
+@onready var gift: AnimatedSprite2D = $GiftAnimation
 
 
 func _ready() -> void:
@@ -118,7 +121,12 @@ func _on_input_event(
 		and event.pressed
 		and event.button_index == MOUSE_BUTTON_LEFT
 	):
-		pop_out(true)
+		AudioManager.play_sound(GIFT)
+		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
+		gift.visible = true
+		gift.play("default")
+		await gift.animation_finished
+		pop_out()
 
 
 func pop_out(was_clicked: bool = false) -> void:

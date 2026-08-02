@@ -14,6 +14,7 @@ func _ready() -> void:
 	flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func activate_camera_effect() -> void:
+	visible = true
 	if effect_running:
 		return
 	effect_running = true
@@ -30,6 +31,7 @@ func activate_camera_effect() -> void:
 
 	Engine.time_scale = 1.0
 	effect_running = false
+	visible = false
 
 
 func transform_all_items() -> void:

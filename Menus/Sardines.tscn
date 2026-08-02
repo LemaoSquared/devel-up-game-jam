@@ -2,13 +2,50 @@
 
 [ext_resource type="Script" uid="uid://y3586xlc763p" path="res://Menus/sardines.gd" id="1_tdta7"]
 [ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_3ia8s"]
+[ext_resource type="Texture2D" uid="uid://cwsffhfhs7eko" path="res://Assets/Object Assets/Gift_Sheet.png" id="3_3ia8s"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oi3uc"]
-size = Vector2(71, 28.5)
+size = Vector2(71, 40)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frjpc"]
 atlas = ExtResource("2_3ia8s")
-region = Rect2(77.900024, -2.0999947, 41.59999, 12.799999)
+region = Rect2(77.900024, 0, 41.59999, 10.700005)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_14f3d"]
+atlas = ExtResource("3_3ia8s")
+region = Rect2(0, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6omvq"]
+atlas = ExtResource("3_3ia8s")
+region = Rect2(45, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wq2yx"]
+atlas = ExtResource("3_3ia8s")
+region = Rect2(90, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_78d6f"]
+atlas = ExtResource("3_3ia8s")
+region = Rect2(135, 0, 45, 70)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_a6wth"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_14f3d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6omvq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wq2yx")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_78d6f")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 10.0
+}]
 
 [node name="Sardines" type="Node2D" unique_id=46643488]
 script = ExtResource("1_tdta7")
@@ -16,7 +53,7 @@ script = ExtResource("1_tdta7")
 [node name="Sardines" type="Area2D" parent="." unique_id=917850277]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Sardines" unique_id=800203798]
-position = Vector2(0, 0.5)
+position = Vector2(0, 1)
 scale = Vector2(2, 2)
 shape = SubResource("RectangleShape2D_oi3uc")
 debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
@@ -25,3 +62,10 @@ debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
 position = Vector2(-3.8146973e-06, 1)
 scale = Vector2(2.682927, 3.1666667)
 texture = SubResource("AtlasTexture_frjpc")
+
+[node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=1673341156]
+visible = false
+self_modulate = Color(0.76931274, 0.9773807, 0, 1)
+position = Vector2(-5.684342e-14, -40)
+scale = Vector2(3.0222223, 3.0222223)
+sprite_frames = SubResource("SpriteFrames_a6wth")
