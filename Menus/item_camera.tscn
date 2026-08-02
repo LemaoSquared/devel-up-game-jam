@@ -6,15 +6,36 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_b676p"]
 radius = 19.924858
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_2lmid"]
+atlas = ExtResource("2_xjh5j")
+region = Rect2(0, 180, 92, 36)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_kgah6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2lmid")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": 1,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
 [node name="item_Camera" type="Node2D" unique_id=470174953]
 script = ExtResource("1_2lmid")
 
 [node name="Camera" type="Area2D" parent="." unique_id=286708455]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Camera" unique_id=160287740]
+scale = Vector2(2, 2)
 shape = SubResource("CircleShape2D_b676p")
 
-[node name="Sprite2D" type="Sprite2D" parent="Camera" unique_id=339479521]
-texture = ExtResource("2_xjh5j")
-region_enabled = true
-region_rect = Rect2(375, 30, 46, 41)
+[node name="Sprite2D" type="AnimatedSprite2D" parent="Camera" unique_id=1063795664]
+position = Vector2(4, -1)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_kgah6")
