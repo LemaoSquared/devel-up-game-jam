@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://ixb0ggojn7t0"]
+
+[ext_resource type="Script" uid="uid://dv5cbfdc5jss1" path="res://Menus/item_camera.gd" id="1_2lmid"]
+[ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_xjh5j"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_b676p"]
+radius = 19.924858
+
+[node name="item_Camera" type="Node2D" unique_id=470174953]
+script = ExtResource("1_2lmid")
+
+[node name="Camera" type="Area2D" parent="." unique_id=286708455]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Camera" unique_id=160287740]
+shape = SubResource("CircleShape2D_b676p")
+
+[node name="Sprite2D" type="Sprite2D" parent="Camera" unique_id=339479521]
+texture = ExtResource("2_xjh5j")
+region_enabled = true
+region_rect = Rect2(375, 30, 46, 41)

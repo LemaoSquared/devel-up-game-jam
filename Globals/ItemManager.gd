@@ -3,9 +3,8 @@ extends Node
 @export var cat_treat: PackedScene = preload("res://Menus/item_cat_treat.tscn")
 @export var yarn: PackedScene = preload("res://Menus/item_yarn.tscn")
 @export var shoes: PackedScene = preload("res://Menus/item_shoes.tscn")
-@export var sardine: PackedScene = preload("res://Menus/Can_Food.tscn")
 @export var sack: PackedScene = preload("res://Menus/item_sack.tscn")
-
+@export var camera: PackedScene = preload("res://Menus/item_camera.tscn")
 
 @export var min_spawn_distance: float = 64.0
 @export var max_placement_attempts: int = 30
@@ -35,7 +34,6 @@ enum Item{
 @export var spawn_count: int = 10
 
 
-
 var time_duration_perBatch: float = 6.0   # minimum total time this batch must occupy
 var spawned_objects: Array[Node] = []
 var wave_one_objects: Array[Node] = []
@@ -48,8 +46,8 @@ var area
 
 func _ready() -> void:
 	current_pattern = 1
+	current_parent = get_tree().current_scene
 	pass
-
 
 func spawn_random_pop_in_rect(obj_type, count: int = -1, parent: Node = null) -> void:
 	var target_parent = parent if parent else get_tree().current_scene
@@ -69,40 +67,68 @@ func spawn_random_pop_in_rect(obj_type, count: int = -1, parent: Node = null) ->
 
 
 		
-func _spawn_drop_grid(obj_type,count: int=-1, target_parent: Node=null) -> void:
-	var cell_size = Vector2(area.size.x / pattern_columns, area.size.y / pattern_rows)
+func _spawn_drop_grid(obj_type,count: int = -1,parent: Node = null) -> void:
+	var target_parent: Node = parent if parent != null else get_tree().current_scene
+
+	if target_parent == null:
+		push_error("ItemManager: No valid parent was found for drop items.")
+		return
+
+	if area == null:
+		push_error("ItemManager: Spawn area has not been assigned.")
+		return
+
+	var final_count: int = count if count >= 0 else spawn_count
+	var cell_size = Vector2(
+		area.size.x / pattern_columns,
+		area.size.y / pattern_rows
+	)
 	var anchor_y = area.global_position.y - drop_start_height
 
 	var row_pool: Array[int] = []
+
 	for r in range(pattern_rows):
 		row_pool.append(r)
-	row_pool.shuffle()
-
-	for index in range(count):
+		row_pool.shuffle()
+	for index in range(final_count):
 		var c = index % pattern_columns
 		if index > 0 and index % pattern_rows == 0:
 			row_pool.shuffle()
 		var r = row_pool[index % pattern_rows]
+		var cell_origin = area.global_position + Vector2(
+			c * cell_size.x,
+			r * cell_size.y
+		)
 
-		var cell_origin = area.global_position + Vector2(c * cell_size.x, r * cell_size.y)
 		var pos = cell_origin + cell_size / 2.0
 		var anchor_pos = Vector2(pos.x, anchor_y)
-
-		#THIS FUNCTION IS FOR DROP ITEMS ONLY
-		var obj
+		var obj: Node
 		match obj_type:
-			Item.YARN: obj = yarn.instantiate()
-			Item.SHOES: obj = shoes.instantiate()
-
+			Item.YARN:
+				obj = yarn.instantiate()
+			Item.SHOES:
+				obj = shoes.instantiate()
+			_:
+				push_warning("ItemManager: Unsupported drop item: " + str(obj_type))
+				continue
 		target_parent.add_child(obj)
-		obj.popped_out.connect(_on_object_popped_out)
+
+		if obj.has_signal("popped_out"):
+			obj.popped_out.connect(_on_object_popped_out)
+
 		spawned_objects.append(obj)
+		wave_one_objects.append(obj)
 
 		if obj.has_method("spawn_drop_and_hang"):
-			obj.spawn_drop_and_hang(pos, anchor_pos, index * 0.05)
+			obj.spawn_drop_and_hang(
+				pos,
+				anchor_pos,
+				index * 0.05
+			)
 		else:
-			push_warning("ItemManager: yarn_scene has no spawn_drop_and_hang method.")
-
+			push_warning(
+				"ItemManager: Drop item has no spawn_drop_and_hang method."
+			)
 
 func _spawn_grid(area: Control, count: int, target_parent: Node,obj_type) -> void:
 	var cell_size = Vector2(area.size.x / pattern_columns, area.size.y / pattern_rows)
@@ -132,11 +158,27 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 	match obj_type:
 		Item.TREAT: obj = cat_treat.instantiate()
 		Item.GARBAGE: obj = cat_treat.instantiate()
-		Item.CAMERA: obj = cat_treat.instantiate()
-		Item.SARDINE: obj = sardine.instantiate()
+		Item.CAMERA: obj = camera.instantiate()
+		Item.SARDINE: obj = cat_treat.instantiate()
 		Item.RAT: obj = cat_treat.instantiate()
 		Item.SACK: obj = sack.instantiate()
 	target_parent.add_child(obj)
+	
+	#Camera signal
+	if obj.has_signal("camera_activated"):
+		var camera_effects := get_tree().get_first_node_in_group(
+		"camera_effects"
+	)
+
+		if camera_effects != null:
+			obj.camera_activated.connect(
+			camera_effects.activate_camera_effect
+		)
+		else:
+			push_warning(
+		"ItemManager: CameraEffects node was not found."
+	)
+	
 	obj.popped_out.connect(_on_object_popped_out)
 	spawned_objects.append(obj)
 	wave_one_objects.append(obj)
@@ -218,17 +260,26 @@ func _on_wave_timeout() -> void:
 	current_pattern += 1
 	play_pattern(current_pattern)
 	
+
+func register_spawned_object(obj: Node) -> void:
+	if obj == null:
+		return
+
+	if obj.has_signal("popped_out"):
+		obj.popped_out.connect(_on_object_popped_out)
+
+	spawned_objects.append(obj)
+	
 func play_pattern(number:int):
 	print("PLAYING PATTERN " + str(current_pattern))
 	# Count of Items in a Wave
-	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Sack, Toy]
+	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Ray, Sack]
 	var item_count = []
 	match number:
-		1: item_count = [0,0,0,0,0,5,0,0]
-		2: item_count = [0,0,0,0,0,0,1,0]
+		1: item_count = [10,3,0,1,4,0,0,3]
+		2: item_count = [0,10,0,1,0,0,0,0]
 		3: item_count = [5,5,0,0,0,0,0,0]
 		4: item_count = [10,0,0,0,10,0,0,0]
-		5: item_count = [0,0,0,0,0,5,0,0]
 		
 	for i in range(item_count.size()):
 		var count = item_count[i]
@@ -236,9 +287,9 @@ func play_pattern(number:int):
 			match i:
 				0: spawn_random_pop_in_rect(Item.TREAT,count, current_parent) #Treats will Pop Spawn
 				1: _spawn_drop_grid(Item.YARN,count,current_parent) #Yarns will Drop Spawn
+				3: spawn_random_pop_in_rect(Item.CAMERA,count, current_parent) # Camera
 				4: _spawn_drop_grid(Item.SHOES,count,current_parent) #Shoes will Drop Spawn
-				5: spawn_random_pop_in_rect(Item.SARDINE,count,current_parent)
-				6: spawn_random_pop_in_rect(Item.SACK,count, current_parent) #Sack will Pop Spawn
+				7: spawn_random_pop_in_rect(Item.SACK,count, current_parent) #Sack will Pop Spawn
 
 # --- NEW INDEPENDENT TIMER SETUP ---
 	# Disconnect old timers by using a clean scene tree timer

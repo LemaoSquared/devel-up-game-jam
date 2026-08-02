@@ -2,6 +2,13 @@ extends Node2D
 
 signal popped_out(obj: Node)
 
+#POLAROID
+@export var polaroid_scene: PackedScene = preload(
+	"res://Menus/item_polaroid.tscn"
+)
+@export var polaroid_texture: Texture2D
+var is_transforming: bool = false
+
 var is_gravity: bool = false
 var is_popping: bool = false
 
@@ -24,6 +31,7 @@ var hit_tween: Tween
 
 
 func _ready() -> void:
+	add_to_group("camera_targets")
 	sack.input_event.connect(_on_area_input_event)
 	sack.input_pickable = true
 
@@ -80,14 +88,42 @@ func update_sack_sprite() -> void:
 		region_index = 1
 
 	region_index = clamp(region_index, 0, sack_regions.size() - 1)
-	print(
-	"Click: ", click_count,
-	" | Phase: ", region_index + 1,
-	" | Region: ", sack_regions[region_index]
-	)
 	sack_sprite.region_rect = sack_regions[region_index]
 
 
+func transform_to_polaroid() -> void:
+	if is_popping or is_transforming:
+		return
+
+	is_transforming = true
+	is_popping = true
+	sack.input_pickable = false
+
+	if hit_tween and hit_tween.is_valid():
+		hit_tween.kill()
+
+	var polaroid := polaroid_scene.instantiate() as Node2D
+	get_parent().add_child(polaroid)
+
+	polaroid.global_position = global_position
+	polaroid.global_rotation = global_rotation
+	polaroid.scale = scale
+
+	var photo_sprite := polaroid.get_node_or_null(
+		"Polaroid/Sprite2D"
+	) as Sprite2D
+
+	if photo_sprite != null and polaroid_texture != null:
+		photo_sprite.texture = polaroid_texture
+
+	if ItemManager.has_method("register_spawned_object"):
+		ItemManager.register_spawned_object(polaroid)
+
+	if polaroid.has_method("appear"):
+		polaroid.appear()
+
+	popped_out.emit(self)
+	queue_free()
 func play_fish_effect() -> void:
 	fish_particles.restart()
 	fish_particles.emitting = true
