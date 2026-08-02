@@ -1,20 +1,41 @@
 [gd_scene format=3 uid="uid://ixb0ggojn7t0"]
 
 [ext_resource type="Script" uid="uid://dv5cbfdc5jss1" path="res://Menus/item_camera.gd" id="1_2lmid"]
-[ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_xjh5j"]
+[ext_resource type="Texture2D" uid="uid://d3yb3n37t5ojd" path="res://Assets/Object Assets/camera-Sheet.png" id="2_2lmid"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_b676p"]
 radius = 19.924858
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_2lmid"]
-atlas = ExtResource("2_xjh5j")
-region = Rect2(0, 180, 92, 36)
+[sub_resource type="AtlasTexture" id="AtlasTexture_xjh5j"]
+atlas = ExtResource("2_2lmid")
+region = Rect2(0, 0, 85, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b676p"]
+atlas = ExtResource("2_2lmid")
+region = Rect2(85, 0, 85, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ys7d3"]
+atlas = ExtResource("2_2lmid")
+region = Rect2(170, 0, 85, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a5npv"]
+atlas = ExtResource("2_2lmid")
+region = Rect2(255, 0, 85, 49)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kgah6"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_2lmid")
+"texture": SubResource("AtlasTexture_xjh5j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b676p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ys7d3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a5npv")
 }],
 "loop": 1,
 "name": &"default",
@@ -37,6 +58,5 @@ scale = Vector2(2, 2)
 shape = SubResource("CircleShape2D_b676p")
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="Camera" unique_id=1063795664]
-position = Vector2(4, -1)
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_kgah6")

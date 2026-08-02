@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://dqohswdgofm1e" path="res://Assets/Character Sprite/outside.png" id="2_cn5lr"]
 
 [node name="CutScene" type="Node2D" unique_id=1663898075]
+process_mode = 3
 script = ExtResource("1_we0jh")
 
 [node name="Background" type="ColorRect" parent="." unique_id=555787150]

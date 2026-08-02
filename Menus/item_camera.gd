@@ -2,15 +2,19 @@ extends Node2D
 
 signal popped_out(obj: Node)
 signal camera_activated
+const CAMERA = preload("uid://ce3v411cq8pkb")
+const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 
 var is_popping: bool = false
 
 const Duration: float = 6.0
 
 @onready var camera_area: Area2D = $Camera
+@onready var sprite_2d: AnimatedSprite2D = $Camera/Sprite2D
 
 
 func _ready() -> void:
+	sprite_2d.play("default")
 	camera_area.input_event.connect(_on_area_input_event)
 	camera_area.input_pickable = true
 
@@ -35,12 +39,14 @@ func _on_area_input_event(
 
 
 func activate_camera() -> void:
+	AudioManager.play_sound(CAMERA)
+	ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
 	if is_popping:
 		return
 
 	is_popping = true
 	camera_area.input_pickable = false
-
+	
 	camera_activated.emit()
 	popped_out.emit(self)
 

@@ -1,5 +1,7 @@
 extends Node
 
+signal item_collected(item_type: int)
+
 @export var cat_treat: PackedScene = preload("res://Menus/item_cat_treat.tscn")
 @export var yarn: PackedScene = preload("res://Menus/item_yarn.tscn")
 @export var shoes: PackedScene = preload("res://Menus/item_shoes.tscn")
@@ -50,7 +52,7 @@ var current_pattern
 var area
 
 func _ready() -> void:
-	current_pattern = 1
+	current_pattern = 1 + randi_range(0,1)
 	current_parent = get_tree().current_scene
 	pass
 
@@ -135,7 +137,7 @@ func _spawn_drop_grid(obj_type, count: int = -1, parent: Node = null) -> void:
 		target_parent.add_child(obj)
 
 		if obj.has_signal("popped_out"):
-			obj.popped_out.connect(_on_object_popped_out)
+			obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
 
 		spawned_objects.append(obj)
 		wave_one_objects.append(obj)
@@ -215,6 +217,9 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 		Item.SACK: obj = sack.instantiate()
 	target_parent.add_child(obj)
 	
+	if obj.has_method("launch"):
+		obj.launch()
+	
 	#Camera signal
 	if obj.has_signal("camera_activated"):
 		var camera_effects := get_tree().get_first_node_in_group(
@@ -230,7 +235,7 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 		"ItemManager: CameraEffects node was not found."
 	)
 	
-	obj.popped_out.connect(_on_object_popped_out)
+	obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
 	spawned_objects.append(obj)
 	wave_one_objects.append(obj)
 
@@ -291,34 +296,45 @@ func clear_objects() -> void:
 	wave_one_objects.clear()
 
 
-func _on_object_popped_out(obj: Node) -> void:
+func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void:
 	spawned_objects.erase(obj)
 	wave_one_objects.erase(obj)
 
-	# If you still want the drop wave sub-step to trigger inside the 6 seconds:
+	if was_clicked:
+		print("Clicked item: ", Item.keys()[item_type])
+		item_collected.emit(item_type)
+	else:
+		print("Item expired (not clicked): ", Item.keys()[item_type])
+
 	if enable_drop_wave and not drop_wave_triggered and wave_one_objects.is_empty():
 		drop_wave_triggered = true
-		
 		var elapsed = (Time.get_ticks_msec() / 1000.0) - batch_start_time
 		var remaining = max(0.0, time_duration_perBatch - elapsed)
-
-		# Optional: Spawn sub-wave if there is time left in the current 6 seconds
 		if remaining > 0.0:
-			# You can handle mid-wave sub-spawns here if your pattern rules require it.
 			pass
 
 func _on_wave_timeout() -> void:
+	# 2. Advance to the next wave
 	current_pattern += 1
-	play_pattern(current_pattern)
-	
 
-func register_spawned_object(obj: Node) -> void:
+	# 3. Math calculation for the 50/50 pattern selection:
+	# Wave 1 -> Base 1 -> Picks 1 or 2
+	# Wave 2 -> Base 3 -> Picks 3 or 4
+	# Wave 3 -> Base 5 -> Picks 5 or 6
+	var pattern_base = ((current_pattern - 1) * 2) + 1
+	var chosen_pattern = pattern_base + randi_range(0, 1)
+	
+	# 5. Play the randomized pattern
+	play_pattern(chosen_pattern)
+
+func register_spawned_object(obj: Node, obj_type = null) -> void:
 	if obj == null:
 		return
-
 	if obj.has_signal("popped_out"):
-		obj.popped_out.connect(_on_object_popped_out)
-
+		if obj_type != null:
+			obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
+		else:
+			push_warning("ItemManager: register_spawned_object called without obj_type.")
 	spawned_objects.append(obj)
 	
 func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col: int, delay_index: int) -> void:
@@ -339,7 +355,7 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 
 	var obj = rat.instantiate()
 	target_parent.add_child(obj)
-	obj.popped_out.connect(_on_object_popped_out)
+	obj.popped_out.connect(_on_object_popped_out.bind(Item.RAT))
 	spawned_objects.append(obj)
 	wave_one_objects.append(obj)
 	obj.set_direction(dir, target_end_x)
@@ -352,17 +368,56 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 	
 func play_pattern(number:int):
 	current_parent = get_tree().current_scene 
-	print("PLAYING PATTERN " + str(current_pattern))
+	print("PLAYING PATTERN " + str(number))
 	# Count of Items in a Wave
 	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Rat, Sack]
 	var item_count = []
 	match number:
-		1: item_count = [0,0,0,1,0,0,0,10]
-		2: item_count = [0,10,0,1,0,0,0,0]
-		3: item_count = [0,0,0,1,0,0,1,0]
-		4: item_count = [10,0,0,0,5,0,1,0]
-		5: item_count = [0,0,0,0,0,5,3,0]
+		1: item_count = [10,0,0,0,0,0,0,0]
+		2: item_count = [10,0,0,0,0,0,0,0]
 		
+		3: item_count = [10,0,5,0,0,0,0,0]
+		4: item_count = [10,0,5,0,0,0,0,0]
+		
+		5: item_count = [0,10,0,0,0,0,0,0]
+		6: item_count = [5,5,0,0,0,0,0,0]
+
+		7: item_count = [5,5,5,0,0,0,0,0]
+		8: item_count = [0,10,5,0,0,0,0,0]
+
+		9: item_count = [10,0,0,1,0,0,0,0]
+		10: item_count = [0,10,0,1,0,0,0,0]
+		
+		11: item_count = [3,0,0,0,0,2,0,0]
+		12: item_count = [0,3,0,0,0,2,0,0]
+		
+		13: item_count = [0,15,0,0,5,0,0,0]
+		14: item_count = [15,0,0,0,5,0,0,0]
+		
+		15: item_count = [0,3,0,0,5,2,0,0]
+		16: item_count = [9,0,5,0,0,1,0,0]
+
+		17: item_count = [3,0,0,0,0,0,2,0]
+		18: item_count = [0,3,0,0,0,0,2,0]
+
+		19: item_count = [0,3,0,1,5,0,2,0]
+		20: item_count = [9,0,5,1,0,0,1,0]
+		
+		21: item_count = [0,2,10,0,0,1,2,0]
+		22: item_count = [2,0,0,0,10,2,1,0]
+		
+		23: item_count = [0,0,0,0,0,0,0,2]
+		24: item_count = [0,4,0,0,0,1,0,1]
+		
+		25: item_count = [20,0,10,1,0,0,0,0]
+		26: item_count = [5,20,0,1,10,0,0,0]
+
+		27: item_count = [0,0,10,0,10,0,0,2]
+		28: item_count = [4,0,5,0,5,0,1,1]
+
+		29: item_count = [2,10,15,0,0,0,3,0]
+		30: item_count = [10,4,0,0,15,1,0,1]
+
 	for i in range(item_count.size()):
 		var count = item_count[i]
 		if count > 0:

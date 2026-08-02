@@ -2,9 +2,46 @@
 
 [ext_resource type="Script" uid="uid://besjqxa1pwh0t" path="res://Menus/item_polaroid.gd" id="1_i15qm"]
 [ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_6isxe"]
+[ext_resource type="Texture2D" uid="uid://cwsffhfhs7eko" path="res://Assets/Object Assets/Gift_Sheet.png" id="3_3j63b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3j63b"]
 size = Vector2(57, 57)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_14f3d"]
+atlas = ExtResource("3_3j63b")
+region = Rect2(0, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6omvq"]
+atlas = ExtResource("3_3j63b")
+region = Rect2(45, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wq2yx"]
+atlas = ExtResource("3_3j63b")
+region = Rect2(90, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_78d6f"]
+atlas = ExtResource("3_3j63b")
+region = Rect2(135, 0, 45, 70)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ixl3m"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_14f3d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6omvq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wq2yx")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_78d6f")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 10.0
+}]
 
 [node name="item_polaroid" type="Node2D" unique_id=753296624 groups=["camera_targets"]]
 script = ExtResource("1_i15qm")
@@ -24,3 +61,9 @@ scale = Vector2(1.6, 1.6)
 texture = ExtResource("2_6isxe")
 region_enabled = true
 region_rect = Rect2(328, 168, 65, 62)
+
+[node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=933783865]
+visible = false
+position = Vector2(-5.684342e-14, -40)
+scale = Vector2(3.0222223, 3.0222223)
+sprite_frames = SubResource("SpriteFrames_ixl3m")

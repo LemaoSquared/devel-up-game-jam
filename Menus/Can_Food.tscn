@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cwsffhfhs7eko" path="res://Assets/Object Assets/Gift_Sheet.png" id="3_3fdt8"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
+radius = 34.59046
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mjxx2"]
 atlas = ExtResource("2_3fdt8")
@@ -94,12 +95,13 @@ shape = SubResource("CircleShape2D_frjpc")
 debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="Can_Food" unique_id=532998280]
-scale = Vector2(2, 2)
+position = Vector2(-4, -10)
+scale = Vector2(3.3000002, 3.3000002)
 sprite_frames = SubResource("SpriteFrames_oi3uc")
 animation = &"Can_Foood"
 frame_progress = 0.35269538
 
 [node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=1463621911]
-position = Vector2(5.684342e-14, -33)
-scale = Vector2(2.4277778, 2.4277778)
+position = Vector2(1, -57)
+scale = Vector2(4.8923616, 4.8923616)
 sprite_frames = SubResource("SpriteFrames_mjxx2")

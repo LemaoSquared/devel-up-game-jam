@@ -2,9 +2,10 @@
 
 [ext_resource type="Script" uid="uid://by6akcsurtg6n" path="res://Menus/item_sack.gd" id="1_htlur"]
 [ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="1_jnwkv"]
+[ext_resource type="Texture2D" uid="uid://cwsffhfhs7eko" path="res://Assets/Object Assets/Gift_Sheet.png" id="3_ucqv3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_htlur"]
-size = Vector2(35, 41)
+size = Vector2(96.5, 102.5)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8upip"]
 atlas = ExtResource("1_jnwkv")
@@ -19,20 +20,56 @@ initial_velocity_min = 180.0
 initial_velocity_max = 180.0
 gravity = Vector3(0, 250, 0)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_14f3d"]
+atlas = ExtResource("3_ucqv3")
+region = Rect2(0, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6omvq"]
+atlas = ExtResource("3_ucqv3")
+region = Rect2(45, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wq2yx"]
+atlas = ExtResource("3_ucqv3")
+region = Rect2(90, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_78d6f"]
+atlas = ExtResource("3_ucqv3")
+region = Rect2(135, 0, 45, 70)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gmlkt"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_14f3d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6omvq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wq2yx")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_78d6f")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 10.0
+}]
+
 [node name="Object" type="Node2D" unique_id=780172524]
 script = ExtResource("1_htlur")
 
 [node name="Sack" type="Area2D" parent="." unique_id=1417257225]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Sack" unique_id=1127696186]
-position = Vector2(0, -7)
+position = Vector2(6, 2)
 scale = Vector2(2, 2)
 shape = SubResource("RectangleShape2D_htlur")
 debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
 
 [node name="Sprite2D" type="Sprite2D" parent="Sack" unique_id=2053182221]
-position = Vector2(0, -6.000001)
-scale = Vector2(1.5555557, 1.590026)
+position = Vector2(2, 9.536743e-07)
+scale = Vector2(2.978066, 3.0440583)
 texture = ExtResource("1_jnwkv")
 region_enabled = true
 region_rect = Rect2(0, 102.98089, 75, 58.52546)
@@ -47,3 +84,10 @@ one_shot = true
 explosiveness = 1.0
 trail_lifetime = 0.8
 process_material = SubResource("ParticleProcessMaterial_3owqy")
+
+[node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=87968451]
+visible = false
+self_modulate = Color(1, 0.7319139, 0.19644985, 1)
+position = Vector2(8.000008, -109)
+scale = Vector2(6.577778, 6.5777783)
+sprite_frames = SubResource("SpriteFrames_gmlkt")

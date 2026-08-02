@@ -24,6 +24,7 @@ PauseManager="*uid://pl8i67h01j3q"
 AudioManager="*uid://cbupjjnoycbp0"
 ItemManager="*uid://cpxh8oj6crlks"
 ParticleManager="*uid://cj4m3gvncgfyn"
+ScoreManager="*uid://bj1sl56gfowe6"
 
 [display]
 

@@ -12,6 +12,17 @@ offset_right = 1150.0
 offset_bottom = 650.0
 color = Color(0.36810192, 0.36810198, 0.36810192, 1)
 
+[node name="ScoreLabel" type="Label" parent="ColorRect" unique_id=1706508346]
+layout_mode = 0
+offset_left = 409.0
+offset_top = 183.0
+offset_right = 709.0
+offset_bottom = 243.0
+theme_override_font_sizes/font_size = 40
+text = "Score"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Label" type="Label" parent="ColorRect" unique_id=503026923]
 layout_mode = 0
 offset_left = 288.0
