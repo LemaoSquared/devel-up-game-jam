@@ -22,7 +22,7 @@ func _on_item_collected(item_type: int) -> void:
 	add_points(point_values[item_type])
 
 func add_points(amount: int) -> void:
-	score += amount
+	score = max(0, score + amount)
 	score_changed.emit(score)
 	print("Score changed by %+d (total: %d)" % [amount, score])
 

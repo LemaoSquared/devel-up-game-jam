@@ -49,6 +49,7 @@ var batch_start_time: float = 0.0
 var current_area: Control
 var current_parent: Node
 var current_pattern
+var scored_objects: Array[Node] = []
 var area
 
 func _ready() -> void:
@@ -294,9 +295,13 @@ func clear_objects() -> void:
 			obj.queue_free()
 	spawned_objects.clear()
 	wave_one_objects.clear()
+	scored_objects.clear()
 
 
 func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void:
+	if obj in scored_objects:
+		return  
+	scored_objects.append(obj)
 	spawned_objects.erase(obj)
 	wave_one_objects.erase(obj)
 

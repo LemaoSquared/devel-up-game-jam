@@ -1,7 +1,7 @@
 extends TextureRect
 
 signal game_started
-
+const SHOP_BELL = preload("uid://fswaj7rxfula")
 const OBJECT_SCENE = preload("res://Menus/item_cat_treat.tscn")
 const START_SOUND = preload("uid://bnvtg6wxrfprs")
 
@@ -18,6 +18,7 @@ func _ready() -> void:
 	pass
 	
 func _on_start_pressed() -> void:
+	AudioManager.play_sound(SHOP_BELL)
 	if is_transitioning:
 		return
 	is_transitioning = true
