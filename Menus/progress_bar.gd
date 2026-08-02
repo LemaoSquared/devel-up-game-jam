@@ -2,7 +2,7 @@ extends ProgressBar
 
 signal countdown_finished
 
-const COUNTDOWN_TIME: float = 90.0  # 1min 30 sec
+const COUNTDOWN_TIME: float = 20.0  # 1min 30 sec
 
 @onready var timer: Timer = $Timer
 

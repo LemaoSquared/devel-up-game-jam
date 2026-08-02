@@ -1,5 +1,5 @@
 extends Node2D
-signal popped_out(obj: Node)
+signal popped_out(obj: Node, was_clicked: bool)
 
 
 @export var polaroid_scene: PackedScene = preload(
@@ -38,7 +38,7 @@ func _ready() -> void:
 	$Shoes.input_event.connect(_on_area_input_event)
 	$Shoes.input_pickable = true
 
-	var timer = get_tree().create_timer(pop_duration_seconds, true)  # pause-aware
+	var timer = get_tree().create_timer(pop_duration_seconds, true)
 	timer.timeout.connect(_on_duration_expired)
 
 
@@ -85,7 +85,7 @@ func _on_duration_expired() -> void:
 	if is_popping:
 		return
 	var stagger = randf_range(0.0, fall_stagger_max)
-	var timer = get_tree().create_timer(stagger, true)   # pause-aware
+	var timer = get_tree().create_timer(stagger, true)
 	timer.timeout.connect(func():
 		if not is_popping:
 			fall_and_disappear()
@@ -96,7 +96,7 @@ func pop_out() -> void:
 	string.visible = false
 	is_popping = true
 	is_hanging = false
-	popped_out.emit(self)
+	popped_out.emit(self, true)
 
 	var tween = create_tween()
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
@@ -109,7 +109,7 @@ func fall_and_disappear() -> void:
 	string.visible = false
 	is_popping = true
 	is_hanging = false
-	popped_out.emit(self)
+	popped_out.emit(self, false)
 
 	var viewport_height = get_viewport_rect().size.y
 	var fall_distance = (viewport_height - global_position.y) + fall_away_screen_buffer
@@ -147,5 +147,5 @@ func transform_to_polaroid() -> void:
 	if polaroid.has_method("appear"):
 		polaroid.appear()
 
-	popped_out.emit(self)
+	popped_out.emit(self, true)
 	queue_free()

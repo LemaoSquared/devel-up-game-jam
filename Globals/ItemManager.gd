@@ -1,5 +1,7 @@
 extends Node
 
+signal item_collected(item_type: int)
+
 @export var cat_treat: PackedScene = preload("res://Menus/item_cat_treat.tscn")
 @export var yarn: PackedScene = preload("res://Menus/item_yarn.tscn")
 @export var shoes: PackedScene = preload("res://Menus/item_shoes.tscn")
@@ -135,7 +137,7 @@ func _spawn_drop_grid(obj_type, count: int = -1, parent: Node = null) -> void:
 		target_parent.add_child(obj)
 
 		if obj.has_signal("popped_out"):
-			obj.popped_out.connect(_on_object_popped_out)
+			obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
 
 		spawned_objects.append(obj)
 		wave_one_objects.append(obj)
@@ -215,6 +217,9 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 		Item.SACK: obj = sack.instantiate()
 	target_parent.add_child(obj)
 	
+	if obj.has_method("launch"):
+		obj.launch()
+	
 	#Camera signal
 	if obj.has_signal("camera_activated"):
 		var camera_effects := get_tree().get_first_node_in_group(
@@ -230,7 +235,7 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 		"ItemManager: CameraEffects node was not found."
 	)
 	
-	obj.popped_out.connect(_on_object_popped_out)
+	obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
 	spawned_objects.append(obj)
 	wave_one_objects.append(obj)
 
@@ -291,20 +296,21 @@ func clear_objects() -> void:
 	wave_one_objects.clear()
 
 
-func _on_object_popped_out(obj: Node) -> void:
+func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void:
 	spawned_objects.erase(obj)
 	wave_one_objects.erase(obj)
 
-	# If you still want the drop wave sub-step to trigger inside the 6 seconds:
+	if was_clicked:
+		print("Clicked item: ", Item.keys()[item_type])
+		item_collected.emit(item_type)
+	else:
+		print("Item expired (not clicked): ", Item.keys()[item_type])
+
 	if enable_drop_wave and not drop_wave_triggered and wave_one_objects.is_empty():
 		drop_wave_triggered = true
-		
 		var elapsed = (Time.get_ticks_msec() / 1000.0) - batch_start_time
 		var remaining = max(0.0, time_duration_perBatch - elapsed)
-
-		# Optional: Spawn sub-wave if there is time left in the current 6 seconds
 		if remaining > 0.0:
-			# You can handle mid-wave sub-spawns here if your pattern rules require it.
 			pass
 
 func _on_wave_timeout() -> void:
@@ -321,13 +327,14 @@ func _on_wave_timeout() -> void:
 	# 5. Play the randomized pattern
 	play_pattern(chosen_pattern)
 
-func register_spawned_object(obj: Node) -> void:
+func register_spawned_object(obj: Node, obj_type = null) -> void:
 	if obj == null:
 		return
-
 	if obj.has_signal("popped_out"):
-		obj.popped_out.connect(_on_object_popped_out)
-
+		if obj_type != null:
+			obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
+		else:
+			push_warning("ItemManager: register_spawned_object called without obj_type.")
 	spawned_objects.append(obj)
 	
 func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col: int, delay_index: int) -> void:
@@ -348,7 +355,7 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 
 	var obj = rat.instantiate()
 	target_parent.add_child(obj)
-	obj.popped_out.connect(_on_object_popped_out)
+	obj.popped_out.connect(_on_object_popped_out.bind(Item.RAT))
 	spawned_objects.append(obj)
 	wave_one_objects.append(obj)
 	obj.set_direction(dir, target_end_x)
