@@ -8,7 +8,6 @@ func _ready() -> void:
 	$StartPanel.game_started.connect(PauseManager.enable_pause)
 	$ProgressBar.countdown_finished.connect(_on_progress_bar_countdown_finished)
 	$StartPanel.visible = true
-	background_manager.pause_movement()
 
 func _on_progress_bar_countdown_finished() -> void:
 	await $Transition.transition()
