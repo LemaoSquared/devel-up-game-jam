@@ -13,7 +13,8 @@ signal popped_out(obj: Node)
 @export var jump_duration: float = 0.3   
 @export var jump_height: float = 20.0   
 @export var max_clicks: int = 3         
-@export var end_x: float = 1220.0       
+@export var end_x: float = 1250.0
+@export var lifetime: float = 6.0
 var is_jumping: bool = false
 var is_finished: bool = false
 var click_count: int = 0
@@ -27,6 +28,9 @@ func _ready() -> void:
 	animated_sprite.play("rat_toy")
 	area.input_pickable = true
 	area.input_event.connect(_on_area_input_event)
+
+	var life_timer = get_tree().create_timer(lifetime, true)
+	life_timer.timeout.connect(_on_lifetime_expired)
 
 func set_direction(dir: int, target_end_x: float) -> void:
 	direction = dir
@@ -90,7 +94,7 @@ func _reach_end() -> void:
 	area.input_pickable = false
 	animated_sprite.stop()
 	popped_out.emit(self)
-	
+
 func transform_to_polaroid() -> void:
 	var polaroid := polaroid_scene.instantiate() as Node2D
 	get_parent().add_child(polaroid)
@@ -111,6 +115,19 @@ func transform_to_polaroid() -> void:
 
 	if polaroid.has_method("appear"):
 		polaroid.appear()
+func _on_lifetime_expired() -> void:
+	if is_finished:
+		return   # already popped or reached end — nothing to do
+	is_finished = true
+	is_jumping = true
+	area.input_pickable = false
+	animated_sprite.stop()
 
-	popped_out.emit(self)
-	queue_free()
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "modulate:a", 0.0, 0.25)
+	tween.finished.connect(func():
+		popped_out.emit(self)
+		queue_free())
+	

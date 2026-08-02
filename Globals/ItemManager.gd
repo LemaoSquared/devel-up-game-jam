@@ -139,35 +139,8 @@ func _spawn_drop_grid(obj_type,count: int = -1,parent: Node = null) -> void:
 func _spawn_grid(area: Control, count: int, target_parent: Node,obj_type) -> void:
 	var cell_size = Vector2(area.size.x / pattern_columns, area.size.y / pattern_rows)
 	if obj_type == Item.RAT:
-		var _chosen_corner = Spawner.BOTTOM_LEFT if randi() % 2 == 0 else Spawner.BOTTOM_RIGHT
-		var c: int
-		var r: int
-		var dir: int
-		var target_end_x: float
-		var roll = randi() % 3
-		match roll:
-			0: _spawn_rat_at(Spawner.BOTTOM_LEFT, cell_size, target_parent)
-			1: _spawn_rat_at(Spawner.BOTTOM_RIGHT, cell_size, target_parent)
-			2:
-				_spawn_rat_at(Spawner.BOTTOM_LEFT, cell_size, target_parent)
-				_spawn_rat_at(Spawner.BOTTOM_RIGHT, cell_size, target_parent)
-
-		var cell_origin = area.global_position + Vector2(c * cell_size.x, r * cell_size.y)
-		var pos = cell_origin + cell_size / 2.0
-
-		var obj = rat.instantiate()
-		target_parent.add_child(obj)
-		obj.popped_out.connect(_on_object_popped_out)
-		spawned_objects.append(obj)
-		wave_one_objects.append(obj)
-		obj.set_direction(dir, target_end_x)
-
-		match spawn_animation:
-			SpawnAnimation.POP_SCALE:
-				_animate_pop_scale(obj, pos, 0)
-			SpawnAnimation.DROP_IN:
-				_animate_drop_in(obj, pos, 0)
-		return 
+		_spawn_rats(count, cell_size, target_parent)
+		return
 	
 	var total_cells = pattern_columns * pattern_rows
 	var spawn_total = min(count, total_cells)
@@ -189,6 +162,23 @@ func _spawn_grid(area: Control, count: int, target_parent: Node,obj_type) -> voi
 		pos[1] += randi_range(-20,20)
 		_instantiate_object(pos, target_parent, index,obj_type)
 
+func _spawn_rats(count: int, cell_size: Vector2, target_parent: Node) -> void:
+	if count <= 0:
+		return
+	var left_count = int(ceil(count / 2.0))
+	var right_count = count - left_count
+
+	left_count = min(left_count, pattern_columns)
+	right_count = min(right_count, pattern_columns)
+
+	for i in range(left_count):
+		var col = min(i, pattern_columns - 1)
+		_spawn_rat_at(Spawner.BOTTOM_LEFT, cell_size, target_parent, col, i)
+
+	for i in range(right_count):
+		var col = max(pattern_columns - 1 - i, 0)
+		_spawn_rat_at(Spawner.BOTTOM_RIGHT, cell_size, target_parent, col, i)
+		
 func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, obj_type) -> void:
 	#THIS FUNCTION IS FOR POP ITEMS ONLY
 	# DROP ITEMS ARE ON _SPAWN_DROP_GRID FUNCTION
@@ -307,25 +297,21 @@ func register_spawned_object(obj: Node) -> void:
 		obj.popped_out.connect(_on_object_popped_out)
 
 	spawned_objects.append(obj)
-func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node) -> void:
-	var c: int
-	var r: int
+	
+func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col: int, delay_index: int) -> void:
+	var r: int = pattern_rows - 1
 	var dir: int
 	var target_end_x: float
 
 	match corner:
 		Spawner.BOTTOM_LEFT:
-			c = 0
-			r = pattern_rows - 1
 			dir = 1
 			target_end_x = area.global_position.x + area.size.x
 		Spawner.BOTTOM_RIGHT:
-			c = pattern_columns - 1
-			r = pattern_rows - 1
 			dir = -1
 			target_end_x = area.global_position.x
 
-	var cell_origin = area.global_position + Vector2(c * cell_size.x, r * cell_size.y)
+	var cell_origin = area.global_position + Vector2(col * cell_size.x, r * cell_size.y)
 	var pos = cell_origin + cell_size / 2.0
 
 	var obj = rat.instantiate()
@@ -337,21 +323,22 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node) -> 
 
 	match spawn_animation:
 		SpawnAnimation.POP_SCALE:
-			_animate_pop_scale(obj, pos, 0)
+			_animate_pop_scale(obj, pos, delay_index)
 		SpawnAnimation.DROP_IN:
-			_animate_drop_in(obj, pos, 0)
+			_animate_drop_in(obj, pos, delay_index)
 	
 func play_pattern(number:int):
+	current_parent = get_tree().current_scene 
 	print("PLAYING PATTERN " + str(current_pattern))
 	# Count of Items in a Wave
 	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Rat, Sack]
 	var item_count = []
 	match number:
-		1: item_count = [3,3,3,1,3,3,3,3]
-		2: item_count = [0,10,0,1,0,0,0,0]
-		3: item_count = [0,0,0,0,0,0,0,0]
-		4: item_count = [10,0,0,0,5,0,0,0]
-		5: item_count = [0,0,0,0,0,5,0,0]
+		1: item_count = [0,0,0,0,0,1,3,0]
+		2: item_count = [0,0,0,1,0,0,3,10]
+		3: item_count = [5,5,0,0,0,0,1,0]
+		4: item_count = [10,0,0,0,5,0,1,0]
+		5: item_count = [0,0,0,0,0,5,3,0]
 		
 	for i in range(item_count.size()):
 		var count = item_count[i]
