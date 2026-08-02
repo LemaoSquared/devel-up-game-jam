@@ -1,6 +1,8 @@
 extends Node2D
 
 signal popped_out(obj: Node)
+const GIFT = preload("uid://fojbgtm48t6b")
+
 
 var is_gravity: bool = false
 var is_popping: bool = false
@@ -56,16 +58,17 @@ func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		gift.visible = true
 		gift.play("default")
+		AudioManager.play_sound(GIFT)
 		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
 		await gift.animation_finished
-		pop_out()
+		pop_out(true)
 
 func _on_duration_expired() -> void:
 	if is_popping:
 		return  
 	pop_out()
 
-func pop_out() -> void:
+func pop_out(is_clicked=false) -> void:
 	is_popping = true
 	popped_out.emit(self)
 	var tween = create_tween()

@@ -1,6 +1,7 @@
 extends Node2D
 signal popped_out(obj: Node)
 
+const TRASH = preload("uid://bnyi53tue8oe2")
 
 @export var polaroid_scene: PackedScene = preload(
 	"res://Menus/item_polaroid.tscn"
@@ -79,7 +80,8 @@ func _on_area_input_event(_viewport: Viewport, event: InputEvent, _shape_idx: in
 	if is_popping:
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		pop_out()
+		AudioManager.play_sound(TRASH)
+		pop_out(true)
 
 func _on_duration_expired() -> void:
 	if is_popping:
@@ -92,7 +94,7 @@ func _on_duration_expired() -> void:
 	)
 
 
-func pop_out() -> void:
+func pop_out(is_clicked) -> void:
 	string.visible = false
 	is_popping = true
 	is_hanging = false

@@ -1,6 +1,9 @@
 extends Node2D
 
 signal popped_out(obj: Node)
+const SACK = preload("uid://844bkgax2wrd")
+const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
+const SACK_OPEN = preload("uid://d3nlvoeoqtbyp")
 
 #POLAROID
 @export var polaroid_scene: PackedScene = preload(
@@ -65,7 +68,8 @@ func _on_area_input_event(
 func hit_sack() -> void:
 	if is_popping:
 		return
-
+	ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
+	AudioManager.play_sound(SACK)
 	click_count += 1
 	print("Sack clicked: ", click_count)
 
@@ -73,6 +77,7 @@ func hit_sack() -> void:
 	play_hit_animation()
 
 	if click_count >= REQUIRED_CLICKS:
+		AudioManager.play_sound(SACK_OPEN)
 		pop_out()
 		return
 

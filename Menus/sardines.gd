@@ -3,6 +3,7 @@ extends Node2D
 signal popped_out(obj)
 
 @export var lifetime: float = 6.0
+const GIFT = preload("uid://fojbgtm48t6b")
 
 @export_group("Spread Settings")
 @export var spacing_x: float = 90.0
@@ -127,6 +128,7 @@ func _on_input_event(
 		and event.pressed
 		and event.button_index == MOUSE_BUTTON_LEFT
 	):
+		AudioManager.play_sound(GIFT)
 		pop_out()
 
 

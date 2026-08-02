@@ -1,6 +1,9 @@
 extends Node2D
 
 signal popped_out(obj)
+const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
+const CAN = preload("uid://hufov8jcs0i2")
+const CAN_OPEN = preload("uid://dei326f80lxo0")
 
 #SARDINES
 @export var sardine_scene: PackedScene = preload(
@@ -48,11 +51,14 @@ func _on_input_event(_viewport, event, _shape_idx) -> void:
 func _advance_frame() -> void:
 	if is_finished or click_count >= MAX_CLICKS:
 		return
+	ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
 	click_count += 1
 	anim_sprite.frame = click_count
+	AudioManager.play_sound(CAN)
 	_click_feedback()
 
 	if click_count >= MAX_CLICKS:
+		AudioManager.play_sound(CAN_OPEN)
 		_spawn_sardines()
 
 func _click_feedback() -> void:
