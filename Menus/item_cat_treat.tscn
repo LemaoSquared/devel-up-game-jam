@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cwsffhfhs7eko" path="res://Assets/Object Assets/Gift_Sheet.png" id="3_1k8l4"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
-radius = 22.051077
+radius = 23.505318
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_41brj"]
 atlas = ExtResource("2_41brj")
