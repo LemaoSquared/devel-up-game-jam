@@ -46,7 +46,7 @@ func activate_camera() -> void:
 
 	is_popping = true
 	camera_area.input_pickable = false
-
+	
 	camera_activated.emit()
 	popped_out.emit(self)
 

@@ -17,6 +17,7 @@ var direction: int = 1
 const MOUSE = preload("uid://dhpdocurfpk5e")
 const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 const GIFT = preload("uid://fojbgtm48t6b")
+@onready var gift: AnimatedSprite2D = $GiftAnimation
 
 func _ready() -> void:
 	animated_sprite.sprite_frames.set_animation_loop("rat_toy", true)
@@ -50,6 +51,9 @@ func _on_clicked() -> void:
 	speed += speed_increase
 	if click_count >= max_clicks:
 		AudioManager.play_sound(GIFT)
+		gift.visible = true
+		gift.play("default")
+		await gift.animation_finished
 		_pop_and_disappear()
 	else:
 		_jump()

@@ -6,6 +6,7 @@ const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 const SACK_OPEN = preload("uid://d3nlvoeoqtbyp")
 
 const POINTS_PER_CLICK: int = 10
+@onready var gift: AnimatedSprite2D = $GiftAnimation
 
 #POLAROID
 @export var polaroid_scene: PackedScene = preload(
@@ -82,7 +83,9 @@ func hit_sack() -> void:
 
 	if click_count >= REQUIRED_CLICKS:
 		AudioManager.play_sound(SACK_OPEN)
-		pop_out()
+		gift.visible = true
+		gift.play("default")
+		await gift.animation_finished
 		pop_out(true)
 		return
 

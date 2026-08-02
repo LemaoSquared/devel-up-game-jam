@@ -6,10 +6,10 @@ const GIFT = preload("uid://fojbgtm48t6b")
 var is_popping: bool = false
 var points_value: int = 0
 @onready var polaroid: Area2D = $Polaroid
-@onready var gift_animation: AnimatedSprite2D = $GiftAnimation
+@onready var gift: AnimatedSprite2D = $GiftAnimation
 
 func _ready() -> void:
-	gift_animation.visible = false
+	gift.visible = false
 	polaroid.input_event.connect(_on_area_input_event)
 	polaroid.input_pickable = true
 	start_tilting_loop(self)
@@ -31,8 +31,9 @@ func _on_area_input_event(
 	):
 		AudioManager.play_sound(GIFT)
 		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
-		gift_animation.visible = true
-		gift_animation.play("default")
+		gift.visible = true
+		gift.play("default")
+		await gift.animation_finished
 		pop_out()
 
 func appear() -> void:
