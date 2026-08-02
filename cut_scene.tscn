@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://bop2712x5u50s"]
+
+[ext_resource type="Script" uid="uid://dsgqyib02j0d6" path="res://cut_scene.gd" id="1_we0jh"]
+[ext_resource type="Texture2D" uid="uid://dqohswdgofm1e" path="res://Assets/Character Sprite/outside.png" id="2_cn5lr"]
+
+[node name="CutScene" type="Node2D" unique_id=1663898075]
+script = ExtResource("1_we0jh")
+
+[node name="Background" type="ColorRect" parent="." unique_id=555787150]
+offset_right = 1150.0
+offset_bottom = 650.0
+
+[node name="Grave" type="ColorRect" parent="Background" unique_id=2036866843]
+layout_mode = 0
+offset_left = 797.0
+offset_top = 250.0
+offset_right = 947.0
+offset_bottom = 450.0
+color = Color(0.6452097, 0.6452098, 0.6452097, 1)
+
+[node name="Entity" type="Sprite2D" parent="." unique_id=1597541261]
+position = Vector2(557, 312)
+scale = Vector2(0.297642, 0.30871737)
+texture = ExtResource("2_cn5lr")
