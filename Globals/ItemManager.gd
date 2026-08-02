@@ -50,7 +50,7 @@ var current_pattern
 var area
 
 func _ready() -> void:
-	current_pattern = 1
+	current_pattern = 1 + randi_range(0,1)
 	current_parent = get_tree().current_scene
 	pass
 
@@ -308,9 +308,18 @@ func _on_object_popped_out(obj: Node) -> void:
 			pass
 
 func _on_wave_timeout() -> void:
+	# 2. Advance to the next wave
 	current_pattern += 1
-	play_pattern(current_pattern)
+
+	# 3. Math calculation for the 50/50 pattern selection:
+	# Wave 1 -> Base 1 -> Picks 1 or 2
+	# Wave 2 -> Base 3 -> Picks 3 or 4
+	# Wave 3 -> Base 5 -> Picks 5 or 6
+	var pattern_base = ((current_pattern - 1) * 2) + 1
+	var chosen_pattern = pattern_base + randi_range(0, 1)
 	
+	# 5. Play the randomized pattern
+	play_pattern(chosen_pattern)
 
 func register_spawned_object(obj: Node) -> void:
 	if obj == null:
@@ -352,17 +361,56 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 	
 func play_pattern(number:int):
 	current_parent = get_tree().current_scene 
-	print("PLAYING PATTERN " + str(current_pattern))
+	print("PLAYING PATTERN " + str(number))
 	# Count of Items in a Wave
 	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Rat, Sack]
 	var item_count = []
 	match number:
-		1: item_count = [0,0,0,1,0,0,0,10]
-		2: item_count = [0,10,0,1,0,0,0,0]
-		3: item_count = [0,0,0,1,0,0,1,0]
-		4: item_count = [10,0,0,0,5,0,1,0]
-		5: item_count = [0,0,0,0,0,5,3,0]
+		1: item_count = [10,0,0,0,0,0,0,0]
+		2: item_count = [10,0,0,0,0,0,0,0]
 		
+		3: item_count = [10,0,5,0,0,0,0,0]
+		4: item_count = [10,0,5,0,0,0,0,0]
+		
+		5: item_count = [0,10,0,0,0,0,0,0]
+		6: item_count = [5,5,0,0,0,0,0,0]
+
+		7: item_count = [5,5,5,0,0,0,0,0]
+		8: item_count = [0,10,5,0,0,0,0,0]
+
+		9: item_count = [10,0,0,1,0,0,0,0]
+		10: item_count = [0,10,0,1,0,0,0,0]
+		
+		11: item_count = [3,0,0,0,0,2,0,0]
+		12: item_count = [0,3,0,0,0,2,0,0]
+		
+		13: item_count = [0,15,0,0,5,0,0,0]
+		14: item_count = [15,0,0,0,5,0,0,0]
+		
+		15: item_count = [0,3,0,0,5,2,0,0]
+		16: item_count = [9,0,5,0,0,1,0,0]
+
+		17: item_count = [3,0,0,0,0,0,2,0]
+		18: item_count = [0,3,0,0,0,0,2,0]
+
+		19: item_count = [0,3,0,1,5,0,2,0]
+		20: item_count = [9,0,5,1,0,0,1,0]
+		
+		21: item_count = [0,2,10,0,0,1,2,0]
+		22: item_count = [2,0,0,0,10,2,1,0]
+		
+		23: item_count = [0,0,0,0,0,0,0,2]
+		24: item_count = [0,4,0,0,0,1,0,1]
+		
+		25: item_count = [20,0,10,1,0,0,0,0]
+		26: item_count = [5,20,0,1,10,0,0,0]
+
+		27: item_count = [0,0,10,0,10,0,0,2]
+		28: item_count = [4,0,5,0,5,0,1,1]
+
+		29: item_count = [2,10,15,0,0,0,3,0]
+		30: item_count = [10,4,0,0,15,1,0,1]
+
 	for i in range(item_count.size()):
 		var count = item_count[i]
 		if count > 0:

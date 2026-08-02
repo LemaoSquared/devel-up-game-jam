@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_3ia8s"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oi3uc"]
-size = Vector2(43.5, 13)
+size = Vector2(71, 28.5)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frjpc"]
 atlas = ExtResource("2_3ia8s")
@@ -16,7 +16,7 @@ script = ExtResource("1_tdta7")
 [node name="Sardines" type="Area2D" parent="." unique_id=917850277]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Sardines" unique_id=800203798]
-position = Vector2(-2.5, 7)
+position = Vector2(0, 0.5)
 scale = Vector2(2, 2)
 shape = SubResource("RectangleShape2D_oi3uc")
 debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
