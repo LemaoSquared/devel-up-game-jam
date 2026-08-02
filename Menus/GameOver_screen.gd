@@ -12,4 +12,5 @@ func _retry_button_pressed() -> void:
 	PauseManager.unpause_game()
 	PauseManager.enable_pause()
 	ScoreManager.reset_score()
+	ItemManager.current_pattern = 1
 	get_tree().reload_current_scene()

@@ -2,6 +2,8 @@ extends ColorRect
 @onready var black_panel_up: ColorRect = $BlackPanelUP
 @onready var black_panel_down: ColorRect = $BlackPanelDown
 
+
+
 func close_cinematic_bars() -> void:
 	var tween = create_tween()
 	tween.set_parallel(true)

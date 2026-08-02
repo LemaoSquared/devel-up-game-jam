@@ -25,7 +25,7 @@ func _on_start_pressed() -> void:
 
 	$Start.disabled = true
 	game_started.emit()
-	
+	await get_tree().create_timer(0.4).timeout
 	AudioManager.play_music(START_SOUND)
 	ItemManager.area = spawn_area
 	ItemManager.play_pattern(1)
