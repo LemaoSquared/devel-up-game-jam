@@ -30,9 +30,13 @@ func toggle_pause() -> void:
 		pause_game()
 
 func pause_game() -> void:
-	is_paused = true
 	get_tree().paused = true
-	game_paused.emit()
+
+func show_pause_menu() -> void:
+	$Pause.visible = true
+
+func hide_pause_menu() -> void:
+	$Pause.visible = false
 
 func unpause_game() -> void:
 	is_paused = false
