@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cctenblpladj4"
-path="res://.godot/imported/EndIdle1.png-1577cad4fdc8f5d48ff3df561589ace3.ctex"
+uid="uid://dhvp0fpg828fg"
+path="res://.godot/imported/walk_to_stand-Sheet.png-d4e611b7514a8178bf0bcc1d0b7cb8ef.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Character Sprite/EndIdle1.png"
-dest_files=["res://.godot/imported/EndIdle1.png-1577cad4fdc8f5d48ff3df561589ace3.ctex"]
+source_file="res://Assets/Character Sprite/walk_to_stand-Sheet.png"
+dest_files=["res://.godot/imported/walk_to_stand-Sheet.png-d4e611b7514a8178bf0bcc1d0b7cb8ef.ctex"]
 
 [params]
 
