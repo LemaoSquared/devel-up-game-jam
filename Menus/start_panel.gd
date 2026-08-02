@@ -25,7 +25,7 @@ func _on_start_pressed() -> void:
 	$Start.disabled = true
 	game_started.emit()
 	
-	AudioManager.play_music(START_SOUND)
+	#AudioManager.play_music(START_SOUND)
 	ItemManager.area = spawn_area
 	ItemManager.play_pattern(1)
 
@@ -48,6 +48,4 @@ func _on_start_pressed() -> void:
 	#var entity_tween = create_tween()
 	#entity_tween.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	#entity_tween.tween_property(entity,"position:x", get_viewport_rect().size.x / 2, 1)
-	
-	background_manager.play_movement()
 	

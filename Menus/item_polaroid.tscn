@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://cseyvipe7oolj"]
+
+[ext_resource type="Script" uid="uid://besjqxa1pwh0t" path="res://Menus/item_polaroid.gd" id="1_i15qm"]
+[ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_6isxe"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3j63b"]
+size = Vector2(57, 57)
+
+[node name="item_polaroid" type="Node2D" unique_id=753296624 groups=["camera_targets"]]
+script = ExtResource("1_i15qm")
+
+[node name="Polaroid" type="Area2D" parent="." unique_id=832164131]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Polaroid" unique_id=946005142]
+z_index = 6
+position = Vector2(-2, 6)
+scale = Vector2(1.6, 1.6)
+shape = SubResource("RectangleShape2D_3j63b")
+
+[node name="Sprite2D" type="Sprite2D" parent="Polaroid" unique_id=1675675808]
+modulate = Color(0.76383513, 0.75604, 0.91804814, 1)
+position = Vector2(-0.9032209, 4)
+scale = Vector2(1.6, 1.6)
+texture = ExtResource("2_6isxe")
+region_enabled = true
+region_rect = Rect2(328, 168, 65, 62)
