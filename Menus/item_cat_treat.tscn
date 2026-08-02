@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bpeqboda0b8yx" path="res://Menus/item_cat_treat.gd" id="1_41brj"]
 [ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_41brj"]
+[ext_resource type="Texture2D" uid="uid://cwsffhfhs7eko" path="res://Assets/Object Assets/Gift_Sheet.png" id="3_1k8l4"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
 radius = 19.525623
@@ -9,6 +10,42 @@ radius = 19.525623
 [sub_resource type="AtlasTexture" id="AtlasTexture_mf3qn"]
 atlas = ExtResource("2_41brj")
 region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_14f3d"]
+atlas = ExtResource("3_1k8l4")
+region = Rect2(0, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6omvq"]
+atlas = ExtResource("3_1k8l4")
+region = Rect2(45, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wq2yx"]
+atlas = ExtResource("3_1k8l4")
+region = Rect2(90, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_78d6f"]
+atlas = ExtResource("3_1k8l4")
+region = Rect2(135, 0, 45, 70)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_85mbi"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_14f3d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6omvq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wq2yx")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_78d6f")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 10.0
+}]
 
 [node name="Object" type="Node2D" unique_id=46643488]
 script = ExtResource("1_41brj")
@@ -23,3 +60,9 @@ debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
 [node name="Sprite2D" type="Sprite2D" parent="Yarn" unique_id=1377271426]
 scale = Vector2(4.296875, 4.296875)
 texture = SubResource("AtlasTexture_mf3qn")
+
+[node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=2003174771]
+visible = false
+position = Vector2(5.684342e-14, -33)
+scale = Vector2(2.4277778, 2.4277778)
+sprite_frames = SubResource("SpriteFrames_85mbi")

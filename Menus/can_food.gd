@@ -4,11 +4,13 @@ signal popped_out(obj)
 
 @onready var click_area: Area2D = $Can_Food
 @onready var anim_sprite: AnimatedSprite2D = $Can_Food/Sprite2D
+@onready var gift: AnimatedSprite2D = $GiftAnimation
 
 var click_count: int = 0
 const MAX_CLICKS: int = 3
 
 func _ready() -> void:
+	gift.visible = false
 	click_area.input_event.connect(_on_input_event)
 	anim_sprite.animation = "Can_Foood"
 	anim_sprite.frame = 0
@@ -34,6 +36,9 @@ func _click_feedback() -> void:
 	tween.tween_property(self, "scale", Vector2.ONE, 0.1)
 
 func _pop_out() -> void:
+	gift.visible = true
+	gift.play("default")
+	await gift.animation_finished
 	var timer = get_tree().create_timer(0.3, true)
 	await timer.timeout
 	popped_out.emit(self)
