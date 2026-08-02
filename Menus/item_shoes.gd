@@ -1,6 +1,12 @@
 extends Node2D
 signal popped_out(obj: Node)
 
+
+@export var polaroid_scene: PackedScene = preload(
+	"res://Menus/item_polaroid.tscn"
+)
+@export var polaroid_texture: Texture2D
+
 @export_group("Pop Settings")
 @export var pop_duration_seconds: float = 6.0
 @export var fall_stagger_max: float = 1.5 
@@ -28,6 +34,7 @@ var anchor_position: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
+	add_to_group("camera_targets")
 	$Shoes.input_event.connect(_on_area_input_event)
 	$Shoes.input_pickable = true
 
@@ -118,3 +125,27 @@ func fall_and_disappear() -> void:
 	tween.tween_property(self, "rotation", rotation + deg_to_rad(fall_away_spin_degrees), fall_away_duration)
 
 	tween.chain().tween_callback(queue_free)
+
+func transform_to_polaroid() -> void:
+	var polaroid := polaroid_scene.instantiate() as Node2D
+	get_parent().add_child(polaroid)
+
+	polaroid.global_position = global_position
+	polaroid.global_rotation = global_rotation
+	polaroid.scale = scale
+
+	var photo_sprite := polaroid.get_node_or_null(
+		"Polaroid/Sprite2D"
+	) as Sprite2D
+
+	if photo_sprite != null and polaroid_texture != null:
+		photo_sprite.texture = polaroid_texture
+
+	if ItemManager.has_method("register_spawned_object"):
+		ItemManager.register_spawned_object(polaroid)
+
+	if polaroid.has_method("appear"):
+		polaroid.appear()
+
+	popped_out.emit(self)
+	queue_free()
