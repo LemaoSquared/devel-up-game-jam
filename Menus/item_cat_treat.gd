@@ -5,6 +5,7 @@ signal popped_out(obj: Node)
 var is_gravity: bool = false
 var is_popping: bool = false
 const Duration: float = 6.0
+const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 
 #POLAROID
 @export var polaroid_scene: PackedScene = preload(
@@ -51,6 +52,7 @@ func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -
 		return
 
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
 		pop_out()
 
 func _on_duration_expired() -> void:

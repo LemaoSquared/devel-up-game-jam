@@ -422,14 +422,13 @@ sprite_frames = SubResource("SpriteFrames_kgah6")
 autoplay = "default"
 
 [node name="ReferenceRect" type="ReferenceRect" parent="." unique_id=690342108]
-offset_left = 256.0
+offset_left = 98.0
 offset_top = 149.0
-offset_right = 1155.0
+offset_right = 1074.0
 offset_bottom = 541.0
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 border_width = 5.0
-metadata/_edit_lock_ = true
 
 [node name="StartPanel" type="TextureRect" parent="." unique_id=164502693 node_paths=PackedStringArray("spawn_area")]
 offset_left = 502.0
