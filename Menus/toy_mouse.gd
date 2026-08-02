@@ -1,5 +1,11 @@
 extends Node2D
 signal popped_out(obj: Node, was_clicked: bool)
+
+#POLAROID
+@export var polaroid_scene: PackedScene = preload(
+	"res://Menus/item_polaroid.tscn"
+)
+@export var polaroid_texture: Texture2D
 @export var speed: float = 60.0         
 @export var speed_increase: float = 40.0 
 @export var jump_distance: float = 40.0  
@@ -20,6 +26,7 @@ const GIFT = preload("uid://fojbgtm48t6b")
 @onready var gift: AnimatedSprite2D = $GiftAnimation
 
 func _ready() -> void:
+	add_to_group("camera_targets")
 	animated_sprite.sprite_frames.set_animation_loop("rat_toy", true)
 	animated_sprite.play("rat_toy")
 	area.input_pickable = true
@@ -101,4 +108,27 @@ func _on_lifetime_expired() -> void:
 	tween.finished.connect(func():
 		popped_out.emit(self, false)
 		queue_free())
-		
+
+func transform_to_polaroid() -> void:
+	var polaroid := polaroid_scene.instantiate() as Node2D
+	get_parent().add_child(polaroid)
+
+	polaroid.global_position = global_position
+	polaroid.global_rotation = global_rotation
+	polaroid.scale = scale
+
+	var photo_sprite := polaroid.get_node_or_null(
+		"Polaroid/Sprite2D"
+	) as Sprite2D
+
+	if photo_sprite != null and polaroid_texture != null:
+		photo_sprite.texture = polaroid_texture
+
+	if ItemManager.has_method("register_spawned_object"):
+		ItemManager.register_spawned_object(polaroid)
+
+	if polaroid.has_method("appear"):
+		polaroid.appear()
+
+	popped_out.emit(self, true)
+	queue_free()
