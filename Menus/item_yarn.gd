@@ -24,6 +24,7 @@ var is_hanging: bool = false
 var hang_length: float = 0.0
 var idle_time: float = 0.0
 var anchor_position: Vector2 = Vector2.ZERO
+@onready var string: ColorRect = $Yarn/String
 
 
 func _ready() -> void:
@@ -85,6 +86,7 @@ func _on_duration_expired() -> void:
 
 
 func pop_out() -> void:
+	string.visible = false
 	is_popping = true
 	is_hanging = false
 	popped_out.emit(self)
@@ -97,6 +99,7 @@ func pop_out() -> void:
 	tween.tween_callback(queue_free)
 
 func fall_and_disappear() -> void:
+	string.visible = false
 	is_popping = true
 	is_hanging = false
 	popped_out.emit(self)

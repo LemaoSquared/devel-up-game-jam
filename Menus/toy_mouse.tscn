@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bp1cyo6ql5jf2"]
 
-[ext_resource type="Script" uid="uid://bqnoipipl0bdr" path="res://Menus/toy_mouse.gd" id="1_v4so6"]
+[ext_resource type="Script" uid="uid://blo7t53touj7n" path="res://Menus/toy_mouse.gd" id="1_v4so6"]
 [ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_5i4as"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_uh13p"]
