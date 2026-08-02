@@ -40,7 +40,7 @@ region_rect = Rect2(20.038738, 36.142246, 67.85559, 56.829075)
 [node name="FishParticles" type="GPUParticles2D" parent="." unique_id=1924561704]
 position = Vector2(0, -49)
 emitting = false
-amount = 1
+amount = 2
 texture = SubResource("AtlasTexture_8upip")
 lifetime = 0.8
 one_shot = true

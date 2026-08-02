@@ -13,9 +13,7 @@
 [ext_resource type="Script" uid="uid://p6cxsl6y2wbp" path="res://Menus/progress_bar.gd" id="5_vocn1"]
 [ext_resource type="Script" uid="uid://73b5003yewl7" path="res://Menus/pause.gd" id="6_dy2tn"]
 [ext_resource type="Texture2D" uid="uid://dqohswdgofm1e" path="res://Assets/Character Sprite/outside.png" id="6_k87b8"]
-[ext_resource type="Texture2D" uid="uid://denywa1lffa25" path="res://Assets/MiddleRound_OutsideStore/L5_Buildings1_start.png" id="7_1jmi0"]
-[ext_resource type="Texture2D" uid="uid://4ptraxkm8603" path="res://Assets/MiddleRound_OutsideStore/L8_Poste.png" id="8_5u0mb"]
-[ext_resource type="Texture2D" uid="uid://2d72gu86ppqg" path="res://Assets/MiddleRound_OutsideStore/L9_Ground.png" id="9_mbgq0"]
+[ext_resource type="Script" uid="uid://uqxvrg1abja5" path="res://Menus/camera_effects.gd" id="15_aai8a"]
 [ext_resource type="Script" uid="uid://c38s48g8inaho" path="res://Menus/transition.gd" id="18_vl1oa"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_k87b8"]
@@ -270,6 +268,17 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 40
 text = "QUIT"
+
+[node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
+script = ExtResource("15_aai8a")
+
+[node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=1467674545]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]
 [connection signal="timeout" from="ProgressBar/Timer" to="ProgressBar" method="_on_timer_timeout"]
