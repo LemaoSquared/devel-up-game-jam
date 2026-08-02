@@ -4,6 +4,7 @@ signal popped_out(obj: Node)
 @export_group("Pop Settings")
 @export var pop_duration_seconds: float = 6.0
 @export var fall_stagger_max: float = 1.5 
+@onready var string: ColorRect = $Shoes/String
 
 @export_group("Drop & Float Settings")
 enum SettleStyle { BOUNCE, SPRING, SWAY }
@@ -39,7 +40,7 @@ func _process(delta: float) -> void:
 		idle_time += delta
 		var angle = deg_to_rad(idle_sway_amplitude_deg) * sin(idle_time * idle_sway_speed)
 		global_position = anchor_position + Vector2(sin(angle), cos(angle)) * hang_length
-		rotation = angle * 0.5
+		rotation = angle * 0.8
 
 
 func spawn_drop_and_hang(target_global_pos: Vector2, anchor_global_pos: Vector2, delay: float = 0.0) -> void:
@@ -85,6 +86,7 @@ func _on_duration_expired() -> void:
 
 
 func pop_out() -> void:
+	string.visible = false
 	is_popping = true
 	is_hanging = false
 	popped_out.emit(self)
@@ -97,6 +99,7 @@ func pop_out() -> void:
 	tween.tween_callback(queue_free)
 
 func fall_and_disappear() -> void:
+	string.visible = false
 	is_popping = true
 	is_hanging = false
 	popped_out.emit(self)
