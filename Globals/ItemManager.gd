@@ -51,7 +51,6 @@ var area
 
 func _ready() -> void:
 	current_pattern = 1
-	current_parent = get_tree().current_scene
 	pass
 
 func spawn_random_pop_in_rect(obj_type, count: int = -1, parent: Node = null) -> void:
@@ -328,12 +327,13 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 			_animate_drop_in(obj, pos, delay_index)
 	
 func play_pattern(number:int):
+	current_parent = get_tree().current_scene 
 	print("PLAYING PATTERN " + str(current_pattern))
 	# Count of Items in a Wave
 	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Rat, Sack]
 	var item_count = []
 	match number:
-		1: item_count = [0,0,0,0,0,0,3,0]
+		1: item_count = [0,0,0,0,0,1,3,0]
 		2: item_count = [0,0,0,1,0,0,3,10]
 		3: item_count = [5,5,0,0,0,0,1,0]
 		4: item_count = [10,0,0,0,5,0,1,0]
