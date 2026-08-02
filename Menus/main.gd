@@ -2,6 +2,7 @@ extends Node2D
 @onready var background_manager: Node2D = $BackgroundManager
 const GameOverScreen := preload("res://Menus/GameOverScreen.tscn")
 
+
 func _ready() -> void:
 	$StartPanel.game_started.connect($Background.close_cinematic_bars)
 	$StartPanel.game_started.connect($ProgressBar.start_countdown)
