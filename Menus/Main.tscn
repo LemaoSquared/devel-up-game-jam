@@ -745,9 +745,9 @@ texture_normal = ExtResource("5_unj6y")
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=170122126]
 offset_left = -18.0
-offset_top = 76.0
+offset_top = 34.0
 offset_right = 1162.0
-offset_bottom = 106.0
+offset_bottom = 64.0
 theme_override_styles/background = SubResource("StyleBoxFlat_7x3k8")
 theme_override_styles/fill = SubResource("StyleBoxFlat_l0led")
 show_percentage = false
