@@ -31,6 +31,7 @@ var idle_time: float = 0.0
 var anchor_position: Vector2 = Vector2.ZERO
 @onready var string: ColorRect = $Yarn/String
 
+@onready var gift_front: AnimatedSprite2D = $GiftAnimation
 
 func _ready() -> void:
 	add_to_group("camera_targets")
@@ -39,6 +40,7 @@ func _ready() -> void:
 
 	var timer = get_tree().create_timer(pop_duration_seconds, true)  # pause-aware
 	timer.timeout.connect(_on_duration_expired)
+	gift_front.visible = false
 
 
 func _process(delta: float) -> void:
@@ -96,8 +98,12 @@ func pop_out() -> void:
 	is_popping = true
 	is_hanging = false
 	popped_out.emit(self)
-
+	
+	gift_front.visible = true
+	gift_front.play("default")
+	await gift_front.animation_finished
 	var tween = create_tween()
+	
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_IN)

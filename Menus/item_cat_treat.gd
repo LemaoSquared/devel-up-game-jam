@@ -15,11 +15,13 @@ const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 @onready var sprite_2d: AnimatedSprite2D = $Treat/Sprite2D
 
 
+
+@onready var gift: AnimatedSprite2D = $GiftAnimation
+
 func _ready() -> void:
-	add_to_group("camera_targets")
-	$Treat.input_event.connect(_on_area_input_event)
-	$Treat.input_pickable = true
-	sprite_2d.play(str(randi_range(1,3)))
+	$Yarn.input_event.connect(_on_area_input_event)
+	$Yarn.input_pickable = true
+	gift.visible = false
 	var timer = get_tree().create_timer(Duration)
 	timer.timeout.connect(_on_duration_expired)
 	start_tilting_loop(self)
@@ -52,6 +54,9 @@ func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -
 		return
 
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		gift.visible = true
+		gift.play("default")
+		await gift.animation_finished
 		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
 		pop_out()
 
@@ -63,7 +68,6 @@ func _on_duration_expired() -> void:
 func pop_out() -> void:
 	is_popping = true
 	popped_out.emit(self)
-
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_IN)

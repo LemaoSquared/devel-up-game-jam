@@ -12,6 +12,7 @@ signal popped_out(obj)
 var click_count: int = 0
 const MAX_CLICKS: int = 4
 
+@onready var gift: AnimatedSprite2D = $GiftAnimation
 
 @export var lifetime: float = 12.0
 var is_finished: bool = false
@@ -24,6 +25,7 @@ var sardine_offsets: Array[Vector2] = [
 ]
 
 func _ready() -> void:
+	gift.visible = false
 	add_to_group("camera_targets")
 	click_area.input_event.connect(_on_input_event)
 	anim_sprite.animation = "Can_Foood"
@@ -77,6 +79,9 @@ func _on_sardine_popped_in() -> void:
 		_pop_out()
 
 func _pop_out() -> void:
+	gift.visible = true
+	gift.play("default")
+	await gift.animation_finished
 	var timer = get_tree().create_timer(0.3, true)
 	await timer.timeout
 	popped_out.emit(self)

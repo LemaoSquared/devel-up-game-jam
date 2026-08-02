@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://buq2iw0bd4yxs" path="res://Menus/can_food.gd" id="1_0v02n"]
 [ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_3fdt8"]
-[ext_resource type="Script" uid="uid://y3586xlc763p" path="res://Menus/sardines.gd" id="3_3fdt8"]
+[ext_resource type="Texture2D" uid="uid://cwsffhfhs7eko" path="res://Assets/Object Assets/Gift_Sheet.png" id="3_3fdt8"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
 
@@ -47,12 +47,41 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_gjt0k"]
-size = Vector2(40, 30)
+[sub_resource type="AtlasTexture" id="AtlasTexture_14f3d"]
+atlas = ExtResource("3_3fdt8")
+region = Rect2(0, 0, 45, 70)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_l0led"]
-atlas = ExtResource("2_3fdt8")
-region = Rect2(79.5, -0.5, 40, 10)
+[sub_resource type="AtlasTexture" id="AtlasTexture_6omvq"]
+atlas = ExtResource("3_3fdt8")
+region = Rect2(45, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wq2yx"]
+atlas = ExtResource("3_3fdt8")
+region = Rect2(90, 0, 45, 70)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_78d6f"]
+atlas = ExtResource("3_3fdt8")
+region = Rect2(135, 0, 45, 70)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mjxx2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_14f3d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6omvq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wq2yx")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_78d6f")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 10.0
+}]
 
 [node name="Can_Food" type="Node2D" unique_id=46643488]
 script = ExtResource("1_0v02n")
@@ -70,17 +99,7 @@ sprite_frames = SubResource("SpriteFrames_oi3uc")
 animation = &"Can_Foood"
 frame_progress = 0.35269538
 
-[node name="Sardine" type="Node2D" parent="." unique_id=299233234]
-visible = false
-script = ExtResource("3_3fdt8")
-
-[node name="Sardine" type="Area2D" parent="Sardine" unique_id=512682136]
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="Sardine/Sardine" unique_id=969344668]
-scale = Vector2(4, 4)
-shape = SubResource("RectangleShape2D_gjt0k")
-debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
-
-[node name="Sprite2D" type="Sprite2D" parent="Sardine/Sardine" unique_id=150134805]
-scale = Vector2(4, 4)
-texture = SubResource("AtlasTexture_l0led")
+[node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=1463621911]
+position = Vector2(5.684342e-14, -33)
+scale = Vector2(2.4277778, 2.4277778)
+sprite_frames = SubResource("SpriteFrames_mjxx2")
