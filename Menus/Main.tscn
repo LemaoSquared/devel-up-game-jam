@@ -167,7 +167,7 @@ script = ExtResource("1_7x3k8")
 [node name="BackgroundManager" type="Node2D" parent="." unique_id=742304184 node_paths=PackedStringArray("backgrounds", "transition_screen")]
 script = ExtResource("2_k4a18")
 backgrounds = [NodePath("IntroBackground"), NodePath("StoreBackground"), NodePath("OutsideBackground")]
-durations = Array[float]([0.0, 51.0, 42.0])
+durations = Array[float]([0.0, 49.0, 42.0])
 transition_screen = NodePath("../Transition2/Gradient")
 
 [node name="IntroBackground" type="Node2D" parent="BackgroundManager" unique_id=111680989]

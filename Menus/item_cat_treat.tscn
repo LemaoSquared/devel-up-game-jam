@@ -82,21 +82,22 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="Object" type="Node2D" unique_id=46643488]
+[node name="Object" type="Node2D" unique_id=1628574223]
 script = ExtResource("1_41brj")
 
-[node name="Treat" type="Area2D" parent="." unique_id=917850277]
+[node name="Treat" type="Area2D" parent="." unique_id=1941015391]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Treat" unique_id=800203798]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Treat" unique_id=783653167]
 scale = Vector2(2, 2)
 shape = SubResource("CircleShape2D_frjpc")
 debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
 
-[node name="Sprite2D" type="AnimatedSprite2D" parent="Treat" unique_id=582040625]
+[node name="Sprite2D" type="AnimatedSprite2D" parent="Treat" unique_id=1495148750]
 scale = Vector2(4.296875, 4.296875)
-texture = SubResource("AtlasTexture_mf3qn")
+sprite_frames = SubResource("SpriteFrames_kgah6")
+animation = &"1"
 
-[node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=2003174771]
+[node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=1318743194]
 visible = false
 position = Vector2(5.684342e-14, -33)
 scale = Vector2(2.4277778, 2.4277778)

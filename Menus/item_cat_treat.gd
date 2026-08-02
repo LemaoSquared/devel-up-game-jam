@@ -19,8 +19,8 @@ const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 @onready var gift: AnimatedSprite2D = $GiftAnimation
 
 func _ready() -> void:
-	$Yarn.input_event.connect(_on_area_input_event)
-	$Yarn.input_pickable = true
+	$Treat.input_event.connect(_on_area_input_event)
+	$Treat.input_pickable = true
 	gift.visible = false
 	var timer = get_tree().create_timer(Duration)
 	timer.timeout.connect(_on_duration_expired)
@@ -56,8 +56,8 @@ func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		gift.visible = true
 		gift.play("default")
-		await gift.animation_finished
 		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
+		await gift.animation_finished
 		pop_out()
 
 func _on_duration_expired() -> void:
