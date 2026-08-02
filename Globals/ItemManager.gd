@@ -4,10 +4,14 @@ extends Node
 @export var yarn: PackedScene = preload("res://Menus/item_yarn.tscn")
 @export var shoes: PackedScene = preload("res://Menus/item_shoes.tscn")
 @export var sardine: PackedScene = preload("res://Menus/Can_Food.tscn")
+@export var sack: PackedScene = preload("res://Menus/item_sack.tscn")
+@export var rat: PackedScene = preload("res://Menus/toy_mouse.tscn")
 
 
 @export var min_spawn_distance: float = 64.0
 @export var max_placement_attempts: int = 30
+enum Spawner {BOTTOM_RIGHT,BOTTOM_LEFT}
+var rat_corner: Spawner = Spawner.BOTTOM_RIGHT
 
 enum SpawnType { RANDOM, GRID } #How the Item Spawn
 enum SpawnAnimation { POP_SCALE, DROP_IN } #Animation of Item Spawning
@@ -18,8 +22,8 @@ enum Item{
 	CAMERA,
 	SHOES,
 	SARDINE,
-	RAT,
-	SACK
+	SACK,
+	RAT
 }
 @export_group("Animation Settings")
 @export var spawn_animation: SpawnAnimation = SpawnAnimation.POP_SCALE
@@ -48,8 +52,7 @@ var area
 func _ready() -> void:
 	current_pattern = 1
 	pass
-
-
+	
 func spawn_random_pop_in_rect(obj_type, count: int = -1, parent: Node = null) -> void:
 	var target_parent = parent if parent else get_tree().current_scene
 	var final_count = count if count >= 0 else spawn_count
@@ -105,6 +108,17 @@ func _spawn_drop_grid(obj_type,count: int=-1, target_parent: Node=null) -> void:
 
 func _spawn_grid(area: Control, count: int, target_parent: Node,obj_type) -> void:
 	var cell_size = Vector2(area.size.x / pattern_columns, area.size.y / pattern_rows)
+	if obj_type == Item.RAT:
+		var c: int
+		var r: int
+		match rat_corner:
+			Spawner.BOTTOM_LEFT:
+				c = 0
+				r = pattern_rows - 1
+			Spawner.BOTTOM_RIGHT:
+				c = pattern_columns - 1
+				r = pattern_rows - 1
+
 	var total_cells = pattern_columns * pattern_rows
 	var spawn_total = min(count, total_cells)
 
@@ -133,8 +147,8 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 		Item.GARBAGE: obj = cat_treat.instantiate()
 		Item.CAMERA: obj = cat_treat.instantiate()
 		Item.SARDINE: obj = sardine.instantiate()
-		Item.RAT: obj = cat_treat.instantiate()
-		Item.SACK: obj = cat_treat.instantiate()
+		Item.RAT: obj = rat.instantiate() 
+		Item.SACK: obj = sack.instantiate()
 	target_parent.add_child(obj)
 	obj.popped_out.connect(_on_object_popped_out)
 	spawned_objects.append(obj)
@@ -223,11 +237,11 @@ func play_pattern(number:int):
 	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Sack, Toy]
 	var item_count = []
 	match number:
-		1: item_count = [10,0,0,0,0,0,0,0]
-		2: item_count = [0,10,0,0,0,0,0,0]
-		3: item_count = [5,5,0,0,0,0,0,0]
-		4: item_count = [10,0,0,0,10,0,0,0]
-		5: item_count = [0,0,0,0,0,5,0,0]
+		1: item_count = [0,0,0,0,0,5,1,1]
+		2: item_count = [0,0,0,0,0,0,1,1]
+		3: item_count = [5,5,0,0,0,0,1,1]
+		4: item_count = [10,0,0,0,10,0,1,1]
+		5: item_count = [0,0,0,0,0,5,1,1]
 		
 	for i in range(item_count.size()):
 		var count = item_count[i]
@@ -237,8 +251,11 @@ func play_pattern(number:int):
 				1: _spawn_drop_grid(Item.YARN,count,current_parent) #Yarns will Drop Spawn
 				4: _spawn_drop_grid(Item.SHOES,count,current_parent) #Shoes will Drop Spawn
 				5: spawn_random_pop_in_rect(Item.SARDINE,count,current_parent)
+				6: spawn_random_pop_in_rect(Item.SACK,count, current_parent) #Sack will Pop Spawn
+				7: spawn_random_pop_in_rect(Item.RAT,count, current_parent)
 
 # --- NEW INDEPENDENT TIMER SETUP ---
 	# Disconnect old timers by using a clean scene tree timer
 	var wave_timer = get_tree().create_timer(time_duration_perBatch, true)
 	wave_timer.timeout.connect(_on_wave_timeout)
+	

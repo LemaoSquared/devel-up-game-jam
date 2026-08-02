@@ -1,28 +1,66 @@
 [gd_scene format=3 uid="uid://bp1cyo6ql5jf2"]
 
 [ext_resource type="Script" uid="uid://bqnoipipl0bdr" path="res://Menus/toy_mouse.gd" id="1_v4so6"]
-[ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_v4so6"]
+[ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_5i4as"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_uh13p"]
+radius = 30.0
+height = 60.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_3g4cc"]
-atlas = ExtResource("2_v4so6")
-region = Rect2(0, 0, 32.30002, 32.299988)
+[sub_resource type="AtlasTexture" id="AtlasTexture_43urd"]
+atlas = ExtResource("2_5i4as")
+region = Rect2(302, 76, 32, 19)
 
-[node name="Toy_Mouse" type="Node2D" unique_id=46643488]
+[sub_resource type="AtlasTexture" id="AtlasTexture_oecgo"]
+atlas = ExtResource("2_5i4as")
+region = Rect2(334, 76, 32, 19)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_unieg"]
+atlas = ExtResource("2_5i4as")
+region = Rect2(366, 76, 32, 19)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ex2s4"]
+atlas = ExtResource("2_5i4as")
+region = Rect2(398, 76, 32, 19)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_frjpc"]
+animations = [{
+"frames": [],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_43urd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oecgo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_unieg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ex2s4")
+}],
+"loop": 0,
+"name": &"rat_toy",
+"speed": 5.0
+}]
+
+[node name="toy_mouse" type="Node2D" unique_id=46643488]
 script = ExtResource("1_v4so6")
 
-[node name="Toy_Mouse" type="Area2D" parent="." unique_id=917850277]
-top_level = true
+[node name="toy_mouse" type="Area2D" parent="." unique_id=917850277]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Toy_Mouse" unique_id=800203798]
-top_level = true
-scale = Vector2(3, 3)
-shape = SubResource("CircleShape2D_frjpc")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="toy_mouse" unique_id=800203798]
+scale = Vector2(2, 2)
+shape = SubResource("CapsuleShape2D_uh13p")
 debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
 
-[node name="Sprite2D" type="Sprite2D" parent="Toy_Mouse" unique_id=1377271426]
-top_level = true
-position = Vector2(-7.2717667e-06, -9.536743e-07)
-scale = Vector2(1.5529158, 1.8743169)
-texture = SubResource("AtlasTexture_3g4cc")
+[node name="Sprite2D" type="AnimatedSprite2D" parent="toy_mouse" unique_id=1740114245]
+scale = Vector2(4, 4)
+sprite_frames = SubResource("SpriteFrames_frjpc")
+animation = &"rat_toy"
+frame = 3
+frame_progress = 1.0

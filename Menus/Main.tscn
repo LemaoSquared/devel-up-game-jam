@@ -268,11 +268,5 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 40
 text = "QUIT"
 
-[node name="RightSpawner" type="Marker2D" parent="." unique_id=877299189]
-position = Vector2(-63, 571)
-
-[node name="LeftMarker2D2" type="Marker2D" parent="." unique_id=737292320]
-position = Vector2(1216, 571)
-
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]
 [connection signal="timeout" from="ProgressBar/Timer" to="ProgressBar" method="_on_timer_timeout"]
