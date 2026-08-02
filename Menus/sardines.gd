@@ -5,15 +5,14 @@ signal sardine_clicked
 signal popped_out
 
 @export var lifetime: float = 6.0
-@export var spacing_x: float = 55.0
-@export var spacing_y: float = 18.0
+@export var spacing_x: float = 130.0
+@export var spacing_y: float = 35.0
 
 var is_finished: bool = false
 var sardine_index: int = 0
 var total_sardines: int = 1
-var spawn_delay: float = 0.0   
+var spawn_delay: float = 0.0
 
-var is_template: bool = false 
 @onready var sardine_area: Area2D = $Sardine
 
 func _ready() -> void:
@@ -26,10 +25,6 @@ func _ready() -> void:
 
 	var life_timer = get_tree().create_timer(lifetime, true)
 	life_timer.timeout.connect(_on_lifetime_expired)
-	
-	if is_template:
-		pass
-
 	_spread_apart()
 
 func _spread_apart() -> void:
@@ -106,7 +101,7 @@ func _on_lifetime_expired() -> void:
 		return
 	pop_out()
 
-func get_fan_offsets(count: int, sx: float = 55.0, sy: float = 18.0) -> Array[Vector2]:
+static func get_fan_offsets(count: int, sx: float = 55.0, sy: float = 18.0) -> Array[Vector2]:
 	var offsets: Array[Vector2] = []
 	if count <= 0:
 		return offsets

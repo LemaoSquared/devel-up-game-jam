@@ -6,10 +6,10 @@ signal popped_out(obj)
 @onready var anim_sprite: AnimatedSprite2D = $Can_Food/Sprite2D
 @onready var sardine_template: Node2D = $Sardine
 var click_count: int = 0
-const MAX_CLICKS: int = 3
+const MAX_CLICKS: int = 4
 
 
-@export var lifetime: float = 6.0
+@export var lifetime: float = 12.0
 var is_finished: bool = false
 var sardines_remaining: int = 0
 
@@ -55,10 +55,9 @@ func _spawn_sardines() -> void:
 	sardines_remaining = count
 	for i in range(count):
 		var s = sardine_template.duplicate()
-		s.is_template = false  
 		s.sardine_index = i
 		s.total_sardines = count
-		s.spawn_delay = i * 0.1
+		s.spawn_delay = i * 0.3
 		add_child(s)   
 		s.sardine_clicked.connect(_on_sardine_clicked.bind(s))
 		s.popped_in.connect(_on_sardine_popped_in)
