@@ -4,6 +4,7 @@ extends Node
 @export var yarn: PackedScene = preload("res://Menus/item_yarn.tscn")
 @export var shoes: PackedScene = preload("res://Menus/item_shoes.tscn")
 @export var sack: PackedScene = preload("res://Menus/item_sack.tscn")
+@export var garbage: PackedScene = preload("res://Menus/item_garbage.tscn")
 @export var camera: PackedScene = preload("res://Menus/item_camera.tscn")
 
 @export var min_spawn_distance: float = 64.0
@@ -148,8 +149,9 @@ func _spawn_grid(area: Control, count: int, target_parent: Node,obj_type) -> voi
 
 		var cell_origin = area.global_position + Vector2(c * cell_size.x, r * cell_size.y)
 		var pos = cell_origin + cell_size / 2.0
+		pos[0] += randi_range(-20,20)
+		pos[1] += randi_range(-20,20)
 		_instantiate_object(pos, target_parent, index,obj_type)
-
 
 func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, obj_type) -> void:
 	#THIS FUNCTION IS FOR POP ITEMS ONLY
@@ -157,9 +159,9 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 	var obj
 	match obj_type:
 		Item.TREAT: obj = cat_treat.instantiate()
-		Item.GARBAGE: obj = cat_treat.instantiate()
+		Item.GARBAGE: obj = garbage.instantiate()
 		Item.CAMERA: obj = camera.instantiate()
-		Item.SARDINE: obj = cat_treat.instantiate()
+		Item.SARDINE: obj = sardine.instantiate()
 		Item.RAT: obj = cat_treat.instantiate()
 		Item.SACK: obj = sack.instantiate()
 	target_parent.add_child(obj)
@@ -279,7 +281,8 @@ func play_pattern(number:int):
 		1: item_count = [10,3,0,1,4,0,0,3]
 		2: item_count = [0,10,0,1,0,0,3,0]
 		3: item_count = [5,5,0,0,0,0,0,0]
-		4: item_count = [10,0,0,0,10,0,0,0]
+		4: item_count = [10,0,0,0,5,0,0,0]
+		5: item_count = [0,0,0,0,0,5,0,0]
 		
 	for i in range(item_count.size()):
 		var count = item_count[i]
@@ -287,6 +290,7 @@ func play_pattern(number:int):
 			match i:
 				0: spawn_random_pop_in_rect(Item.TREAT,count, current_parent) #Treats will Pop Spawn
 				1: _spawn_drop_grid(Item.YARN,count,current_parent) #Yarns will Drop Spawn
+				2: spawn_random_pop_in_rect(Item.GARBAGE,count, current_parent) #Garbage will Pop Spawn
 				3: spawn_random_pop_in_rect(Item.CAMERA,count, current_parent) # Camera
 				4: _spawn_drop_grid(Item.SHOES,count,current_parent) #Shoes will Drop Spawn
 				7: spawn_random_pop_in_rect(Item.SACK,count, current_parent) #Sack will Pop Spawn

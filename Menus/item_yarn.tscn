@@ -4,11 +4,19 @@
 [ext_resource type="Texture2D" uid="uid://b0m2w2mm7nwef" path="res://Assets/Object Assets/Yarn.png" id="2_of6pb"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
+radius = 23.420076
 
 [node name="Yarn" type="Node2D" unique_id=46643488]
 script = ExtResource("1_mf3qn")
 
 [node name="Yarn" type="Area2D" parent="." unique_id=917850277]
+
+[node name="String" type="ColorRect" parent="Yarn" unique_id=39955390]
+offset_left = -1.0
+offset_top = -620.0
+offset_right = 1.0
+offset_bottom = -20.0
+color = Color(0.8156863, 0.41568628, 0.28627452, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Yarn" unique_id=800203798]
 scale = Vector2(2, 2)

@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://brji5cukaog0e"]
+
+[ext_resource type="Script" uid="uid://mmr0p21iwkni" path="res://Menus/item_garbage.gd" id="1_7bpuo"]
+[ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_qa5vg"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
+radius = 18.527008
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7bpuo"]
+atlas = ExtResource("2_qa5vg")
+region = Rect2(175, 48, 57, 51)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7bpuo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7bpuo")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Object" type="Node2D" unique_id=46643488]
+script = ExtResource("1_7bpuo")
+
+[node name="Garbage" type="Area2D" parent="." unique_id=917850277]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Garbage" unique_id=800203798]
+scale = Vector2(2, 2)
+shape = SubResource("CircleShape2D_frjpc")
+debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="Garbage" unique_id=582040625]
+self_modulate = Color(0.5443015, 0.68924344, 0.5232084, 1)
+position = Vector2(4.9999995, -6)
+scale = Vector2(1.7086781, 1.7086781)
+sprite_frames = SubResource("SpriteFrames_7bpuo")
