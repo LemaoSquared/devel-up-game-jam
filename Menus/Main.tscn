@@ -289,6 +289,17 @@ fill_from = Vector2(0, 0.004347826)
 [node name="Main" type="Node2D" unique_id=1521551065]
 script = ExtResource("1_7x3k8")
 
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
+
+[node name="FadeRect" type="ColorRect" parent="CanvasLayer" unique_id=1786602749]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
 [node name="BackgroundManager" type="Node2D" parent="." unique_id=742304184 node_paths=PackedStringArray("backgrounds", "transition_screen")]
 script = ExtResource("2_k4a18")
 backgrounds = [NodePath("IntroBackground"), NodePath("StoreBackground"), NodePath("OutsideBackground")]

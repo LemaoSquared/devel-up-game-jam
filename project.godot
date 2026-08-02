@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="DevelUP Game Jam"
-run/main_scene="uid://fldj3nccgla6"
+run/main_scene="uid://b6pxdpajnlrgo"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [audio]

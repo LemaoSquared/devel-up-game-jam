@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://b6pxdpajnlrgo"]
+
+[ext_resource type="Script" uid="uid://bcg1ijkfibq40" path="res://studio_splash.gd" id="1_t07cl"]
+[ext_resource type="Texture2D" uid="uid://gup3fkkm4web" path="res://Assets/Black Wide Logo.png" id="2_eyrxa"]
+
+[node name="StudioSplash" type="Control" unique_id=1068206176]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_t07cl")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=902173135]
+layout_mode = 0
+offset_right = 1156.0
+offset_bottom = 656.0
+color = Color(0, 0, 0, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=85350179]
+layout_mode = 0
+offset_left = 359.0
+offset_top = 192.0
+offset_right = 759.0
+offset_bottom = 442.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1878286416]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="CenterContainer/VBoxContainer" unique_id=902850342]
+custom_minimum_size = Vector2(400, 250)
+layout_mode = 2
+texture = ExtResource("2_eyrxa")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1128869874]
+
+[node name="Timer" type="Timer" parent="." unique_id=1828973025]
