@@ -12,7 +12,6 @@
 [ext_resource type="Texture2D" uid="uid://dr62whdowon4v" path="res://Assets/Store Background/store foreground1.png" id="4_u4s41"]
 [ext_resource type="Texture2D" uid="uid://b0m2w2mm7nwef" path="res://Assets/Object Assets/Yarn.png" id="5_unj6y"]
 [ext_resource type="Script" uid="uid://p6cxsl6y2wbp" path="res://Menus/progress_bar.gd" id="5_vocn1"]
-[ext_resource type="Script" uid="uid://73b5003yewl7" path="res://Menus/pause.gd" id="6_dy2tn"]
 [ext_resource type="Texture2D" uid="uid://denywa1lffa25" path="res://Assets/MiddleRound_OutsideStore/L5_Buildings1_start.png" id="7_1jmi0"]
 [ext_resource type="Texture2D" uid="uid://byhccumq5oxra" path="res://Assets/MiddleRound_OutsideStore/L1_Background.png" id="8_1jmi0"]
 [ext_resource type="Texture2D" uid="uid://4ptraxkm8603" path="res://Assets/MiddleRound_OutsideStore/L8_Poste.png" id="8_5u0mb"]
@@ -290,6 +289,7 @@ fill_from = Vector2(0, 0.004347826)
 script = ExtResource("1_7x3k8")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
+visible = false
 
 [node name="FadeRect" type="ColorRect" parent="CanvasLayer" unique_id=1786602749]
 anchors_preset = 15
@@ -756,58 +756,11 @@ script = ExtResource("5_vocn1")
 [node name="Timer" type="Timer" parent="ProgressBar" unique_id=2042900797]
 
 [node name="Transition" type="ColorRect" parent="." unique_id=1234018471]
+process_mode = 1
 visible = false
 offset_right = 1150.0
 offset_bottom = 650.0
 script = ExtResource("18_vl1oa")
-
-[node name="Pause" type="Panel" parent="." unique_id=1802693864]
-visible = false
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 387.0
-offset_top = 107.0
-offset_right = 787.0
-offset_bottom = 507.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("6_dy2tn")
-
-[node name="Label" type="Label" parent="Pause" unique_id=1631249989]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 7.0
-offset_bottom = 87.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 50
-text = "PAUSED"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Resume" type="Button" parent="Pause" unique_id=175952647]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 103.0
-offset_bottom = 203.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 40
-text = "RESUME"
-
-[node name="Quit" type="Button" parent="Pause" unique_id=1410822424]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -152.0
-offset_bottom = -52.0
-grow_horizontal = 2
-grow_vertical = 0
 
 [node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
 visible = false

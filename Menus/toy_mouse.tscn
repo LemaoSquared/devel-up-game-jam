@@ -87,6 +87,7 @@ animations = [{
 
 [node name="toy_mouse" type="Node2D" unique_id=46643488]
 script = ExtResource("1_v4so6")
+jump_distance = 60.0
 
 [node name="toy_mouse" type="Area2D" parent="." unique_id=917850277]
 

@@ -18,7 +18,7 @@ var is_transforming: bool = false
 
 var is_gravity: bool = false
 var is_popping: bool = false
-
+var is_finishing: bool = false 
 const Duration: float = 15.0
 const REQUIRED_CLICKS: int = 10
 
@@ -82,6 +82,8 @@ func hit_sack() -> void:
 	play_hit_animation()
 
 	if click_count >= REQUIRED_CLICKS:
+		is_popping = true              
+		sack.input_pickable = false   
 		AudioManager.play_sound(SACK_OPEN)
 		gift.visible = true
 		gift.play("default")

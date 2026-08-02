@@ -97,7 +97,7 @@ func _on_duration_expired() -> void:
 	)
 
 
-func pop_out(is_clicked = false) -> void:
+func pop_out(_is_clicked = false) -> void:
 	string.visible = false
 	is_popping = true
 	is_hanging = false

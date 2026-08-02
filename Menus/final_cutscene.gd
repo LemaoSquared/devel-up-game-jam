@@ -2,6 +2,8 @@ extends Node2D
 
 @onready var kath: AnimatedSprite2D = $AnimatedSprite2D
 
+signal cutscene_finished
+
 var front_facing_scale: float = 2.25
 var back_facing_scale: float = 2.375
 # Called when the node enters the scene tree for the first time.
@@ -32,7 +34,7 @@ func kath_walk_to_grave() -> void:
 	sequence.tween_property(kath, "position:x", 967.0, 1.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	
 	# 4. DRAMATIC PAUSE
-	sequence.tween_interval(0.8) 
+	sequence.tween_interval(0.9) 
 	
 	# 5. Snap the animation AND the scale at the exact same time!
 	sequence.tween_callback(func():
@@ -40,4 +42,6 @@ func kath_walk_to_grave() -> void:
 		kath.scale = Vector2(back_facing_scale, back_facing_scale)
 	)
 	
+	await sequence.finished
+	cutscene_finished.emit()
 	

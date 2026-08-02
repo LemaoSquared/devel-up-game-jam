@@ -36,7 +36,7 @@ func _on_progress_bar_countdown_finished() -> void:
 	if cutscene.has_signal("cutscene_finished"):
 		await cutscene.cutscene_finished
 		
-	await $Transition.Return()
+	await $Transition.transition() 
 	cutscene.queue_free()
 	
 	var game_over_instance := GameOverScreen.instantiate()

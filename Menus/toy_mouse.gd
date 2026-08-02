@@ -42,14 +42,17 @@ func _process(delta: float) -> void:
 func _on_area_input_event(_viewport, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_on_clicked()
+		
 func _on_clicked() -> void:
 	if is_jumping or is_finished:
 		return
 	AudioManager.play_sound(MOUSE)
-	ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
+	ParticleManager.spawn_particle(CLICK_PARTICLE, global_position)
 	click_count += 1
 	speed += speed_increase
 	if click_count >= max_clicks:
+		is_finished = true          
+		area.input_pickable = false 
 		AudioManager.play_sound(GIFT)
 		gift.visible = true
 		gift.play("default")
@@ -57,6 +60,7 @@ func _on_clicked() -> void:
 		_pop_and_disappear()
 	else:
 		_jump()
+		
 func _jump() -> void:
 	is_jumping = true
 	var target_x = position.x + jump_distance * direction

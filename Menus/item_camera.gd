@@ -70,7 +70,7 @@ func pop_out() -> void:
 
 	is_popping = true
 	camera_area.input_pickable = false
-	popped_out.emit(self)
+	popped_out.emit(self,true)
 
 	var tween := create_tween()
 	tween.set_trans(Tween.TRANS_BACK)
