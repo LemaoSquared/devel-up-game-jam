@@ -694,7 +694,7 @@ color = Color(0, 0, 0, 1)
 position = Vector2(448.00003, 520)
 scale = Vector2(7.444583, 7.444584)
 sprite_frames = SubResource("SpriteFrames_kgah6")
-animation = &"outside_idle"
+animation = &"Inside_Walk"
 autoplay = "outside_idle"
 script = ExtResource("19_i0d87")
 

@@ -218,3 +218,4 @@ expand_mode = 1
 position = Vector2(545, 463.99997)
 scale = Vector2(2.25, 2.25)
 sprite_frames = SubResource("SpriteFrames_5c5y6")
+animation = &"walk_to_stand"
