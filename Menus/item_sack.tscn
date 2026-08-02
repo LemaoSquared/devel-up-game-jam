@@ -35,7 +35,7 @@ position = Vector2(0.9016075, -7.4792647)
 scale = Vector2(1.2566683, 1.590026)
 texture = ExtResource("1_jnwkv")
 region_enabled = true
-region_rect = Rect2(20.038738, 36.142246, 67.85559, 56.829075)
+region_rect = Rect2(320, 112, 72, 56.82907)
 
 [node name="FishParticles" type="GPUParticles2D" parent="." unique_id=1924561704]
 position = Vector2(0, -49)

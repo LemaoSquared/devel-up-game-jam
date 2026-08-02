@@ -2,25 +2,24 @@ extends Node2D
 
 signal popped_out(obj: Node)
 
-var is_gravity: bool = false
-var is_popping: bool = false
-const Duration: float = 6.0
-
-#POLAROID
 @export var polaroid_scene: PackedScene = preload(
 	"res://Menus/item_polaroid.tscn"
 )
 @export var polaroid_texture: Texture2D
-@onready var sprite_2d: AnimatedSprite2D = $Treat/Sprite2D
+
+var is_gravity: bool = false
+var is_popping: bool = false
+const Duration: float = 6.0
 
 
 func _ready() -> void:
 	add_to_group("camera_targets")
-	$Treat.input_event.connect(_on_area_input_event)
-	$Treat.input_pickable = true
-	sprite_2d.play(str(randi_range(1,3)))
+	$Garbage.input_event.connect(_on_area_input_event)
+	$Garbage.input_pickable = true
 	var timer = get_tree().create_timer(Duration)
 	timer.timeout.connect(_on_duration_expired)
+	global_position.x += randi_range(-20,20)
+	global_position.y += randi_range(-20,20)
 	start_tilting_loop(self)
 
 func start_tilting_loop(obj: Node2D) -> void:
@@ -45,6 +44,7 @@ func start_tilting_loop(obj: Node2D) -> void:
 	
 	# Step C: Return to center to finish the cycle smoothly
 	tween.tween_property(obj, "rotation", 0.0, duration)
+	
 
 func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if is_popping:

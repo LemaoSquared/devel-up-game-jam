@@ -4,10 +4,15 @@ extends Node
 @export var yarn: PackedScene = preload("res://Menus/item_yarn.tscn")
 @export var shoes: PackedScene = preload("res://Menus/item_shoes.tscn")
 @export var sack: PackedScene = preload("res://Menus/item_sack.tscn")
+@export var sardine: PackedScene = preload("res://Menus/Can_Food.tscn")
+@export var garbage: PackedScene = preload("res://Menus/item_garbage.tscn")
 @export var camera: PackedScene = preload("res://Menus/item_camera.tscn")
+@export var rat: PackedScene = preload("res://Menus/toy_mouse.tscn")
 
 @export var min_spawn_distance: float = 64.0
 @export var max_placement_attempts: int = 30
+enum Spawner {BOTTOM_RIGHT,BOTTOM_LEFT,BOTH}
+var rat_corner: Spawner = Spawner.BOTTOM_RIGHT
 
 enum SpawnType { RANDOM, GRID } #How the Item Spawn
 enum SpawnAnimation { POP_SCALE, DROP_IN } #Animation of Item Spawning
@@ -69,6 +74,7 @@ func spawn_random_pop_in_rect(obj_type, count: int = -1, parent: Node = null) ->
 		
 func _spawn_drop_grid(obj_type,count: int = -1,parent: Node = null) -> void:
 	var target_parent: Node = parent if parent != null else get_tree().current_scene
+
 
 	if target_parent == null:
 		push_error("ItemManager: No valid parent was found for drop items.")
@@ -132,6 +138,37 @@ func _spawn_drop_grid(obj_type,count: int = -1,parent: Node = null) -> void:
 
 func _spawn_grid(area: Control, count: int, target_parent: Node,obj_type) -> void:
 	var cell_size = Vector2(area.size.x / pattern_columns, area.size.y / pattern_rows)
+	if obj_type == Item.RAT:
+		var _chosen_corner = Spawner.BOTTOM_LEFT if randi() % 2 == 0 else Spawner.BOTTOM_RIGHT
+		var c: int
+		var r: int
+		var dir: int
+		var target_end_x: float
+		var roll = randi() % 3
+		match roll:
+			0: _spawn_rat_at(Spawner.BOTTOM_LEFT, cell_size, target_parent)
+			1: _spawn_rat_at(Spawner.BOTTOM_RIGHT, cell_size, target_parent)
+			2:
+				_spawn_rat_at(Spawner.BOTTOM_LEFT, cell_size, target_parent)
+				_spawn_rat_at(Spawner.BOTTOM_RIGHT, cell_size, target_parent)
+
+		var cell_origin = area.global_position + Vector2(c * cell_size.x, r * cell_size.y)
+		var pos = cell_origin + cell_size / 2.0
+
+		var obj = rat.instantiate()
+		target_parent.add_child(obj)
+		obj.popped_out.connect(_on_object_popped_out)
+		spawned_objects.append(obj)
+		wave_one_objects.append(obj)
+		obj.set_direction(dir, target_end_x)
+
+		match spawn_animation:
+			SpawnAnimation.POP_SCALE:
+				_animate_pop_scale(obj, pos, 0)
+			SpawnAnimation.DROP_IN:
+				_animate_drop_in(obj, pos, 0)
+		return 
+	
 	var total_cells = pattern_columns * pattern_rows
 	var spawn_total = min(count, total_cells)
 
@@ -148,8 +185,9 @@ func _spawn_grid(area: Control, count: int, target_parent: Node,obj_type) -> voi
 
 		var cell_origin = area.global_position + Vector2(c * cell_size.x, r * cell_size.y)
 		var pos = cell_origin + cell_size / 2.0
+		pos[0] += randi_range(-20,20)
+		pos[1] += randi_range(-20,20)
 		_instantiate_object(pos, target_parent, index,obj_type)
-
 
 func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, obj_type) -> void:
 	#THIS FUNCTION IS FOR POP ITEMS ONLY
@@ -157,10 +195,10 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 	var obj
 	match obj_type:
 		Item.TREAT: obj = cat_treat.instantiate()
-		Item.GARBAGE: obj = cat_treat.instantiate()
+		Item.GARBAGE: obj = garbage.instantiate()
 		Item.CAMERA: obj = camera.instantiate()
-		Item.SARDINE: obj = cat_treat.instantiate()
-		Item.RAT: obj = cat_treat.instantiate()
+		Item.SARDINE: obj = sardine.instantiate()
+		Item.RAT: obj = rat.instantiate()
 		Item.SACK: obj = sack.instantiate()
 	target_parent.add_child(obj)
 	
@@ -269,17 +307,51 @@ func register_spawned_object(obj: Node) -> void:
 		obj.popped_out.connect(_on_object_popped_out)
 
 	spawned_objects.append(obj)
+func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node) -> void:
+	var c: int
+	var r: int
+	var dir: int
+	var target_end_x: float
+
+	match corner:
+		Spawner.BOTTOM_LEFT:
+			c = 0
+			r = pattern_rows - 1
+			dir = 1
+			target_end_x = area.global_position.x + area.size.x
+		Spawner.BOTTOM_RIGHT:
+			c = pattern_columns - 1
+			r = pattern_rows - 1
+			dir = -1
+			target_end_x = area.global_position.x
+
+	var cell_origin = area.global_position + Vector2(c * cell_size.x, r * cell_size.y)
+	var pos = cell_origin + cell_size / 2.0
+
+	var obj = rat.instantiate()
+	target_parent.add_child(obj)
+	obj.popped_out.connect(_on_object_popped_out)
+	spawned_objects.append(obj)
+	wave_one_objects.append(obj)
+	obj.set_direction(dir, target_end_x)
+
+	match spawn_animation:
+		SpawnAnimation.POP_SCALE:
+			_animate_pop_scale(obj, pos, 0)
+		SpawnAnimation.DROP_IN:
+			_animate_drop_in(obj, pos, 0)
 	
 func play_pattern(number:int):
 	print("PLAYING PATTERN " + str(current_pattern))
 	# Count of Items in a Wave
-	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Ray, Sack]
+	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Rat, Sack]
 	var item_count = []
 	match number:
-		1: item_count = [10,3,0,1,4,0,0,3]
+		1: item_count = [3,3,3,1,3,3,3,3]
 		2: item_count = [0,10,0,1,0,0,0,0]
-		3: item_count = [5,5,0,0,0,0,0,0]
-		4: item_count = [10,0,0,0,10,0,0,0]
+		3: item_count = [0,0,0,0,0,0,0,0]
+		4: item_count = [10,0,0,0,5,0,0,0]
+		5: item_count = [0,0,0,0,0,5,0,0]
 		
 	for i in range(item_count.size()):
 		var count = item_count[i]
@@ -287,8 +359,11 @@ func play_pattern(number:int):
 			match i:
 				0: spawn_random_pop_in_rect(Item.TREAT,count, current_parent) #Treats will Pop Spawn
 				1: _spawn_drop_grid(Item.YARN,count,current_parent) #Yarns will Drop Spawn
+				2: spawn_random_pop_in_rect(Item.GARBAGE,count, current_parent) #Garbage will Pop Spawn
 				3: spawn_random_pop_in_rect(Item.CAMERA,count, current_parent) # Camera
 				4: _spawn_drop_grid(Item.SHOES,count,current_parent) #Shoes will Drop Spawn
+				5: spawn_random_pop_in_rect(Item.SARDINE,count, current_parent) #Treats will Pop Spawn
+				6: spawn_random_pop_in_rect(Item.RAT,count, current_parent)
 				7: spawn_random_pop_in_rect(Item.SACK,count, current_parent) #Sack will Pop Spawn
 
 # --- NEW INDEPENDENT TIMER SETUP ---
