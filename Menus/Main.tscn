@@ -12,6 +12,16 @@
 [ext_resource type="Texture2D" uid="uid://b0m2w2mm7nwef" path="res://Assets/Object Assets/Yarn.png" id="5_unj6y"]
 [ext_resource type="Script" uid="uid://p6cxsl6y2wbp" path="res://Menus/progress_bar.gd" id="5_vocn1"]
 [ext_resource type="Script" uid="uid://73b5003yewl7" path="res://Menus/pause.gd" id="6_dy2tn"]
+[ext_resource type="Texture2D" uid="uid://denywa1lffa25" path="res://Assets/MiddleRound_OutsideStore/L5_Buildings1_start.png" id="7_1jmi0"]
+[ext_resource type="Texture2D" uid="uid://byhccumq5oxra" path="res://Assets/MiddleRound_OutsideStore/L1_Background.png" id="8_1jmi0"]
+[ext_resource type="Texture2D" uid="uid://4ptraxkm8603" path="res://Assets/MiddleRound_OutsideStore/L8_Poste.png" id="8_5u0mb"]
+[ext_resource type="Texture2D" uid="uid://dfoayjq6ieoxs" path="res://Assets/MiddleRound_OutsideStore/Untitled34_20260802001739.png" id="9_5u0mb"]
+[ext_resource type="Texture2D" uid="uid://2d72gu86ppqg" path="res://Assets/MiddleRound_OutsideStore/L9_Ground.png" id="9_mbgq0"]
+[ext_resource type="Texture2D" uid="uid://h8yf8js0ehvo" path="res://Assets/MiddleRound_OutsideStore/Untitled34_20260802001742.png" id="10_mbgq0"]
+[ext_resource type="Texture2D" uid="uid://ctp2rhcdq0lwd" path="res://Assets/MiddleRound_OutsideStore/L4_Trees.png" id="11_i0d87"]
+[ext_resource type="Texture2D" uid="uid://ckj54vn7prxgr" path="res://Assets/MiddleRound_OutsideStore/Buildings2.png" id="14_mbgq0"]
+[ext_resource type="Texture2D" uid="uid://ctvkwhklufnt6" path="res://Assets/MiddleRound_OutsideStore/Buildings3.png" id="15_i0d87"]
+[ext_resource type="Texture2D" uid="uid://xqk22ynngbk1" path="res://Assets/Character Sprite/Walking base-Sheet.png" id="18_mbgq0"]
 [ext_resource type="Texture2D" uid="uid://dqohswdgofm1e" path="res://Assets/Character Sprite/outside.png" id="6_k87b8"]
 [ext_resource type="Script" uid="uid://uqxvrg1abja5" path="res://Menus/camera_effects.gd" id="15_aai8a"]
 [ext_resource type="Script" uid="uid://c38s48g8inaho" path="res://Menus/transition.gd" id="18_vl1oa"]
@@ -26,23 +36,72 @@ shader = ExtResource("2_yng6g")
 shader_parameter/pixelation = 3.000000095
 shader_parameter/controlEdges = false
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6fbi1"]
-atlas = ExtResource("6_k87b8")
-region = Rect2(0, 0, 640, 1280)
+[sub_resource type="AtlasTexture" id="AtlasTexture_i0d87"]
+atlas = ExtResource("18_mbgq0")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hdwr6"]
+atlas = ExtResource("18_mbgq0")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ew7g"]
+atlas = ExtResource("18_mbgq0")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g2jn8"]
+atlas = ExtResource("18_mbgq0")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0lenh"]
+atlas = ExtResource("18_mbgq0")
+region = Rect2(384, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gg5gl"]
+atlas = ExtResource("18_mbgq0")
+region = Rect2(480, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vwlca"]
+atlas = ExtResource("18_mbgq0")
+region = Rect2(576, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y8skh"]
+atlas = ExtResource("18_mbgq0")
+region = Rect2(672, 0, 96, 128)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kgah6"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_6fbi1")
+"texture": SubResource("AtlasTexture_i0d87")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hdwr6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2ew7g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g2jn8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0lenh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gg5gl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vwlca")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y8skh")
 }],
 "loop": 1,
 "name": &"default",
-"speed": 5.0
+"speed": 8.0
 }]
 
 [sub_resource type="Gradient" id="Gradient_l0led"]
-offsets = PackedFloat32Array(0, 0.13221154, 0.27644232, 0.71875, 1)
+offsets = PackedFloat32Array(0, 0.1626506, 0.27644232, 0.71875, 1)
 colors = PackedColorArray(1, 1, 1, 0, 0, 0, 0, 0.1882353, 0, 0, 0, 0.43529412, 0, 0, 0, 0.75686276, 0, 0, 0, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_oi3uc"]
@@ -54,14 +113,31 @@ bg_color = Color(0.8990849, 0.899085, 0.89908487, 0)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l0led"]
 bg_color = Color(0, 0, 0, 1)
 
+[sub_resource type="Gradient" id="Gradient_mbgq0"]
+offsets = PackedFloat32Array(0, 0.2, 0.8, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0)
+metadata/_snap_count = 15
+metadata/_snap_enabled = true
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_5c5y6"]
+gradient = SubResource("Gradient_mbgq0")
+width = 3000
+height = 742
+use_hdr = true
+fill_from = Vector2(0, 0.004347826)
+
 [node name="Main" type="Node2D" unique_id=1521551065]
 script = ExtResource("1_7x3k8")
 
-[node name="BackgroundManager" type="Node2D" parent="." unique_id=742304184 node_paths=PackedStringArray("background_a")]
+[node name="BackgroundManager" type="Node2D" parent="." unique_id=742304184 node_paths=PackedStringArray("background_a", "background_b", "transition_screen")]
 script = ExtResource("2_k4a18")
 background_a = NodePath("StoreBackground")
+background_b = NodePath("OutsideBackground")
+transition_screen = NodePath("../Transition2/Gradient")
+seconds_until_a = 1.0
 
 [node name="StoreBackground" type="Node2D" parent="BackgroundManager" unique_id=1692822279]
+visible = false
 
 [node name="Background" type="Node2D" parent="BackgroundManager/StoreBackground" unique_id=2000936904]
 material = SubResource("ShaderMaterial_k87b8")
@@ -122,6 +198,191 @@ scale = Vector2(0.6, 0.59999996)
 texture = ExtResource("4_u4s41")
 centered = false
 
+[node name="OutsideBackground" type="Node2D" parent="BackgroundManager" unique_id=10526258]
+visible = false
+
+[node name="L1_Background" type="Node2D" parent="BackgroundManager/OutsideBackground" unique_id=1073209159]
+script = ExtResource("2_u4s41")
+depth_multiplier = 0.5
+
+[node name="1" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L1_Background" unique_id=1806621423]
+position = Vector2(-1208, 0)
+scale = Vector2(2.1999998, 0.6)
+texture = ExtResource("8_1jmi0")
+centered = false
+
+[node name="2" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L1_Background" unique_id=168215869]
+position = Vector2(-1208, 0)
+scale = Vector2(2.1999998, 0.6)
+texture = ExtResource("8_1jmi0")
+centered = false
+
+[node name="3" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L1_Background" unique_id=1912009375]
+position = Vector2(-1208, 0)
+scale = Vector2(2.1999998, 0.6)
+texture = ExtResource("8_1jmi0")
+centered = false
+
+[node name="4" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L1_Background" unique_id=1384225828]
+position = Vector2(-1208, 0)
+scale = Vector2(2.1999998, 0.6)
+texture = ExtResource("8_1jmi0")
+centered = false
+
+[node name="L2_MountainsBig" type="Node2D" parent="BackgroundManager/OutsideBackground" unique_id=2063337787]
+position = Vector2(1, -72)
+script = ExtResource("2_u4s41")
+
+[node name="1" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L2_MountainsBig" unique_id=1533321620]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("9_5u0mb")
+centered = false
+
+[node name="2" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L2_MountainsBig" unique_id=659922833]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("9_5u0mb")
+centered = false
+
+[node name="3" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L2_MountainsBig" unique_id=1198197376]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("9_5u0mb")
+centered = false
+
+[node name="4" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L2_MountainsBig" unique_id=421861416]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("9_5u0mb")
+centered = false
+
+[node name="L3_MountainsSmall" type="Node2D" parent="BackgroundManager/OutsideBackground" unique_id=1385677500]
+position = Vector2(1, -72)
+script = ExtResource("2_u4s41")
+depth_multiplier = 1.5
+
+[node name="1" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L3_MountainsSmall" unique_id=361819262]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("10_mbgq0")
+centered = false
+
+[node name="2" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L3_MountainsSmall" unique_id=559475434]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("10_mbgq0")
+centered = false
+
+[node name="3" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L3_MountainsSmall" unique_id=182198380]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("10_mbgq0")
+centered = false
+
+[node name="4" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L3_MountainsSmall" unique_id=853381120]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("10_mbgq0")
+centered = false
+
+[node name="L4_Trees" type="Node2D" parent="BackgroundManager/OutsideBackground" unique_id=950329596]
+position = Vector2(1, -72)
+script = ExtResource("2_u4s41")
+depth_multiplier = 2.0
+
+[node name="1" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L4_Trees" unique_id=2144439208]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("11_i0d87")
+centered = false
+
+[node name="2" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L4_Trees" unique_id=1781958399]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("11_i0d87")
+centered = false
+
+[node name="3" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L4_Trees" unique_id=70426818]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("11_i0d87")
+centered = false
+
+[node name="4" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L4_Trees" unique_id=2131725911]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("11_i0d87")
+centered = false
+
+[node name="L8_Poste" type="Node2D" parent="BackgroundManager/OutsideBackground" unique_id=645702592]
+position = Vector2(1, -41.325)
+script = ExtResource("2_u4s41")
+depth_multiplier = 2.5
+
+[node name="1" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L8_Poste" unique_id=756817927]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("8_5u0mb")
+centered = false
+
+[node name="2" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L8_Poste" unique_id=1895325191]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("8_5u0mb")
+centered = false
+
+[node name="3" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L8_Poste" unique_id=1624927708]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("8_5u0mb")
+centered = false
+
+[node name="4" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L8_Poste" unique_id=964930798]
+scale = Vector2(0.59999996, 0.6)
+texture = ExtResource("8_5u0mb")
+centered = false
+
+[node name="L9_Ground" type="Node2D" parent="BackgroundManager/OutsideBackground" unique_id=1919503994]
+position = Vector2(1, -116)
+script = ExtResource("2_u4s41")
+depth_multiplier = 3.0
+
+[node name="1" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L9_Ground" unique_id=1947034352]
+scale = Vector2(0.5994792, 0.6666666)
+texture = ExtResource("9_mbgq0")
+centered = false
+
+[node name="2" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L9_Ground" unique_id=1404817622]
+scale = Vector2(0.5994792, 0.6666666)
+texture = ExtResource("9_mbgq0")
+centered = false
+
+[node name="3" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L9_Ground" unique_id=1246801827]
+scale = Vector2(0.5994792, 0.6666666)
+texture = ExtResource("9_mbgq0")
+centered = false
+
+[node name="4" type="Sprite2D" parent="BackgroundManager/OutsideBackground/L9_Ground" unique_id=289490937]
+scale = Vector2(0.5994792, 0.6666666)
+texture = ExtResource("9_mbgq0")
+centered = false
+
+[node name="BUILDINGS" type="Node2D" parent="BackgroundManager/OutsideBackground" unique_id=1566646041]
+position = Vector2(1, -44.949997)
+script = ExtResource("2_u4s41")
+random_textures = Array[Texture2D]([ExtResource("14_mbgq0"), ExtResource("15_i0d87")])
+depth_multiplier = 3.0
+
+[node name="1" type="Sprite2D" parent="BackgroundManager/OutsideBackground/BUILDINGS" unique_id=1076851899]
+position = Vector2(0, -5)
+scale = Vector2(0.6083333, 0.59999996)
+texture = ExtResource("7_1jmi0")
+centered = false
+
+[node name="2" type="Sprite2D" parent="BackgroundManager/OutsideBackground/BUILDINGS" unique_id=427073017]
+position = Vector2(-8, -8)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("14_mbgq0")
+centered = false
+
+[node name="3" type="Sprite2D" parent="BackgroundManager/OutsideBackground/BUILDINGS" unique_id=1247373260]
+position = Vector2(0, -8)
+scale = Vector2(0.6083333, 0.59999996)
+texture = ExtResource("15_i0d87")
+centered = false
+
+[node name="4" type="Sprite2D" parent="BackgroundManager/OutsideBackground/BUILDINGS" unique_id=453647257]
+position = Vector2(0, -5)
+scale = Vector2(0.6083333, 0.59999996)
+texture = ExtResource("14_mbgq0")
+centered = false
+
 [node name="Background" type="ColorRect" parent="." unique_id=186063241]
 anchors_preset = 15
 anchor_right = 1.0
@@ -139,9 +400,8 @@ top_level = true
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = -80.0
+offset_top = -64.0
 offset_right = 10.0
-offset_bottom = -5.0
 grow_horizontal = 2
 color = Color(0, 0, 0, 1)
 
@@ -150,16 +410,16 @@ top_level = true
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 652.0
-offset_right = 10.0
-offset_bottom = 720.0
+offset_top = 648.0
+offset_bottom = 704.0
 grow_horizontal = 2
 color = Color(0, 0, 0, 1)
 
 [node name="Entity" type="AnimatedSprite2D" parent="." unique_id=1100770989]
-position = Vector2(96, 424)
-scale = Vector2(0.26484373, 0.24609374)
+position = Vector2(80, 520.00006)
+scale = Vector2(0.7206624, 0.7206625)
 sprite_frames = SubResource("SpriteFrames_kgah6")
+autoplay = "default"
 
 [node name="ReferenceRect" type="ReferenceRect" parent="." unique_id=690342108]
 offset_left = 256.0
@@ -284,5 +544,20 @@ position = Vector2(-63, 571)
 [node name="LeftMarker2D2" type="Marker2D" parent="." unique_id=737292320]
 position = Vector2(1216, 571)
 
+[node name="Transition2" type="CanvasLayer" parent="." unique_id=161198873]
+
+[node name="Gradient" type="TextureRect" parent="Transition2" unique_id=1029427981]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1352.0
+offset_top = -72.0
+offset_right = 4300.0
+offset_bottom = 408.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_5c5y6")
+
+[connection signal="pressed" from="StartPanel/Start" to="BackgroundManager" method="_on_start_pressed"]
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]
 [connection signal="timeout" from="ProgressBar/Timer" to="ProgressBar" method="_on_timer_timeout"]

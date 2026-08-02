@@ -49,5 +49,3 @@ func _on_start_pressed() -> void:
 	#entity_tween.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	#entity_tween.tween_property(entity,"position:x", get_viewport_rect().size.x / 2, 1)
 	
-	background_manager.play_movement()
-	
