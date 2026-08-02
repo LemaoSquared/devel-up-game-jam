@@ -46,7 +46,7 @@ func _on_duration_expired() -> void:
 
 func pop_out(is_clicked=false) -> void:
 	is_popping = true
-	popped_out.emit(self, was_clicked)
+	popped_out.emit(self, is_clicked)
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_IN)
