@@ -1,6 +1,9 @@
 extends Node2D
 
-signal popped_out(obj: Node)
+
+const GIFT = preload("uid://fojbgtm48t6b")
+signal popped_out(obj: Node, was_clicked: bool)
+
 
 var is_gravity: bool = false
 var is_popping: bool = false
@@ -52,22 +55,22 @@ func start_tilting_loop(obj: Node2D) -> void:
 func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if is_popping:
 		return
-
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		AudioManager.play_sound(GIFT)
+		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
 		gift.visible = true
 		gift.play("default")
-		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
 		await gift.animation_finished
-		pop_out()
+		pop_out(true)
 
 func _on_duration_expired() -> void:
 	if is_popping:
 		return  
-	pop_out()
+	pop_out(false)
 
-func pop_out() -> void:
+func pop_out(is_clicked=false) -> void:
 	is_popping = true
-	popped_out.emit(self)
+	popped_out.emit(self, is_clicked)
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_IN)
@@ -95,7 +98,7 @@ func transform_to_polaroid() -> void:
 	if polaroid.has_method("appear"):
 		polaroid.appear()
 
-	popped_out.emit(self)
+	popped_out.emit(self, true)
 	queue_free()
 
 	

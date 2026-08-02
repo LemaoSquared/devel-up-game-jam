@@ -273,14 +273,14 @@ bg_color = Color(0.8990849, 0.899085, 0.89908487, 0)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l0led"]
 bg_color = Color(0, 0, 0, 1)
 
-[sub_resource type="Gradient" id="Gradient_mbgq0"]
+[sub_resource type="Gradient" id="Gradient_gg5gl"]
 offsets = PackedFloat32Array(0, 0.2, 0.8, 1)
 colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0)
 metadata/_snap_count = 15
 metadata/_snap_enabled = true
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_5c5y6"]
-gradient = SubResource("Gradient_mbgq0")
+gradient = SubResource("Gradient_gg5gl")
 width = 3000
 height = 742
 use_hdr = true
@@ -288,14 +288,25 @@ fill_from = Vector2(0, 0.004347826)
 
 [node name="Main" type="Node2D" unique_id=1521551065]
 script = ExtResource("1_7x3k8")
+final_cutscene = ExtResource("3_g2jn8")
 
-[node name="BackgroundManager" type="Node2D" parent="." unique_id=742304184 node_paths=PackedStringArray("backgrounds", "transition_screen")]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
+
+[node name="FadeRect" type="ColorRect" parent="CanvasLayer" unique_id=1786602749]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="BackgroundManager" type="Node2D" parent="." unique_id=742304184 node_paths=PackedStringArray("backgrounds")]
 script = ExtResource("2_k4a18")
 backgrounds = [NodePath("IntroBackground"), NodePath("StoreBackground"), NodePath("OutsideBackground")]
 durations = Array[float]([0.0, 49.0, 42.0])
 loop_sequence = false
-transition_screen = NodePath("../Transition2/Gradient")
-final_cutscene = ExtResource("3_g2jn8")
 
 [node name="IntroBackground" type="Node2D" parent="BackgroundManager" unique_id=111680989]
 position = Vector2(-180.88, -180.665)
@@ -734,9 +745,9 @@ texture_normal = ExtResource("5_unj6y")
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=170122126]
 offset_left = -18.0
-offset_top = 76.0
+offset_top = 34.0
 offset_right = 1162.0
-offset_bottom = 106.0
+offset_bottom = 64.0
 theme_override_styles/background = SubResource("StyleBoxFlat_7x3k8")
 theme_override_styles/fill = SubResource("StyleBoxFlat_l0led")
 show_percentage = false
@@ -799,7 +810,6 @@ grow_horizontal = 2
 grow_vertical = 0
 
 [node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
-visible = false
 script = ExtResource("15_aai8a")
 
 [node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=1467674545]

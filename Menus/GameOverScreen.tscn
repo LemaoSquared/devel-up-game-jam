@@ -1,25 +1,59 @@
 [gd_scene format=3 uid="uid://dh364flg18d2j"]
 
 [ext_resource type="Script" uid="uid://ojjwxrf0v2oo" path="res://Menus/GameOver_screen.gd" id="1_ikqa8"]
+[ext_resource type="Shader" uid="uid://d2jeis1lksurj" path="res://Shaders/pixelater.gdshader" id="2_j685f"]
+[ext_resource type="Texture2D" uid="uid://byhccumq5oxra" path="res://Assets/MiddleRound_OutsideStore/L1_Background.png" id="2_op2i6"]
+[ext_resource type="FontFile" uid="uid://cqwfub3g65jm6" path="res://Assets/Baby Night.otf" id="3_j685f"]
+[ext_resource type="Texture2D" uid="uid://b56c1ojyedeka" path="res://Assets/Polaroid Pictures/polaroid1 with calligraphy.png" id="4_2t4kf"]
+[ext_resource type="Texture2D" uid="uid://c0b5fuudbemxp" path="res://Assets/Polaroid Pictures/polaroid2.png" id="5_ovstn"]
+[ext_resource type="Texture2D" uid="uid://dtw1brm8e1a4y" path="res://Assets/Polaroid Pictures/polaroid3.png" id="6_at8r6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2t4kf"]
+shader = ExtResource("2_j685f")
+shader_parameter/pixelation = 16.0
+shader_parameter/controlEdges = false
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ovstn"]
+shader = ExtResource("2_j685f")
+shader_parameter/pixelation = 1.0
+shader_parameter/controlEdges = false
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5c5y6"]
+atlas = ExtResource("4_2t4kf")
+region = Rect2(1208, 104, 640, 568)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hf7om"]
+atlas = ExtResource("5_ovstn")
+region = Rect2(72, 112, 648, 560)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qup64"]
+atlas = ExtResource("6_at8r6")
+region = Rect2(624, 472, 648, 560)
 
 [node name="GameOver Screen" type="Node2D" unique_id=341467045]
 process_mode = 3
 script = ExtResource("1_ikqa8")
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=1688136868]
+[node name="ColorRect" type="TextureRect" parent="." unique_id=164002361]
 process_mode = 3
-offset_right = 1150.0
-offset_bottom = 650.0
-color = Color(0.36810192, 0.36810198, 0.36810192, 1)
+material = SubResource("ShaderMaterial_2t4kf")
+offset_right = 1152.0
+offset_bottom = 648.0
+texture = ExtResource("2_op2i6")
+expand_mode = 1
 
-[node name="Label" type="Label" parent="ColorRect" unique_id=503026923]
+[node name="ScoreLabel" type="Label" parent="ColorRect" unique_id=1706508346]
 layout_mode = 0
-offset_left = 288.0
-offset_top = 43.0
-offset_right = 825.0
-offset_bottom = 126.0
-theme_override_font_sizes/font_size = 60
-text = "Game Over Screen"
+offset_left = 424.0
+offset_top = 40.0
+offset_right = 724.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.90588236, 0.83137256, 0.6784314, 1)
+theme_override_fonts/font = ExtResource("3_j685f")
+theme_override_font_sizes/font_size = 80
+text = "Score"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="retry" type="Button" parent="ColorRect" unique_id=370138902]
 process_mode = 3
@@ -29,13 +63,47 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -125.0
-offset_top = -40.0
-offset_right = 125.0
-offset_bottom = 40.0
+offset_left = -312.0
+offset_top = 188.0
+offset_right = 308.0
+offset_bottom = 302.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 40
-text = "Retry"
+theme_override_colors/font_color = Color(0.81960785, 0.47843137, 0.5647059, 1)
+theme_override_colors/font_focus_color = Color(0.5762458, 0.27360624, 0.35757944, 1)
+theme_override_colors/font_pressed_color = Color(0.3120187, 0.62358475, 0.3233552, 1)
+theme_override_colors/font_hover_color = Color(0.5764706, 0.27450982, 0.35686275, 1)
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("3_j685f")
+theme_override_font_sizes/font_size = 116
+text = "try again"
+flat = true
+
+[node name="Middle" type="TextureRect" parent="." unique_id=893753874]
+material = SubResource("ShaderMaterial_ovstn")
+offset_left = 416.0
+offset_top = 160.0
+offset_right = 736.0
+offset_bottom = 485.0
+texture = SubResource("AtlasTexture_5c5y6")
+expand_mode = 1
+
+[node name="Left" type="TextureRect" parent="." unique_id=2063061943]
+offset_left = 112.0
+offset_top = 32.0
+offset_right = 432.0
+offset_bottom = 360.0
+rotation = 0.26529005
+texture = SubResource("AtlasTexture_hf7om")
+expand_mode = 1
+
+[node name="Right" type="TextureRect" parent="." unique_id=385729521]
+offset_left = 736.0
+offset_top = 112.0
+offset_right = 1056.0
+offset_bottom = 440.0
+rotation = -0.2617994
+texture = SubResource("AtlasTexture_qup64")
+expand_mode = 1
 
 [connection signal="pressed" from="ColorRect/retry" to="." method="_on_button_pressed"]

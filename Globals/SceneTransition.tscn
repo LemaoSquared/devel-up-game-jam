@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://l02c4gi6t62d"]
+
+[ext_resource type="Script" uid="uid://dwtigpib18m84" path="res://Globals/scene_transition.gd" id="1_53viq"]
+
+[sub_resource type="Gradient" id="Gradient_mbgq0"]
+offsets = PackedFloat32Array(0, 0.2, 0.8, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0)
+metadata/_snap_count = 15
+metadata/_snap_enabled = true
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_53viq"]
+gradient = SubResource("Gradient_mbgq0")
+width = 3000
+height = 742
+use_hdr = true
+fill_from = Vector2(0, 0.004347826)
+
+[node name="SceneTransition" type="CanvasLayer" unique_id=10743763]
+layer = 100
+script = ExtResource("1_53viq")
+
+[node name="Gradient" type="TextureRect" parent="." unique_id=1997589652]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1264.0
+offset_top = -40.0
+offset_right = 3112.0
+offset_bottom = 54.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_53viq")
