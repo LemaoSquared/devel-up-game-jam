@@ -1,6 +1,11 @@
 extends Node2D
 
 signal popped_out(obj)
+
+#SARDINES
+@export var sardine_scene: PackedScene = preload(
+	"res://Menus/Sardines.tscn"
+)
 #POLAROID
 @export var polaroid_scene: PackedScene = preload(
 	"res://Menus/item_polaroid.tscn"
@@ -8,9 +13,8 @@ signal popped_out(obj)
 @export var polaroid_texture: Texture2D
 @onready var click_area: Area2D = $Can_Food
 @onready var anim_sprite: AnimatedSprite2D = $Can_Food/Sprite2D
-@onready var sardine_template: Node2D = $Sardine
 var click_count: int = 0
-const MAX_CLICKS: int = 4
+const MAX_CLICKS: int = 3
 
 @onready var gift: AnimatedSprite2D = $GiftAnimation
 
@@ -25,8 +29,10 @@ var sardine_offsets: Array[Vector2] = [
 ]
 
 func _ready() -> void:
+	
 	gift.visible = false
 	add_to_group("camera_targets")
+	click_area.input_pickable = true
 	click_area.input_event.connect(_on_input_event)
 	anim_sprite.animation = "Can_Foood"
 	anim_sprite.frame = 0
@@ -58,25 +64,33 @@ func _click_feedback() -> void:
 func _spawn_sardines() -> void:
 	is_finished = true
 	click_area.input_pickable = false
-	var count = 3
-	sardines_remaining = count
+
+	var parent := get_parent()
+
+	if parent == null:
+		push_error("Can_Food has no valid parent.")
+		return
+
+	var count: int = 3
+
 	for i in range(count):
-		var s = sardine_template.duplicate()
-		s.sardine_index = i
-		s.total_sardines = count
-		s.spawn_delay = i * 0.3
-		add_child(s)   
-		s.sardine_clicked.connect(_on_sardine_clicked.bind(s))
-		s.popped_in.connect(_on_sardine_popped_in)
+		var sardine := sardine_scene.instantiate() as SardineItem
 
-func _on_sardine_clicked(s: Node2D) -> void:
-	if is_instance_valid(s):
-		s.pop_into_can(anim_sprite.global_position)
+		if sardine == null:
+			push_error("Sardines.tscn must use sardines.gd on its root.")
+			continue
 
-func _on_sardine_popped_in() -> void:
-	sardines_remaining -= 1
-	if sardines_remaining <= 0:
-		_pop_out()
+		sardine.sardine_index = i
+		sardine.total_sardines = count
+		sardine.spawn_delay = i * 0.07
+
+		parent.add_child(sardine)
+		sardine.global_position = anim_sprite.global_position
+
+		ItemManager.register_spawned_object(sardine)
+		sardine.launch()
+
+	_pop_opened_can()
 
 func _pop_out() -> void:
 	gift.visible = true
@@ -86,6 +100,24 @@ func _pop_out() -> void:
 	await timer.timeout
 	popped_out.emit(self)
 	queue_free()
+	
+func _pop_opened_can() -> void:
+	var tween := create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
+	tween.set_trans(Tween.TRANS_BACK)
+	tween.set_ease(Tween.EASE_IN)
+
+	tween.tween_property(
+		self,
+		"scale",
+		Vector2.ZERO,
+		0.25
+	)
+
+	tween.tween_callback(func():
+		popped_out.emit(self)
+		queue_free()
+	)
 	
 func transform_to_polaroid() -> void:
 	var polaroid := polaroid_scene.instantiate() as Node2D

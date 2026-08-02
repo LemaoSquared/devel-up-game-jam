@@ -4,8 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_5i4as"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_uh13p"]
-radius = 30.0
-height = 60.0
+radius = 41.5
+height = 83.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_43urd"]
 atlas = ExtResource("2_5i4as")
@@ -54,6 +54,7 @@ script = ExtResource("1_v4so6")
 [node name="toy_mouse" type="Area2D" parent="." unique_id=917850277]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="toy_mouse" unique_id=800203798]
+position = Vector2(5, -1)
 scale = Vector2(2, 2)
 shape = SubResource("CapsuleShape2D_uh13p")
 debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)

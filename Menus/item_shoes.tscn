@@ -26,6 +26,37 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="Curve" id="Curve_rko1p"]
+_limits = [-200.0, 200.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, -95.38461), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ijthc"]
+curve = SubResource("Curve_rko1p")
+
+[sub_resource type="Curve" id="Curve_eek78"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.3670412, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_wqigk"]
+curve = SubResource("Curve_eek78")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_h7roj"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(42.74, 49.56, 1)
+emission_shape = 1
+emission_sphere_radius = 1.0
+spread = 180.0
+initial_velocity_min = 8.2
+initial_velocity_max = 40.989998
+gravity = Vector3(0, 0, 0)
+radial_accel_min = 7.3699975
+radial_accel_max = 13.929997
+radial_accel_curve = SubResource("CurveTexture_ijthc")
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_wqigk")
+color = Color(0, 0, 0, 1)
+
 [node name="Shoes" type="Node2D" unique_id=46643488]
 script = ExtResource("1_rko1p")
 
@@ -49,3 +80,9 @@ position = Vector2(35, 8.000001)
 scale = Vector2(4.0535707, 4.053571)
 sprite_frames = SubResource("SpriteFrames_kgah6")
 frame_progress = 0.9922685
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Shoes" unique_id=477620655]
+position = Vector2(2, 2)
+amount = 16
+lifetime = 2.1599999999999997
+process_material = SubResource("ParticleProcessMaterial_h7roj")

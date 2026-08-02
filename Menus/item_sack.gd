@@ -6,6 +6,7 @@ signal popped_out(obj: Node)
 @export var polaroid_scene: PackedScene = preload(
 	"res://Menus/item_polaroid.tscn"
 )
+
 @export var polaroid_texture: Texture2D
 var is_transforming: bool = false
 
@@ -32,16 +33,18 @@ var hit_tween: Tween
 
 func _ready() -> void:
 	add_to_group("camera_targets")
+
 	sack.input_event.connect(_on_area_input_event)
 	sack.input_pickable = true
 
 	sack_sprite.region_enabled = true
+	sack_sprite.region_filter_clip_enabled = true
 	update_sack_sprite()
 
 	var timer = get_tree().create_timer(Duration)
 	timer.timeout.connect(_on_duration_expired)
-	start_tilting_loop(self)
 
+	start_tilting_loop(self)
 
 func _on_area_input_event(
 	_viewport: Node,
