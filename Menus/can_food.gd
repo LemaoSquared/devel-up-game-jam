@@ -8,6 +8,7 @@ signal popped_out(obj)
 var click_count: int = 0
 const MAX_CLICKS: int = 3
 
+
 @export var lifetime: float = 6.0
 var is_finished: bool = false
 var sardines_remaining: int = 0
@@ -50,12 +51,15 @@ func _click_feedback() -> void:
 func _spawn_sardines() -> void:
 	is_finished = true
 	click_area.input_pickable = false
-	sardines_remaining = sardine_offsets.size()
-
-	for i in range(sardine_offsets.size()):
+	var count = 3
+	sardines_remaining = count
+	for i in range(count):
 		var s = sardine_template.duplicate()
-		add_child(s)
-		s.pop_up(sardine_offsets[i], i * 0.1)
+		s.is_template = false  
+		s.sardine_index = i
+		s.total_sardines = count
+		s.spawn_delay = i * 0.1
+		add_child(s)   
 		s.sardine_clicked.connect(_on_sardine_clicked.bind(s))
 		s.popped_in.connect(_on_sardine_popped_in)
 
