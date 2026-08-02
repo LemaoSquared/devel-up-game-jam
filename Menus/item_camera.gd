@@ -8,9 +8,11 @@ var is_popping: bool = false
 const Duration: float = 6.0
 
 @onready var camera_area: Area2D = $Camera
+@onready var sprite_2d: AnimatedSprite2D = $Camera/Sprite2D
 
 
 func _ready() -> void:
+	sprite_2d.play("default")
 	camera_area.input_event.connect(_on_area_input_event)
 	camera_area.input_pickable = true
 

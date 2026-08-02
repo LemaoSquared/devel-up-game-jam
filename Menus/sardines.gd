@@ -17,9 +17,11 @@ var total_sardines: int = 1
 var spawn_delay: float = 0.0
 
 @onready var sardine_area: Area2D = $Sardines
+@onready var gift_animation: AnimatedSprite2D = $GiftAnimation
 
 
 func _ready() -> void:
+	gift_animation.visible = false
 	visible = false
 	scale = Vector2.ZERO
 
@@ -122,11 +124,9 @@ func _on_input_event(
 	if is_finished:
 		return
 
-	if (
-		event is InputEventMouseButton
-		and event.pressed
-		and event.button_index == MOUSE_BUTTON_LEFT
-	):
+	if (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
+		gift_animation.visible = true
+		gift_animation.play("default")
 		pop_out()
 
 

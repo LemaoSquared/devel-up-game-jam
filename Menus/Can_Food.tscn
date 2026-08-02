@@ -102,6 +102,7 @@ animation = &"Can_Foood"
 frame_progress = 0.35269538
 
 [node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=1463621911]
+visible = false
 position = Vector2(1, -57)
 scale = Vector2(4.8923616, 4.8923616)
 sprite_frames = SubResource("SpriteFrames_mjxx2")

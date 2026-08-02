@@ -4,8 +4,10 @@ signal popped_out(obj: Node)
 
 var is_popping: bool = false
 @onready var polaroid: Area2D = $Polaroid
+@onready var gift_animation: AnimatedSprite2D = $GiftAnimation
 
 func _ready() -> void:
+	gift_animation.visible = false
 	polaroid.input_event.connect(_on_area_input_event)
 	polaroid.input_pickable = true
 	start_tilting_loop(self)
@@ -23,6 +25,8 @@ func _on_area_input_event(
 		and event.pressed
 		and event.button_index == MOUSE_BUTTON_LEFT
 	):
+		gift_animation.visible = true
+		gift_animation.play("default")
 		pop_out()
 
 
