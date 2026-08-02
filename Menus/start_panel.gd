@@ -44,7 +44,7 @@ func _on_start_pressed() -> void:
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "modulate:a", 0.0, 0.6)
 	tween.tween_callback(queue_free)
-	
+
 	#var entity_tween = create_tween()
 	#entity_tween.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	#entity_tween.tween_property(entity,"position:x", get_viewport_rect().size.x / 2, 1)

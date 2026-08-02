@@ -1,91 +1,118 @@
 extends Node2D
 
-@export var background_a: Node2D
-@export var background_b: Node2D
+@export var backgrounds: Array[Node2D] 
+@export var durations: Array[float]    
+@export var loop_sequence: bool = true 
+@export var starting_index: int = 0 
 @export var transition_screen: TextureRect
-@export var seconds_until_a: float = 5.0 
-@export var seconds_until_b: float = 10.0 
 @export var swipe_speed: float = 0.5 
 @export var start_moving: bool = false 
 
+signal background_changed(new_index:int)
+
 var is_visible: bool = true
 var is_moving: bool = false
-var active_bg: String = "B"
+var current_index: int = 0 
 
 func _ready():
 	is_moving = start_moving
-	active_bg = "B"
+	current_index = starting_index 
+	
+	if backgrounds.is_empty():
+		push_error("ERROR: Your Backgrounds array is completely empty!")
+	
+	for i in range(backgrounds.size()):
+		if backgrounds[i] == null:
+			push_error("ERROR: Background slot [" + str(i) + "] is empty! Assign a node in the Inspector.")
+	
+	if durations.size() != backgrounds.size():
+		push_warning("WARNING: You have " + str(backgrounds.size()) + " backgrounds but " + str(durations.size()) + " durations. They should match!")
+	# -------------------------------
+		
 	_apply_state()
 	
-	# Make sure the transition screen starts safely hidden off-screen to the right
 	if transition_screen:
 		transition_screen.position.x = get_viewport_rect().size.x
 	else:
-		push_error("Transition Screen not assigned in BackgroundManager!")
+		push_error("ERROR: Transition Screen not assigned!")
 
-# --- TRIGGER THIS WHEN YOUR BUTTON IS PRESSED ---
+func _on_start_pressed() -> void:
+	start_sequence()
 
 func start_sequence():
-	is_moving = true
-	_apply_state()
-	print("Sequence started! Background B is moving.")
+	# Advance to the NEXT background in the array
+	var next_index = current_index + 1
+	if next_index >= backgrounds.size():
+		next_index = 0 
+		
+	_swipe_transition(next_index)
 	
-	var timer = get_tree().create_timer(seconds_until_a)
-	timer.timeout.connect(func(): _swipe_transition("A"))
+
+# --- THE SEQUENCE LOGIC ---
+
+func _start_timer_for_current_bg():
+	var wait_time = 5.0
+	if current_index < durations.size():
+		wait_time = durations[current_index]
+		
+	var timer = get_tree().create_timer(wait_time)
+	timer.timeout.connect(_on_timer_finished)
+
+func _on_timer_finished():
+	var next_index = current_index + 1
+	
+	if next_index >= backgrounds.size():
+		if loop_sequence:
+			next_index = 0
+		else:
+			print("Sequence complete!")
+			return 
+			
+	_swipe_transition(next_index)
 
 # --- THE SWIPE ANIMATION ---
 
-func _swipe_transition(target_bg: String):
+func _swipe_transition(target_index: int):
 	if not transition_screen:
 		return
 		
 	var screen_width = get_viewport_rect().size.x
-	
-	# Reset the screen to the right side and ensure it covers the viewport
 	transition_screen.position.x = screen_width
-	transition_screen.size = get_viewport_rect().size
 	
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_LINEAR)
 	
-	# 1. Slide the screen IN (Right to Left)
 	tween.tween_property(transition_screen, "position:x", -1536.0, swipe_speed)
 	
-	# 2. Swap the backgrounds instantly while the screen covers the view
 	tween.tween_callback(func():
-		active_bg = target_bg
+		current_index = target_index
+		is_moving = true 
 		_apply_state()
-		print("Swapped to Background ", target_bg)
+		
+		background_changed.emit(current_index)
+		
+		print("Swapped to Background index ", current_index)
 	)
 	
-	# 3. Slide the screen OUT (Continuing Left)
-	tween.tween_property(transition_screen, "position:x", -screen_width -3100, swipe_speed)
+	tween.tween_property(transition_screen, "position:x", -screen_width - 3100, swipe_speed)
 	
-	# 4. If we just swapped to A, queue up the swap back to B
 	tween.tween_callback(func():
-		if target_bg == "A":
-			var timer = get_tree().create_timer(seconds_until_b)
-			timer.timeout.connect(func(): _swipe_transition("B"))
+		_start_timer_for_current_bg()
 	)
 
 # --- THE ENGINE ROOM ---
 
 func _apply_state():
-	var a_active = (active_bg == "A")
-	if background_a:
-		background_a.visible = is_visible and a_active
-		if is_visible and a_active and is_moving:
-			background_a.process_mode = Node.PROCESS_MODE_INHERIT
-		else:
-			background_a.process_mode = Node.PROCESS_MODE_DISABLED
+	for i in range(backgrounds.size()):
+		var bg = backgrounds[i]
+		if not bg: 
+			continue
 			
-	var b_active = (active_bg == "B")
-	if background_b:
-		background_b.visible = is_visible and b_active
-		if is_visible and b_active and is_moving:
-			background_b.process_mode = Node.PROCESS_MODE_INHERIT
+		var is_active = (i == current_index)
+		
+		bg.visible = is_visible and is_active
+		
+		if is_visible and is_active and is_moving:
+			bg.process_mode = Node.PROCESS_MODE_INHERIT
 		else:
-			background_b.process_mode = Node.PROCESS_MODE_DISABLED
-
-func _on_start_pressed() -> void:
-	start_sequence()
+			bg.process_mode = Node.PROCESS_MODE_DISABLED
