@@ -8,6 +8,8 @@ extends Node2D
 @export var swipe_speed: float = 0.5 
 @export var start_moving: bool = false 
 
+@export var final_cutscene: PackedScene
+
 signal background_changed(new_index:int)
 
 var is_visible: bool = true
@@ -65,12 +67,30 @@ func _on_timer_finished():
 		if loop_sequence:
 			next_index = 0
 		else:
-			print("Sequence complete!")
+			print("Sequence complete! Moving to Cutscene...")
+			if final_cutscene:
+					_swipe_to_cutscene()
+			else:
+					push_error("NO CUTSCENE ASSIGNED")
 			return 
 			
 	_swipe_transition(next_index)
 
 # --- THE SWIPE ANIMATION ---
+func _swipe_to_cutscene():
+	if not transition_screen:
+		get_tree().change_scene_to_packed(final_cutscene)
+		return
+	var screen_width = get_viewport_rect().size.x
+	transition_screen.position.x = screen_width
+	
+	var tween = create_tween()
+	tween.set_trans(tween.TRANS_LINEAR)
+	
+	tween.tween_property(transition_screen, "position:x", -1536,swipe_speed)
+	
+	tween.tween_callback(func():
+		get_tree().change_scene_to_packed(final_cutscene))
 
 func _swipe_transition(target_index: int):
 	if not transition_screen:
