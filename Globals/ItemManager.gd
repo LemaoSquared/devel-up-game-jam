@@ -277,7 +277,7 @@ func play_pattern(number:int):
 	var item_count = []
 	match number:
 		1: item_count = [10,3,0,1,4,0,0,3]
-		2: item_count = [0,10,0,1,0,0,0,0]
+		2: item_count = [0,10,0,1,0,0,3,0]
 		3: item_count = [5,5,0,0,0,0,0,0]
 		4: item_count = [10,0,0,0,10,0,0,0]
 		
