@@ -2,7 +2,7 @@ extends TextureRect
 
 signal game_started
 
-const OBJECT_SCENE := preload("res://Menus/item_cat_treat.tscn")
+const OBJECT_SCENE = preload("res://Menus/item_cat_treat.tscn")
 const START_SOUND = preload("uid://bnvtg6wxrfprs")
 
 @onready var entity: AnimatedSprite2D = $"../Entity"
@@ -25,7 +25,7 @@ func _on_start_pressed() -> void:
 	$Start.disabled = true
 	game_started.emit()
 	
-	#AudioManager.play_music(START_SOUND)
+	AudioManager.play_music(START_SOUND)
 	ItemManager.area = spawn_area
 	ItemManager.play_pattern(1)
 
@@ -44,7 +44,7 @@ func _on_start_pressed() -> void:
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "modulate:a", 0.0, 0.6)
 	tween.tween_callback(queue_free)
-	
+
 	#var entity_tween = create_tween()
 	#entity_tween.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	#entity_tween.tween_property(entity,"position:x", get_viewport_rect().size.x / 2, 1)
