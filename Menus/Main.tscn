@@ -20,10 +20,9 @@
 [ext_resource type="Texture2D" uid="uid://h8yf8js0ehvo" path="res://Assets/MiddleRound_OutsideStore/Untitled34_20260802001742.png" id="10_mbgq0"]
 [ext_resource type="Texture2D" uid="uid://ctp2rhcdq0lwd" path="res://Assets/MiddleRound_OutsideStore/L4_Trees.png" id="11_i0d87"]
 [ext_resource type="Texture2D" uid="uid://ckj54vn7prxgr" path="res://Assets/MiddleRound_OutsideStore/Buildings2.png" id="14_mbgq0"]
+[ext_resource type="Script" uid="uid://uqxvrg1abja5" path="res://Menus/camera_effects.gd" id="15_aai8a"]
 [ext_resource type="Texture2D" uid="uid://ctvkwhklufnt6" path="res://Assets/MiddleRound_OutsideStore/Buildings3.png" id="15_i0d87"]
 [ext_resource type="Texture2D" uid="uid://xqk22ynngbk1" path="res://Assets/Character Sprite/Walking base-Sheet.png" id="18_mbgq0"]
-[ext_resource type="Texture2D" uid="uid://dqohswdgofm1e" path="res://Assets/Character Sprite/outside.png" id="6_k87b8"]
-[ext_resource type="Script" uid="uid://uqxvrg1abja5" path="res://Menus/camera_effects.gd" id="15_aai8a"]
 [ext_resource type="Script" uid="uid://c38s48g8inaho" path="res://Menus/transition.gd" id="18_vl1oa"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_k87b8"]
@@ -422,14 +421,13 @@ sprite_frames = SubResource("SpriteFrames_kgah6")
 autoplay = "default"
 
 [node name="ReferenceRect" type="ReferenceRect" parent="." unique_id=690342108]
-offset_left = 256.0
+offset_left = 98.0
 offset_top = 149.0
-offset_right = 1155.0
+offset_right = 1074.0
 offset_bottom = 541.0
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 border_width = 5.0
-metadata/_edit_lock_ = true
 
 [node name="StartPanel" type="TextureRect" parent="." unique_id=164502693 node_paths=PackedStringArray("spawn_area")]
 visible = false

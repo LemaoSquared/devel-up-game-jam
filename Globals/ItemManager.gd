@@ -34,7 +34,7 @@ enum Item{
 @export_group("Spawn Settings")
 @export var spawn_type: SpawnType = SpawnType.GRID
 @export var pattern_columns: int = 12
-@export var pattern_rows: int = 12
+@export var pattern_rows: int = 4
 @export var enable_drop_wave: bool = true
 @export var spawn_count: int = 10
 
@@ -72,9 +72,8 @@ func spawn_random_pop_in_rect(obj_type, count: int = -1, parent: Node = null) ->
 
 
 		
-func _spawn_drop_grid(obj_type,count: int = -1,parent: Node = null) -> void:
+func _spawn_drop_grid(obj_type, count: int = -1, parent: Node = null) -> void:
 	var target_parent: Node = parent if parent != null else get_tree().current_scene
-
 
 	if target_parent == null:
 		push_error("ItemManager: No valid parent was found for drop items.")
@@ -91,24 +90,39 @@ func _spawn_drop_grid(obj_type,count: int = -1,parent: Node = null) -> void:
 	)
 	var anchor_y = area.global_position.y - drop_start_height
 
-	var row_pool: Array[int] = []
+	# 1. Calculate max safe limit based on total grid capacity
+	var total_cells = pattern_columns * pattern_rows
+	var spawn_total = min(final_count, total_cells)
 
+	# 2. Build a flat pool of all grid coordinates
+	var cell_pool: Array[Vector2i] = []
 	for r in range(pattern_rows):
-		row_pool.append(r)
-		row_pool.shuffle()
-	for index in range(final_count):
-		var c = index % pattern_columns
-		if index > 0 and index % pattern_rows == 0:
-			row_pool.shuffle()
-		var r = row_pool[index % pattern_rows]
+		for c in range(pattern_columns):
+			cell_pool.append(Vector2i(c, r))
+			
+	# 3. Shuffle the grid pool for true randomization
+	cell_pool.shuffle()
+
+	# 4. Pull unique coordinates from the shuffled grid pool
+	for index in range(spawn_total):
+		var cell = cell_pool[index]
+		var c = cell.x
+		var r = cell.y
+
 		var cell_origin = area.global_position + Vector2(
 			c * cell_size.x,
 			r * cell_size.y
 		)
 
 		var pos = cell_origin + cell_size / 2.0
+		
+		# Optional: Add organic random offsets here if you want them slightly off-center:
+		# pos.x += randi_range(-15, 15)
+		# pos.y += randi_range(-15, 15)
+		
 		var anchor_pos = Vector2(pos.x, anchor_y)
 		var obj: Node
+		
 		match obj_type:
 			Item.YARN:
 				obj = yarn.instantiate()
@@ -117,6 +131,7 @@ func _spawn_drop_grid(obj_type,count: int = -1,parent: Node = null) -> void:
 			_:
 				push_warning("ItemManager: Unsupported drop item: " + str(obj_type))
 				continue
+				
 		target_parent.add_child(obj)
 
 		if obj.has_signal("popped_out"):
@@ -136,7 +151,7 @@ func _spawn_drop_grid(obj_type,count: int = -1,parent: Node = null) -> void:
 				"ItemManager: Drop item has no spawn_drop_and_hang method."
 			)
 
-func _spawn_grid(area: Control, count: int, target_parent: Node,obj_type) -> void:
+func _spawn_grid(area: Control, count: int, target_parent: Node, obj_type) -> void:
 	var cell_size = Vector2(area.size.x / pattern_columns, area.size.y / pattern_rows)
 	if obj_type == Item.RAT:
 		_spawn_rats(count, cell_size, target_parent)
@@ -145,22 +160,30 @@ func _spawn_grid(area: Control, count: int, target_parent: Node,obj_type) -> voi
 	var total_cells = pattern_columns * pattern_rows
 	var spawn_total = min(count, total_cells)
 
-	var row_pool: Array[int] = []
+	# 1. Build a pool containing all grid cell positions
+	var cell_pool: Array[Vector2i] = []
 	for r in range(pattern_rows):
-		row_pool.append(r)
-	row_pool.shuffle()
+		for c in range(pattern_columns):
+			cell_pool.append(Vector2i(c, r))
+			
+	# 2. Shuffle the entire pool once to randomize cell selection
+	cell_pool.shuffle()
 
+	# 3. Pull from the shuffled pool sequentially
 	for index in range(spawn_total):
-		var c = index % pattern_columns
-		if index > 0 and index % pattern_rows == 0:
-			row_pool.shuffle()
-		var r = row_pool[index % pattern_rows]
+		var cell = cell_pool[index]
+		var c = cell.x
+		var r = cell.y
 
+		# Calculate the core point centered inside the chosen cell
 		var cell_origin = area.global_position + Vector2(c * cell_size.x, r * cell_size.y)
 		var pos = cell_origin + cell_size / 2.0
-		pos[0] += randi_range(-20,20)
-		pos[1] += randi_range(-20,20)
-		_instantiate_object(pos, target_parent, index,obj_type)
+		
+		# Apply a slight organic coordinate offset so it doesn't look perfectly aligned
+		pos.x += randi_range(-20, 20)
+		pos.y += randi_range(-20, 20)
+		
+		_instantiate_object(pos, target_parent, index, obj_type)
 
 func _spawn_rats(count: int, cell_size: Vector2, target_parent: Node) -> void:
 	if count <= 0:
@@ -333,9 +356,9 @@ func play_pattern(number:int):
 	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Rat, Sack]
 	var item_count = []
 	match number:
-		1: item_count = [0,0,0,0,0,0,3,0]
-		2: item_count = [0,0,0,1,0,0,3,10]
-		3: item_count = [5,5,0,0,0,0,1,0]
+		1: item_count = [10,0,0,0,0,0,3,0]
+		2: item_count = [0,10,0,0,10,0,0,0]
+		3: item_count = [10,0,10,0,0,0,1,0]
 		4: item_count = [10,0,0,0,5,0,1,0]
 		5: item_count = [0,0,0,0,0,5,3,0]
 		
