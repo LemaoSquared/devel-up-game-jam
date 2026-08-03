@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://bnvtg6wxrfprs"
-path="res://.godot/imported/Pasalubong.wav-d94b47d2bf780bed807ed7ecfc991b5a.sample"
+path="res://.godot/imported/Taptap.wav-97db20a3ff04095d3f25400c99fa76c2.sample"
 
 [deps]
 
-source_file="res://BGM/Pasalubong.wav"
-dest_files=["res://.godot/imported/Pasalubong.wav-d94b47d2bf780bed807ed7ecfc991b5a.sample"]
+source_file="res://BGM/Taptap.wav"
+dest_files=["res://.godot/imported/Taptap.wav-97db20a3ff04095d3f25400c99fa76c2.sample"]
 
 [params]
 

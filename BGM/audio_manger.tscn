@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cbupjjnoycbp0"]
 
 [ext_resource type="Script" uid="uid://d0bvnkgpx7bcv" path="res://Globals/AudioManager.gd" id="1_2uve6"]
-[ext_resource type="AudioStream" uid="uid://bnvtg6wxrfprs" path="res://BGM/Pasalubong.wav" id="2_2uve6"]
+[ext_resource type="AudioStream" uid="uid://bnvtg6wxrfprs" path="res://BGM/Taptap.wav" id="2_2uve6"]
 
 [sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_2uve6"]
 

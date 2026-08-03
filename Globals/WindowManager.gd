@@ -1,5 +1,14 @@
 extends Node
 
+func _ready() -> void:
+	# 1. Change the Text Name on the Taskbar / Window Title
+	DisplayServer.window_set_title("Taptap")
+	# 2. Change the Taskbar Icon dynamically (Optional)
+	var custom_logo = load("res://Assets/Object Assets/Yarn.png") # Make sure path matches your image
+	if custom_logo:
+		var image = custom_logo.get_image()
+		DisplayServer.window_set_icon(image)
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.is_echo():
 		if event.keycode == KEY_F:

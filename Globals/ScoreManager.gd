@@ -3,7 +3,7 @@ signal score_changed(new_score: int)
 var score: int = 0
 var point_values := {
 	ItemManager.Item.TREAT: 5,
-	ItemManager.Item.GARBAGE: -15,
+	ItemManager.Item.GARBAGE: -30,
 	ItemManager.Item.RAT: 30,
 	ItemManager.Item.YARN: 5,
 	ItemManager.Item.SHOES: -30,

@@ -13,12 +13,12 @@ signal item_collected(item_type: int)
 
 @export var min_spawn_distance: float = 64.0
 @export var max_placement_attempts: int = 30
-enum Spawner {BOTTOM_RIGHT,BOTTOM_LEFT,BOTH}
+enum Spawner {BOTTOM_RIGHT, BOTTOM_LEFT, BOTH}
 var rat_corner: Spawner = Spawner.BOTTOM_RIGHT
 
-enum SpawnType { RANDOM, GRID } #How the Item Spawn
-enum SpawnAnimation { POP_SCALE, DROP_IN } #Animation of Item Spawning
-enum Item{
+enum SpawnType { RANDOM, GRID }
+enum SpawnAnimation { POP_SCALE, DROP_IN }
+enum Item {
 	TREAT,
 	YARN,
 	GARBAGE,
@@ -29,6 +29,7 @@ enum Item{
 	SACK,
 	POLAROID
 }
+
 @export_group("Animation Settings")
 @export var spawn_animation: SpawnAnimation = SpawnAnimation.POP_SCALE
 @export var drop_start_height: float = 100.0
@@ -41,22 +42,52 @@ enum Item{
 @export var enable_drop_wave: bool = true
 @export var spawn_count: int = 10
 
-
-var time_duration_perBatch: float = 6.0   # minimum total time this batch must occupy
+var time_duration_perBatch: float = 6.0
 var spawned_objects: Array[Node] = []
 var wave_one_objects: Array[Node] = []
 var drop_wave_triggered: bool = false
-var batch_start_time: float = 0.0                 
+var batch_start_time: float = 0.0                  
 var current_area: Control
 var current_parent: Node
 var current_pattern
 var scored_objects: Array[Node] = []
 var area
 
+# --- Shared Grid & Distance Tracking ---
+var occupied_cells: Array[Vector2i] = []
+
 func _ready() -> void:
-	current_pattern = 1 + randi_range(0,1)
+	current_pattern = 1 + randi_range(0, 1)
 	current_parent = get_tree().current_scene
-	pass
+
+# Returns available grid positions enforcing a minimum neighbor distance rule
+func _get_available_cells(min_cell_distance: int = 1) -> Array[Vector2i]:
+	var available: Array[Vector2i] = []
+	
+	for r in range(pattern_rows):
+		for c in range(pattern_columns):
+			var candidate = Vector2i(c, r)
+			
+			# 1. Skip if already occupied
+			if occupied_cells.has(candidate):
+				continue
+				
+			# 2. Check distance against all currently occupied cells
+			var is_too_close: bool = false
+			for occupied in occupied_cells:
+				var dist_x = abs(candidate.x - occupied.x)
+				var dist_y = abs(candidate.y - occupied.y)
+				
+				# If within min_cell_distance (including diagonals), block cell
+				if dist_x <= min_cell_distance and dist_y <= min_cell_distance:
+					is_too_close = true
+					break
+			
+			if not is_too_close:
+				available.append(candidate)
+				
+	available.shuffle()
+	return available
 
 func spawn_random_pop_in_rect(obj_type, count: int = -1, parent: Node = null) -> void:
 	var target_parent = parent if parent else get_tree().current_scene
@@ -64,18 +95,13 @@ func spawn_random_pop_in_rect(obj_type, count: int = -1, parent: Node = null) ->
 
 	current_area = area
 	current_parent = target_parent
-	wave_one_objects.clear()
-	drop_wave_triggered = false
-	batch_start_time = Time.get_ticks_msec() / 1000.0   # record batch start, in seconds
 	
 	match spawn_type:
 		SpawnType.RANDOM:
 			pass
 		SpawnType.GRID:
-			_spawn_grid(area, final_count, target_parent,obj_type)
+			_spawn_grid(area, final_count, target_parent, obj_type)
 
-
-		
 func _spawn_drop_grid(obj_type, count: int = -1, parent: Node = null) -> void:
 	var target_parent: Node = parent if parent != null else get_tree().current_scene
 
@@ -94,22 +120,19 @@ func _spawn_drop_grid(obj_type, count: int = -1, parent: Node = null) -> void:
 	)
 	var anchor_y = area.global_position.y - drop_start_height
 
-	# 1. Calculate max safe limit based on total grid capacity
-	var total_cells = pattern_columns * pattern_rows
-	var spawn_total = min(final_count, total_cells)
+	# 1. Try fetching padded cells (no adjacent spawns) for mobile touch readability
+	var available_cells = _get_available_cells(1)
+	
+	# 2. Fallback: If grid is getting crowded, allow adjacent cells
+	if available_cells.size() < final_count:
+		available_cells = _get_available_cells(0)
 
-	# 2. Build a flat pool of all grid coordinates
-	var cell_pool: Array[Vector2i] = []
-	for r in range(pattern_rows):
-		for c in range(pattern_columns):
-			cell_pool.append(Vector2i(c, r))
-			
-	# 3. Shuffle the grid pool for true randomization
-	cell_pool.shuffle()
+	var spawn_total = min(final_count, available_cells.size())
 
-	# 4. Pull unique coordinates from the shuffled grid pool
 	for index in range(spawn_total):
-		var cell = cell_pool[index]
+		var cell = available_cells[index]
+		occupied_cells.append(cell) # Reserve cell
+		
 		var c = cell.x
 		var r = cell.y
 
@@ -119,11 +142,6 @@ func _spawn_drop_grid(obj_type, count: int = -1, parent: Node = null) -> void:
 		)
 
 		var pos = cell_origin + cell_size / 2.0
-		
-		# Optional: Add organic random offsets here if you want them slightly off-center:
-		# pos.x += randi_range(-15, 15)
-		# pos.y += randi_range(-15, 15)
-		
 		var anchor_pos = Vector2(pos.x, anchor_y)
 		var obj: Node
 		
@@ -151,9 +169,7 @@ func _spawn_drop_grid(obj_type, count: int = -1, parent: Node = null) -> void:
 				index * 0.05
 			)
 		else:
-			push_warning(
-				"ItemManager: Drop item has no spawn_drop_and_hang method."
-			)
+			push_warning("ItemManager: Drop item has no spawn_drop_and_hang method.")
 
 func _spawn_grid(area: Control, count: int, target_parent: Node, obj_type) -> void:
 	var cell_size = Vector2(area.size.x / pattern_columns, area.size.y / pattern_rows)
@@ -161,31 +177,28 @@ func _spawn_grid(area: Control, count: int, target_parent: Node, obj_type) -> vo
 		_spawn_rats(count, cell_size, target_parent)
 		return
 	
-	var total_cells = pattern_columns * pattern_rows
-	var spawn_total = min(count, total_cells)
+	# 1. Try fetching padded cells (1-cell spacing buffer)
+	var available_cells = _get_available_cells(1)
+	
+	# 2. Fallback: If space is tight, allow standard adjacent cells
+	if available_cells.size() < count:
+		available_cells = _get_available_cells(0)
+		
+	var spawn_total = min(count, available_cells.size())
 
-	# 1. Build a pool containing all grid cell positions
-	var cell_pool: Array[Vector2i] = []
-	for r in range(pattern_rows):
-		for c in range(pattern_columns):
-			cell_pool.append(Vector2i(c, r))
-			
-	# 2. Shuffle the entire pool once to randomize cell selection
-	cell_pool.shuffle()
-
-	# 3. Pull from the shuffled pool sequentially
 	for index in range(spawn_total):
-		var cell = cell_pool[index]
+		var cell = available_cells[index]
+		occupied_cells.append(cell) # Reserve cell
+		
 		var c = cell.x
 		var r = cell.y
 
-		# Calculate the core point centered inside the chosen cell
 		var cell_origin = area.global_position + Vector2(c * cell_size.x, r * cell_size.y)
 		var pos = cell_origin + cell_size / 2.0
 		
-		# Apply a slight organic coordinate offset so it doesn't look perfectly aligned
-		pos.x += randi_range(-20, 20)
-		pos.y += randi_range(-20, 20)
+		# Tighter offset so items stay nicely centered in their touch targets
+		pos.x += randi_range(-10, 10)
+		pos.y += randi_range(-10, 10)
 		
 		_instantiate_object(pos, target_parent, index, obj_type)
 
@@ -205,10 +218,8 @@ func _spawn_rats(count: int, cell_size: Vector2, target_parent: Node) -> void:
 	for i in range(right_count):
 		var col = max(pattern_columns - 1 - i, 0)
 		_spawn_rat_at(Spawner.BOTTOM_RIGHT, cell_size, target_parent, col, i)
-		
+
 func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, obj_type) -> void:
-	#THIS FUNCTION IS FOR POP ITEMS ONLY
-	# DROP ITEMS ARE ON _SPAWN_DROP_GRID FUNCTION
 	var obj
 	match obj_type:
 		Item.TREAT: obj = cat_treat.instantiate()
@@ -222,20 +233,12 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 	if obj.has_method("launch"):
 		obj.launch()
 	
-	#Camera signal
 	if obj.has_signal("camera_activated"):
-		var camera_effects := get_tree().get_first_node_in_group(
-		"camera_effects"
-	)
-
+		var camera_effects := get_tree().get_first_node_in_group("camera_effects")
 		if camera_effects != null:
-			obj.camera_activated.connect(
-			camera_effects.activate_camera_effect
-		)
+			obj.camera_activated.connect(camera_effects.activate_camera_effect)
 		else:
-			push_warning(
-		"ItemManager: CameraEffects node was not found."
-	)
+			push_warning("ItemManager: CameraEffects node was not found.")
 	
 	obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
 	spawned_objects.append(obj)
@@ -247,7 +250,6 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 		SpawnAnimation.DROP_IN:
 			_animate_drop_in(obj, pos, delay_index)
 
-
 func _animate_pop_scale(obj: Node, pos: Vector2, delay_index: int) -> void:
 	obj.global_position = pos
 	obj.scale = Vector2.ZERO
@@ -257,7 +259,6 @@ func _animate_pop_scale(obj: Node, pos: Vector2, delay_index: int) -> void:
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(obj, "scale", Vector2.ONE, 0.4).set_delay(delay_index * 0.05)
-
 
 func _animate_drop_in(obj: Node, pos: Vector2, delay_index: int) -> void:
 	var anchor_y = current_area.global_position.y - drop_start_height if current_area else pos.y - drop_start_height
@@ -274,7 +275,6 @@ func _animate_drop_in(obj: Node, pos: Vector2, delay_index: int) -> void:
 		tween.set_ease(Tween.EASE_OUT)
 		tween.tween_property(obj, "global_position", pos, drop_duration).set_delay(delay_index * 0.05)
 
-
 func _find_valid_position(existing: Array[Vector2]) -> Variant:
 	for attempt in range(max_placement_attempts):
 		var rand_x = randf_range(0, area.size.x)
@@ -289,7 +289,6 @@ func _find_valid_position(existing: Array[Vector2]) -> Variant:
 			return candidate
 	return null
 
-
 func clear_objects() -> void:
 	for obj in spawned_objects:
 		if is_instance_valid(obj):
@@ -297,7 +296,7 @@ func clear_objects() -> void:
 	spawned_objects.clear()
 	wave_one_objects.clear()
 	scored_objects.clear()
-
+	occupied_cells.clear()
 
 func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void:
 	if obj in scored_objects:
@@ -320,17 +319,11 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 			pass
 
 func _on_wave_timeout() -> void:
-	# 2. Advance to the next wave
 	current_pattern += 1
 
-	# 3. Math calculation for the 50/50 pattern selection:
-	# Wave 1 -> Base 1 -> Picks 1 or 2
-	# Wave 2 -> Base 3 -> Picks 3 or 4
-	# Wave 3 -> Base 5 -> Picks 5 or 6
 	var pattern_base = ((current_pattern - 1) * 2) + 1
 	var chosen_pattern = pattern_base + randi_range(0, 1)
 	
-	# 5. Play the randomized pattern
 	if current_pattern >= 29:
 		current_pattern = 1
 		return
@@ -345,7 +338,7 @@ func register_spawned_object(obj: Node, obj_type = null) -> void:
 		else:
 			push_warning("ItemManager: register_spawned_object called without obj_type.")
 	spawned_objects.append(obj)
-	
+
 func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col: int, delay_index: int) -> void:
 	var r: int = pattern_rows - 1
 	var dir: int
@@ -358,6 +351,9 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 		Spawner.BOTTOM_RIGHT:
 			dir = -1
 			target_end_x = area.global_position.x
+
+	var cell = Vector2i(col, r)
+	occupied_cells.append(cell)
 
 	var cell_origin = area.global_position + Vector2(col * cell_size.x, r * cell_size.y)
 	var pos = cell_origin + cell_size / 2.0
@@ -374,14 +370,19 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 			_animate_pop_scale(obj, pos, delay_index)
 		SpawnAnimation.DROP_IN:
 			_animate_drop_in(obj, pos, delay_index)
-	
-func play_pattern(number:int):
+
+func play_pattern(number: int):
+	# Clear grid memory completely for the new wave
+	occupied_cells.clear()
+	wave_one_objects.clear()
+	drop_wave_triggered = false
+	batch_start_time = Time.get_ticks_msec() / 1000.0
+
 	current_parent = get_tree().current_scene 
 	if number > 30:
 		return
 	print("PLAYING PATTERN " + str(number))
-	# Count of Items in a Wave
-	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Rat, Sack]
+
 	var item_count = []
 	match number:
 		1: item_count = [10,0,0,0,0,0,0,0]
@@ -433,17 +434,14 @@ func play_pattern(number:int):
 		var count = item_count[i]
 		if count > 0:
 			match i:
-				0: spawn_random_pop_in_rect(Item.TREAT,count, current_parent) #Treats will Pop Spawn
-				1: _spawn_drop_grid(Item.YARN,count,current_parent) #Yarns will Drop Spawn
-				2: spawn_random_pop_in_rect(Item.GARBAGE,count, current_parent) #Garbage will Pop Spawn
-				3: spawn_random_pop_in_rect(Item.CAMERA,count, current_parent) # Camera
-				4: _spawn_drop_grid(Item.SHOES,count,current_parent) #Shoes will Drop Spawn
-				5: spawn_random_pop_in_rect(Item.SARDINE,count, current_parent) #Treats will Pop Spawn
-				6: spawn_random_pop_in_rect(Item.RAT,count, current_parent)
-				7: spawn_random_pop_in_rect(Item.SACK,count, current_parent) #Sack will Pop Spawn
+				0: spawn_random_pop_in_rect(Item.TREAT, count, current_parent)
+				1: _spawn_drop_grid(Item.YARN, count, current_parent)
+				2: spawn_random_pop_in_rect(Item.GARBAGE, count, current_parent)
+				3: spawn_random_pop_in_rect(Item.CAMERA, count, current_parent)
+				4: _spawn_drop_grid(Item.SHOES, count, current_parent)
+				5: spawn_random_pop_in_rect(Item.SARDINE, count, current_parent)
+				6: spawn_random_pop_in_rect(Item.RAT, count, current_parent)
+				7: spawn_random_pop_in_rect(Item.SACK, count, current_parent)
 
-# --- NEW INDEPENDENT TIMER SETUP ---
-	# Disconnect old timers by using a clean scene tree timer
-	var wave_timer
-	wave_timer = get_tree().create_timer(time_duration_perBatch, true)
+	var wave_timer = get_tree().create_timer(time_duration_perBatch, true)
 	wave_timer.timeout.connect(_on_wave_timeout)

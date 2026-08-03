@@ -5,7 +5,8 @@ const STREET = preload("uid://c6xk46jpedco4")
 signal game_started
 const SHOP_BELL = preload("uid://fswaj7rxfula")
 const OBJECT_SCENE = preload("res://Menus/item_cat_treat.tscn")
-const START_SOUND = preload("uid://bnvtg6wxrfprs")
+const TAPTAP = preload("uid://bnvtg6wxrfprs")
+
 @onready var label: Label = $Label
 
 @onready var entity: AnimatedSprite2D = $"../Entity"
@@ -68,7 +69,7 @@ func _on_start_pressed() -> void:
 	
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.stop_music()
-	AudioManager.play_music(START_SOUND)
+	AudioManager.play_music(TAPTAP)
 	ItemManager.area = spawn_area
 	ScoreManager.reset_score()
 	ItemManager.current_pattern = 1

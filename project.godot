@@ -10,9 +10,12 @@ config_version=5
 
 [application]
 
-config/name="DevelUP Game Jam"
+config/name="Taptap"
 run/main_scene="uid://b6pxdpajnlrgo"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/bg_color=Color(0, 0, 0, 1)
+boot_splash/show_image=false
+boot_splash/use_filter=false
 
 [audio]
 
@@ -25,15 +28,20 @@ AudioManager="*uid://cbupjjnoycbp0"
 ItemManager="*uid://cpxh8oj6crlks"
 ParticleManager="*uid://cj4m3gvncgfyn"
 ScoreManager="*uid://bj1sl56gfowe6"
-SceneTransition="*uid://l02c4gi6t62d"
+SceneTransition="*uid://dlpmt1xdaclks"
 WindowManager="*uid://lo33st6fr55x"
 
 [display]
 
 window/size/resizable=false
+window/size/maximize_disabled=true
 window/subwindows/embed_subwindows=false
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+
+[editor]
+
+version_control/autoload_on_startup=true
 
 [input]
 
@@ -52,3 +60,4 @@ textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
