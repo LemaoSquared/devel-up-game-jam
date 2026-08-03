@@ -26,9 +26,12 @@ ItemManager="*uid://cpxh8oj6crlks"
 ParticleManager="*uid://cj4m3gvncgfyn"
 ScoreManager="*uid://bj1sl56gfowe6"
 SceneTransition="*uid://l02c4gi6t62d"
+WindowManager="*uid://lo33st6fr55x"
 
 [display]
 
+window/size/resizable=false
+window/subwindows/embed_subwindows=false
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 

@@ -890,6 +890,15 @@ theme_override_fonts/font = ExtResource("29_qn5f4")
 theme_override_font_sizes/font_size = 43
 text = "Click Items to Wrap Them"
 
+[node name="Label" type="Label" parent="." unique_id=1230464535]
+offset_left = 18.0
+offset_top = 603.0
+offset_right = 168.0
+offset_bottom = 641.0
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 30
+text = "F - Full Screen"
+
 [connection signal="mouse_entered" from="StartPanel/Start" to="StartPanel" method="_on_start_mouse_entered"]
 [connection signal="mouse_exited" from="StartPanel/Start" to="StartPanel" method="_on_start_mouse_exited"]
 [connection signal="pressed" from="StartPanel/Start" to="BackgroundManager" method="_on_start_pressed"]

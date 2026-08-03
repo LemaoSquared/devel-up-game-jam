@@ -19,6 +19,8 @@ spread = 25.0
 initial_velocity_min = 180.0
 initial_velocity_max = 180.0
 gravity = Vector3(0, 250, 0)
+scale_min = 2.0
+scale_max = 5.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_14f3d"]
 atlas = ExtResource("3_ucqv3")
@@ -76,6 +78,7 @@ region_rect = Rect2(0, 102.98089, 75, 58.52546)
 
 [node name="FishParticles" type="GPUParticles2D" parent="." unique_id=1924561704]
 position = Vector2(0, -49)
+scale = Vector2(2, 2)
 emitting = false
 amount = 2
 texture = SubResource("AtlasTexture_8upip")
