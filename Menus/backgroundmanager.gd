@@ -1,5 +1,7 @@
 extends Node2D
 
+const STREET = preload("uid://c6xk46jpedco4")
+
 @export var backgrounds: Array[Node2D] 
 @export var durations: Array[float]    
 @export var loop_sequence: bool = true 
@@ -14,8 +16,24 @@ signal sequence_finished
 var is_visible: bool = true
 var is_moving: bool = false
 var current_index: int = 0 
-
+func reset():
+	is_moving = start_moving
+	current_index = starting_index 
+	
+	if backgrounds.is_empty():
+		push_error("ERROR: Your Backgrounds array is completely empty!")
+	
+	for i in range(backgrounds.size()):
+		if backgrounds[i] == null:
+			push_error("ERROR: Background slot [" + str(i) + "] is empty!")
+	
+	if durations.size() != backgrounds.size():
+		push_warning("WARNING: Backgrounds and Durations arrays must match in size!")
+		
+	_apply_state()
+	
 func _ready():
+	AudioManager.play_music(STREET)
 	is_moving = start_moving
 	current_index = starting_index 
 	

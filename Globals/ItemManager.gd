@@ -26,7 +26,8 @@ enum Item{
 	SHOES,
 	SARDINE,
 	RAT,
-	SACK
+	SACK,
+	POLAROID
 }
 @export_group("Animation Settings")
 @export var spawn_animation: SpawnAnimation = SpawnAnimation.POP_SCALE
@@ -330,7 +331,7 @@ func _on_wave_timeout() -> void:
 	var chosen_pattern = pattern_base + randi_range(0, 1)
 	
 	# 5. Play the randomized pattern
-	if current_pattern >= 1:
+	if current_pattern >= 29:
 		current_pattern = 1
 		return
 	play_pattern(chosen_pattern)
@@ -376,6 +377,8 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 	
 func play_pattern(number:int):
 	current_parent = get_tree().current_scene 
+	if number > 30:
+		return
 	print("PLAYING PATTERN " + str(number))
 	# Count of Items in a Wave
 	# [Treat, Yarn, Garbage, Camera, Shoe, Sardine, Rat, Sack]
@@ -442,8 +445,5 @@ func play_pattern(number:int):
 # --- NEW INDEPENDENT TIMER SETUP ---
 	# Disconnect old timers by using a clean scene tree timer
 	var wave_timer
-	if current_pattern <= 28:
-		wave_timer = get_tree().create_timer(time_duration_perBatch, true)
-		wave_timer.timeout.connect(_on_wave_timeout)
-	else:
-		wave_timer.stop()
+	wave_timer = get_tree().create_timer(time_duration_perBatch, true)
+	wave_timer.timeout.connect(_on_wave_timeout)

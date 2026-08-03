@@ -31,6 +31,7 @@
 [ext_resource type="Texture2D" uid="uid://cco8j71lo8gv1" path="res://Assets/Polaroid Pictures/polaroid1.png" id="20_y8skh"]
 [ext_resource type="Texture2D" uid="uid://c0b5fuudbemxp" path="res://Assets/Polaroid Pictures/polaroid2.png" id="21_qn5f4"]
 [ext_resource type="Texture2D" uid="uid://xdl7124u5wa7" path="res://Assets/Character Sprite/Walking_Outside.png" id="21_y8skh"]
+[ext_resource type="FontFile" uid="uid://cqwfub3g65jm6" path="res://Assets/Baby Night.otf" id="29_qn5f4"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i0d87"]
 shader = ExtResource("2_yng6g")
@@ -88,7 +89,7 @@ fill_from = Vector2(0.10750853, 0.90273035)
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="CurveTexture" id="CurveTexture_36c8c"]
+[sub_resource type="CurveTexture" id="CurveTexture_qn5f4"]
 curve = SubResource("Curve_gg5gl")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kgah6"]
@@ -102,7 +103,7 @@ initial_velocity_max = 122.95
 gravity = Vector3(0, 0, 0)
 scale_min = 0.0
 scale_max = 5.0
-scale_curve = SubResource("CurveTexture_36c8c")
+scale_curve = SubResource("CurveTexture_qn5f4")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qn5f4"]
 atlas = ExtResource("19_gg5gl")
@@ -291,8 +292,8 @@ animations = [{
 }]
 
 [sub_resource type="Gradient" id="Gradient_l0led"]
-offsets = PackedFloat32Array(0, 0.1626506, 0.27644232, 0.71875, 1)
-colors = PackedColorArray(1, 1, 1, 0, 0, 0, 0, 0.1882353, 0, 0, 0, 0.43529412, 0, 0, 0, 0.75686276, 0, 0, 0, 1)
+offsets = PackedFloat32Array(0, 0.46193773, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.75686276, 0, 0, 0, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_oi3uc"]
 gradient = SubResource("Gradient_l0led")
@@ -321,7 +322,6 @@ script = ExtResource("1_7x3k8")
 final_cutscene = ExtResource("3_g2jn8")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
-visible = false
 
 [node name="FadeRect" type="ColorRect" parent="CanvasLayer" unique_id=1786602749]
 anchors_preset = 15
@@ -336,7 +336,7 @@ metadata/_edit_use_anchors_ = true
 [node name="BackgroundManager" type="Node2D" parent="." unique_id=742304184 node_paths=PackedStringArray("backgrounds")]
 script = ExtResource("2_k4a18")
 backgrounds = [NodePath("IntroBackground"), NodePath("StoreBackground"), NodePath("OutsideBackground")]
-durations = Array[float]([0.0, 49.0, 42.0])
+durations = Array[float]([0.0, 49.0, 46.0])
 loop_sequence = false
 
 [node name="IntroBackground" type="Node2D" parent="BackgroundManager" unique_id=111680989]
@@ -703,7 +703,7 @@ centered = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 1158.0
+offset_right = 1167.0
 offset_bottom = 650.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -715,7 +715,7 @@ script = ExtResource("1_j1rpa")
 visible = false
 self_modulate = Color(1, 1, 0.99607843, 0)
 layout_mode = 0
-offset_right = 1151.0
+offset_right = 1168.0
 offset_bottom = 651.0
 texture = SubResource("GradientTexture2D_36c8c")
 
@@ -809,12 +809,23 @@ texture = ExtResource("20_hdwr6")
 [node name="Start" type="TextureButton" parent="StartPanel" unique_id=1916219]
 texture_filter = 1
 layout_mode = 0
-offset_left = 281.0
-offset_top = 288.0
-offset_right = 313.0
-offset_bottom = 320.0
+offset_left = 318.0
+offset_top = 382.0
+offset_right = 350.0
+offset_bottom = 414.0
 scale = Vector2(4, 4)
 texture_normal = ExtResource("5_unj6y")
+
+[node name="Label" type="Label" parent="StartPanel" unique_id=107870984]
+visible = false
+layout_mode = 0
+offset_left = 255.0
+offset_top = 482.0
+offset_right = 399.0
+offset_bottom = 520.0
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 30
+text = "Begin Shopping"
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=170122126]
 offset_left = -18.0
@@ -838,13 +849,14 @@ offset_bottom = 650.0
 script = ExtResource("18_vl1oa")
 
 [node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
+visible = false
 script = ExtResource("15_aai8a")
 
 [node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=1467674545]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 8.0
+offset_right = 14.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -869,6 +881,17 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_5c5y6")
 
+[node name="TutorialLabel" type="Label" parent="." unique_id=2130771760]
+offset_left = 49.0
+offset_top = 137.0
+offset_right = 408.0
+offset_bottom = 177.0
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 43
+text = "Click Items to Wrap Them"
+
+[connection signal="mouse_entered" from="StartPanel/Start" to="StartPanel" method="_on_start_mouse_entered"]
+[connection signal="mouse_exited" from="StartPanel/Start" to="StartPanel" method="_on_start_mouse_exited"]
 [connection signal="pressed" from="StartPanel/Start" to="BackgroundManager" method="_on_start_pressed"]
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]
 [connection signal="timeout" from="ProgressBar/Timer" to="ProgressBar" method="_on_timer_timeout"]

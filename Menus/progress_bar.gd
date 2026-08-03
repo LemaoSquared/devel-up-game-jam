@@ -3,7 +3,7 @@ extends ProgressBar
 @onready var gradient: TextureRect = $"../Background/Gradient"
 
 signal countdown_finished
-const COUNTDOWN_TIME: float = 5.0  # 1min 30 sec
+const COUNTDOWN_TIME: float = 94.0  # 1min 30 sec
 const FIRST_GRADIENT_TIME: float = 30.0
 const SECOND_GRADIENT_TIME: float = 70.0
 

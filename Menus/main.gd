@@ -6,8 +6,9 @@ const GameOverScreen = preload("uid://dh364flg18d2j")
 const CutsceneScene = preload("uid://bqfwjyhkbhn82")
 @onready var progress_bar: ProgressBar = $ProgressBar
 
+const BACKYARD = preload("uid://c13kxu5fitd1y")
+
 func _ready() -> void:
-	background_manager.sequence_finished.connect(_on_background_sequence_finished)
 	progress_bar.countdown_finished.connect(_on_progress_bar_countdown_finished)
 	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fade_rect.modulate.a = 1.0
@@ -33,10 +34,11 @@ func _on_progress_bar_countdown_finished() -> void:
 	add_child(cutscene)
 	await $Transition.Return()
 	
-	if cutscene.has_signal("cutscene_finished"):
-		await cutscene.cutscene_finished
-		cutscene.queue_free()
 
-	
-func _on_background_sequence_finished() -> void:
-	SceneTransition.change_scene(final_cutscene)
+	if cutscene.has_signal("cutscene_finished"):
+		AudioManager.stop_music()
+		AudioManager.play_music(BACKYARD)
+		await cutscene.cutscene_finished
+		var game_over := GameOverScreen.instantiate()
+		add_child(game_over)
+		background_manager.reset()

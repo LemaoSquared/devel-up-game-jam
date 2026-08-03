@@ -1,6 +1,7 @@
 extends Node2D
 
 @onready var color_rect_2: ColorRect = $ColorRect2
+const STREET = preload("uid://c6xk46jpedco4")
 
 @onready var retry_button: Button = $ColorRect/retry 
 @onready var score_label: Label = $ColorRect/ScoreLabel
@@ -11,6 +12,7 @@ extends Node2D
 @onready var pic_3: TextureRect = $Right
 
 const MAIN = preload("uid://fldj3nccgla6")
+
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -67,7 +69,10 @@ func _retry_button_pressed() -> void:
 	# --- CRITICAL FIX: Ensure the engine is fully unpaused before switching scenes ---
 	get_tree().paused = false
 	Engine.time_scale = 1.0
+	PauseManager.unpause_game()
+	PauseManager.disable_pause()
 	# ---------------------------------------------------------------------------------
 	SceneTransition.reload_scene()
 	await get_tree().create_timer(0.4).timeout
+	AudioManager.play_music(STREET)
 	queue_free()

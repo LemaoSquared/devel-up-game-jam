@@ -1,11 +1,13 @@
 extends Node2D
-
+const CAMERA = preload("uid://ce3v411cq8pkb")
+signal cutscene_finished
 @onready var kath: AnimatedSprite2D = $AnimatedSprite2D
 @onready var continue_button: Button = $Button
 @export var spawn_delay: float = 5.0
 var front_facing_scale: float = 2.25
 var back_facing_scale: float = 2.375
 @onready var camera_effects: CanvasLayer = $CameraEffects
+
 
 var target_button_y: float 
 
@@ -23,6 +25,7 @@ func _ready() -> void:
 	
 	kath_walk_to_grave()
 
+const GAME_OVER_SCREEN = preload("uid://dh364flg18d2j")
 
 func kath_walk_to_grave() -> void:
 	kath.scale = Vector2(front_facing_scale, front_facing_scale)
@@ -69,8 +72,11 @@ func _start_button_float() -> void:
 
 
 func _on_continue_button_pressed() -> void:
+	AudioManager.play_sound(CAMERA)
+	AudioManager.stop_music()
 	continue_button.disabled = true
 	camera_effects.visible = true
 	await camera_effects.flash_in()
 	await get_tree().create_timer(1.0).timeout
-	get_tree().change_scene_to_file("res://Menus/GameOverScreen.tscn")
+	self.queue_free()
+	cutscene_finished.emit()

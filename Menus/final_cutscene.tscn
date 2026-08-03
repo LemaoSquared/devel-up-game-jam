@@ -236,6 +236,26 @@ animations = [{
 "speed": 8.0
 }]
 
+[sub_resource type="Curve" id="Curve_q7s1o"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_36c8c"]
+curve = SubResource("Curve_q7s1o")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_b6n2d"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(41.945, 20, 1)
+emission_shape = 1
+emission_sphere_radius = 17.54
+direction = Vector3(-1, 0, 0)
+spread = 180.0
+initial_velocity_max = 12.29
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_36c8c")
+
 [node name="FinalCutscene" type="Node2D" unique_id=779027990]
 process_mode = 3
 script = ExtResource("1_p3wk3")
@@ -287,3 +307,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=747425648]
+position = Vector2(505, 329)
+amount = 32
+process_material = SubResource("ParticleProcessMaterial_b6n2d")
