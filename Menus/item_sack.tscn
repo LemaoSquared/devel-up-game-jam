@@ -87,7 +87,7 @@ process_material = SubResource("ParticleProcessMaterial_3owqy")
 
 [node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=87968451]
 visible = false
-self_modulate = Color(1, 0.7319139, 0.19644985, 1)
+self_modulate = Color(0.9999996, 0.7516539, 0.27617705, 1)
 position = Vector2(8.000008, -109)
 scale = Vector2(6.577778, 6.5777783)
 sprite_frames = SubResource("SpriteFrames_gmlkt")

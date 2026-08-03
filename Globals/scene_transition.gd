@@ -45,3 +45,14 @@ func change_scene(target_scene: PackedScene) -> void:
 	
 	# 3. Swipe away to reveal the new level
 	await swipe_out()
+
+# Add this to the bottom of your SceneTransition Autoload script
+func reload_scene() -> void:
+	# 1. Swipe the screen to black
+	await swipe_in()
+	
+	# 2. Change the actual level behind the darkness
+	get_tree().reload_current_scene()
+	
+	# 3. Swipe away to reveal the new level
+	await swipe_out()

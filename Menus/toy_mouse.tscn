@@ -106,7 +106,7 @@ frame_progress = 1.0
 
 [node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=56499414]
 visible = false
-self_modulate = Color(1, 0.39213943, 0.87325174, 1)
+self_modulate = Color(1, 0.68953043, 0.9182896, 1)
 position = Vector2(8, -56)
 scale = Vector2(3.9555557, 3.9555552)
 sprite_frames = SubResource("SpriteFrames_43urd")

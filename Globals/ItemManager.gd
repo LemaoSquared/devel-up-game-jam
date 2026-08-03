@@ -330,7 +330,7 @@ func _on_wave_timeout() -> void:
 	var chosen_pattern = pattern_base + randi_range(0, 1)
 	
 	# 5. Play the randomized pattern
-	if current_pattern > 30:
+	if current_pattern >= 1:
 		current_pattern = 1
 		return
 	play_pattern(chosen_pattern)

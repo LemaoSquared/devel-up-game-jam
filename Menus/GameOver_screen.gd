@@ -1,5 +1,7 @@
 extends Node2D
 
+@onready var color_rect_2: ColorRect = $ColorRect2
+
 @onready var retry_button: Button = $ColorRect/retry 
 @onready var score_label: Label = $ColorRect/ScoreLabel
 
@@ -15,6 +17,22 @@ func _ready() -> void:
 	retry_button.pressed.connect(_retry_button_pressed)
 	score_label.text = "Score: %d" % ScoreManager.score
 	
+	# --- NEW: Fade Out ColorRect2 on Scene Load ---
+	if color_rect_2:
+		color_rect_2.visible = true
+		color_rect_2.modulate.a = 1.0 # Start completely solid
+		
+		var fade_tween = create_tween()
+		fade_tween.set_ignore_time_scale(true) 
+		fade_tween.set_trans(Tween.TRANS_SINE)
+		fade_tween.set_ease(Tween.EASE_OUT)
+		
+		# Smoothly fade alpha down to 0 over 1.5 seconds
+		fade_tween.tween_property(color_rect_2, "modulate:a", 0.0, 1.5)
+		# Hide completely at the end to save on draw calls
+		fade_tween.tween_callback(func(): color_rect_2.visible = false)
+	# ---------------------------------------------
+	
 	# 2. Run the simple animation
 	throw_pictures_on_table()
 
@@ -24,6 +42,7 @@ func throw_pictures_on_table() -> void:
 	
 	for i in range(pictures.size()):
 		var p = pictures[i]
+		if not is_instance_valid(p): continue
 		
 		# Save where you placed them in the editor
 		var target_pos = p.position
@@ -37,6 +56,7 @@ func throw_pictures_on_table() -> void:
 		
 		# Tween them back to normal!
 		var tween = create_tween().set_parallel(true)
+		tween.set_ignore_time_scale(true) 
 		var delay = i * 0.25 # Delays the 2nd and 3rd picture slightly
 		
 		tween.tween_property(p, "position", target_pos, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT).set_delay(delay)
@@ -44,6 +64,10 @@ func throw_pictures_on_table() -> void:
 		tween.tween_property(p, "scale", target_scale, 0.5).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT).set_delay(delay)
 
 func _retry_button_pressed() -> void:
-	ScoreManager.reset_score()
-	SceneTransition.change_scene(MAIN)
-	ItemManager.current_pattern = 1
+	# --- CRITICAL FIX: Ensure the engine is fully unpaused before switching scenes ---
+	get_tree().paused = false
+	Engine.time_scale = 1.0
+	# ---------------------------------------------------------------------------------
+	SceneTransition.reload_scene()
+	await get_tree().create_timer(0.4).timeout
+	queue_free()

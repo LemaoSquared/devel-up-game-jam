@@ -2,9 +2,13 @@ extends Node2D
 @export var final_cutscene: PackedScene
 @onready var background_manager: Node2D = $BackgroundManager
 @onready var fade_rect: ColorRect = $CanvasLayer/FadeRect
+const GameOverScreen = preload("uid://dh364flg18d2j")
+const CutsceneScene = preload("uid://bqfwjyhkbhn82")
+@onready var progress_bar: ProgressBar = $ProgressBar
 
 func _ready() -> void:
 	background_manager.sequence_finished.connect(_on_background_sequence_finished)
+	progress_bar.countdown_finished.connect(_on_progress_bar_countdown_finished)
 	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fade_rect.modulate.a = 1.0
 
@@ -31,17 +35,8 @@ func _on_progress_bar_countdown_finished() -> void:
 	
 	if cutscene.has_signal("cutscene_finished"):
 		await cutscene.cutscene_finished
-		
-	await $Transition.transition() 
-	cutscene.queue_free()
-	
-	var game_over_instance := GameOverScreen.instantiate()
-	add_child(game_over_instance)
+		cutscene.queue_free()
 
-	await $Transition.Return()
 	
 func _on_background_sequence_finished() -> void:
-	if final_cutscene:
-		SceneTransition.change_scene(final_cutscene)
-	else:
-		push_error("Main Script: No final cutscene assigned in the Inspector!")
+	SceneTransition.change_scene(final_cutscene)

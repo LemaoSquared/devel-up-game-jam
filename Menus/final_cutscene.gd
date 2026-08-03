@@ -72,5 +72,5 @@ func _on_continue_button_pressed() -> void:
 	continue_button.disabled = true
 	camera_effects.visible = true
 	await camera_effects.flash_in()
-	
+	await get_tree().create_timer(1.0).timeout
 	get_tree().change_scene_to_file("res://Menus/GameOverScreen.tscn")

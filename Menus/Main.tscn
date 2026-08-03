@@ -76,11 +76,12 @@ shader = ExtResource("2_yng6g")
 shader_parameter/pixelation = 3.000000095
 shader_parameter/controlEdges = false
 
-[sub_resource type="Gradient" id="Gradient_gg5gl"]
-colors = PackedColorArray(0.70260495, 0.43896034, 0.7190824, 1, 1, 0.6592582, 0.27635324, 0.56078434)
+[sub_resource type="Gradient" id="Gradient_y8skh"]
+colors = PackedColorArray(1, 0.56078434, 0.972549, 0.46666667, 1, 0.70980394, 0.3529412, 0.69411767)
+metadata/_snap_count = 15
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_36c8c"]
-gradient = SubResource("Gradient_gg5gl")
+gradient = SubResource("Gradient_y8skh")
 fill_from = Vector2(0.10750853, 0.90273035)
 
 [sub_resource type="Curve" id="Curve_gg5gl"]
@@ -702,7 +703,7 @@ centered = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 1150.0
+offset_right = 1158.0
 offset_bottom = 650.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -843,6 +844,7 @@ script = ExtResource("15_aai8a")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 8.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2

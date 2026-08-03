@@ -63,6 +63,8 @@ func _on_start_pressed() -> void:
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.play_music(START_SOUND)
 	ItemManager.area = spawn_area
+	ScoreManager.reset_score()
+	ItemManager.current_pattern = 1
 	ItemManager.play_pattern(1)
 	
 	var obj = OBJECT_SCENE.instantiate()
