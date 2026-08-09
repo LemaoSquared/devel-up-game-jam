@@ -322,6 +322,7 @@ script = ExtResource("1_7x3k8")
 final_cutscene = ExtResource("3_g2jn8")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
+visible = false
 
 [node name="FadeRect" type="ColorRect" parent="CanvasLayer" unique_id=1786602749]
 anchors_preset = 15
@@ -809,23 +810,43 @@ texture = ExtResource("20_hdwr6")
 [node name="Start" type="TextureButton" parent="StartPanel" unique_id=1916219]
 texture_filter = 1
 layout_mode = 0
-offset_left = 318.0
-offset_top = 382.0
-offset_right = 350.0
-offset_bottom = 414.0
+offset_left = 259.0
+offset_top = 316.0
+offset_right = 291.0
+offset_bottom = 348.0
 scale = Vector2(4, 4)
 texture_normal = ExtResource("5_unj6y")
 
 [node name="Label" type="Label" parent="StartPanel" unique_id=107870984]
-visible = false
 layout_mode = 0
-offset_left = 255.0
-offset_top = 482.0
-offset_right = 399.0
-offset_bottom = 520.0
+offset_left = 359.0
+offset_top = 331.0
+offset_right = 503.0
+offset_bottom = 369.0
 theme_override_fonts/font = ExtResource("29_qn5f4")
-theme_override_font_sizes/font_size = 30
-text = "Begin Shopping"
+theme_override_font_sizes/font_size = 37
+text = "Story Mode"
+
+[node name="Start2" type="TextureButton" parent="StartPanel" unique_id=1310882319]
+self_modulate = Color(3.080368e-06, 0.8493475, 0.97114426, 1)
+texture_filter = 1
+layout_mode = 0
+offset_left = 256.0
+offset_top = 511.0
+offset_right = 288.0
+offset_bottom = 543.0
+scale = Vector2(4, 4)
+texture_normal = ExtResource("5_unj6y")
+
+[node name="Label2" type="Label" parent="StartPanel" unique_id=2127646751]
+layout_mode = 0
+offset_left = 359.0
+offset_top = 511.0
+offset_right = 522.0
+offset_bottom = 549.0
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 37
+text = "Endless Mode"
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=170122126]
 offset_left = -18.0
@@ -909,8 +930,6 @@ theme_override_font_sizes/font_size = 30
 text = "Version 1.1"
 horizontal_alignment = 2
 
-[connection signal="mouse_entered" from="StartPanel/Start" to="StartPanel" method="_on_start_mouse_entered"]
-[connection signal="mouse_exited" from="StartPanel/Start" to="StartPanel" method="_on_start_mouse_exited"]
 [connection signal="pressed" from="StartPanel/Start" to="BackgroundManager" method="_on_start_pressed"]
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]
 [connection signal="timeout" from="ProgressBar/Timer" to="ProgressBar" method="_on_timer_timeout"]
