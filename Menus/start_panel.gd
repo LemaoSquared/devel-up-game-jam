@@ -65,7 +65,10 @@ func _on_start_pressed() -> void:
 	
 	if hover_tween:
 		hover_tween.kill()
+	if hover_tween2:
+		hover_tween2.kill()
 		
+	# Button press feedback
 	var bounce_tween = create_tween()
 	bounce_tween.tween_property($Start, "position:y", $Start.position.y - 20.0, 0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	bounce_tween.tween_property($Start, "position:y", $Start.position.y, 0.3).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
@@ -78,6 +81,7 @@ func _on_start_pressed() -> void:
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.stop_music()
 	AudioManager.play_music(TAPTAP)
+	
 	ItemManager.area = spawn_area
 	ScoreManager.reset_score()
 	ItemManager.current_pattern = 1
@@ -102,7 +106,7 @@ func _on_start_pressed() -> void:
 	tween.tween_property(self, "modulate:a", 0.0, 0.6)
 	tween.tween_callback(queue_free)
 
-# --- START2 BUTTON LOGIC ---
+# --- ENDLESS START BUTTON LOGIC ---
 func _on_endless_hovered() -> void:
 	if is_transitioning: 
 		return 
@@ -127,48 +131,6 @@ func _on_endless_unhovered() -> void:
 	hover_tween2.tween_property($EndlessStart, "rotation_degrees", target_rotation, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	hover_tween2.tween_callback(func(): $EndlessStart.rotation_degrees = 0.0)
 
-
-# --- HELPER FUNCTIONS ---
-func _trigger_tutorial_sequence() -> void:
-	if tutorial_label:
-		tutorial_label.visible = true
-		tutorial_label.pivot_offset = tutorial_label.size / 2.0
-		tutorial_label.modulate.a = 0.0
-		
-		# 1. Start the flowy infinite tilt loop bound to the tutorial label node itself
-		var tilt_angle: float = deg_to_rad(6.0)
-		var tilt_duration: float = 0.8
-		var tilt_tween = tutorial_label.create_tween().set_loops()
-		tilt_tween.set_trans(Tween.TRANS_SINE)
-		tilt_tween.set_ease(Tween.EASE_IN_OUT)
-		tilt_tween.tween_property(tutorial_label, "rotation", -tilt_angle, tilt_duration)
-		tilt_tween.tween_property(tutorial_label, "rotation", tilt_angle, tilt_duration * 2.0)
-		tilt_tween.tween_property(tutorial_label, "rotation", -tilt_angle, tilt_duration * 2.0)
-		
-		# 2. Control the ENTIRE visibility lifetime timeline via a unified sequence tween
-		var lifecycle_tween = tutorial_label.create_tween()
-		lifecycle_tween.set_trans(Tween.TRANS_SINE)
-		
-		# Phase A: Fade in over 0.5 seconds
-		lifecycle_tween.set_ease(Tween.EASE_OUT)
-		lifecycle_tween.tween_property(tutorial_label, "modulate:a", 1.0, 0.5)
-		
-		# Phase B: Keep it visible on screen for exactly 6.0 seconds
-		lifecycle_tween.tween_interval(6.0)
-		
-		# Phase C: Fade it back out over 0.5 seconds
-		lifecycle_tween.set_ease(Tween.EASE_IN)
-		lifecycle_tween.tween_property(tutorial_label, "modulate:a", 0.0, 0.5)
-		
-		# Phase D: Cleanup state parameters immediately after opacity hits zero
-		lifecycle_tween.tween_callback(func():
-			if is_instance_valid(tilt_tween):
-				tilt_tween.kill()
-			tutorial_label.visible = false
-			tutorial_label.rotation = 0.0
-		)
-
-
 func _on_endless_start_pressed() -> void:
 	if is_transitioning:
 		return
@@ -178,6 +140,11 @@ func _on_endless_start_pressed() -> void:
 		hover_tween.kill()
 	if hover_tween2:
 		hover_tween2.kill()
+		
+	# Added: Missing button press feedback bounce animation
+	var bounce_tween = create_tween()
+	bounce_tween.tween_property($EndlessStart, "position:y", $EndlessStart.position.y - 20.0, 0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	bounce_tween.tween_property($EndlessStart, "position:y", $EndlessStart.position.y, 0.3).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 
 	AudioManager.play_sound(SHOP_BELL)
 	$Start.disabled = true
@@ -194,12 +161,54 @@ func _on_endless_start_pressed() -> void:
 	ItemManager.start_endless()
 	ItemManager.is_game_over = false
 	
-	background_manager.start_sequence()
-	_trigger_tutorial_sequence()
+	# Spawn treat effect at Endless button position
+	var obj = OBJECT_SCENE.instantiate()
+	get_tree().current_scene.add_child(obj)
+	obj.global_position = $EndlessStart.global_position
 	
+	var obj_tween = create_tween()
+	obj_tween.set_trans(Tween.TRANS_CUBIC)
+	obj_tween.set_ease(Tween.EASE_OUT)
+	obj_tween.tween_callback(obj.queue_free)
+
+	_trigger_tutorial_sequence()
 	
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_CUBIC)
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "modulate:a", 0.0, 0.6)
 	tween.tween_callback(queue_free)
+
+# --- HELPER FUNCTIONS ---
+func _trigger_tutorial_sequence() -> void:
+	if tutorial_label:
+		tutorial_label.visible = true
+		tutorial_label.pivot_offset = tutorial_label.size / 2.0
+		tutorial_label.modulate.a = 0.0
+		
+		var tilt_angle: float = deg_to_rad(6.0)
+		var tilt_duration: float = 0.8
+		var tilt_tween = tutorial_label.create_tween().set_loops()
+		tilt_tween.set_trans(Tween.TRANS_SINE)
+		tilt_tween.set_ease(Tween.EASE_IN_OUT)
+		tilt_tween.tween_property(tutorial_label, "rotation", -tilt_angle, tilt_duration)
+		tilt_tween.tween_property(tutorial_label, "rotation", tilt_angle, tilt_duration * 2.0)
+		tilt_tween.tween_property(tutorial_label, "rotation", -tilt_angle, tilt_duration * 2.0)
+		
+		var lifecycle_tween = tutorial_label.create_tween()
+		lifecycle_tween.set_trans(Tween.TRANS_SINE)
+		
+		lifecycle_tween.set_ease(Tween.EASE_OUT)
+		lifecycle_tween.tween_property(tutorial_label, "modulate:a", 1.0, 0.5)
+		
+		lifecycle_tween.tween_interval(6.0)
+		
+		lifecycle_tween.set_ease(Tween.EASE_IN)
+		lifecycle_tween.tween_property(tutorial_label, "modulate:a", 0.0, 0.5)
+		
+		lifecycle_tween.tween_callback(func():
+			if is_instance_valid(tilt_tween):
+				tilt_tween.kill()
+			tutorial_label.visible = false
+			tutorial_label.rotation = 0.0
+		)

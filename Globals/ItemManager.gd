@@ -46,14 +46,17 @@ var time_duration_perBatch: float = 6.0
 var spawned_objects: Array[Node] = []
 var wave_one_objects: Array[Node] = []
 var drop_wave_triggered: bool = false
-var batch_start_time: float = 0.0                  
+var batch_start_time: float = 0.0                      
 var current_area: Control
 var current_parent: Node
 var current_pattern
 var scored_objects: Array[Node] = []
 var area
 
-#Endless
+# Wave Timer Reference
+var active_wave_timer: SceneTreeTimer = null
+
+# Endless
 var is_endless: bool = false
 var endless_pattern_number: int = 1
 var is_game_over: bool = false
@@ -62,7 +65,6 @@ var base_time_duration_perBatch: float = 6.0
 @export var endless_speed_step: float = 0.5    
 @export var endless_min_wave_time: float = 2.5    
 
-
 # --- Shared Grid & Distance Tracking ---
 var occupied_cells: Array[Vector2i] = []
 
@@ -70,7 +72,10 @@ func _ready() -> void:
 	current_pattern = 1 + randi_range(0, 1)
 	current_parent = get_tree().current_scene
 	base_time_duration_perBatch = time_duration_perBatch
-	
+
+func _exit_tree() -> void:
+	clear_objects()
+
 func start_endless() -> void:
 	is_endless = true
 	is_game_over = false
@@ -317,6 +322,11 @@ func _find_valid_position(existing: Array[Vector2]) -> Variant:
 	return null
 
 func clear_objects() -> void:
+	# Immediately stop pending wave timer callbacks
+	if active_wave_timer and active_wave_timer.timeout.is_connected(_on_wave_timeout):
+		active_wave_timer.timeout.disconnect(_on_wave_timeout)
+		active_wave_timer = null
+
 	for obj in spawned_objects:
 		if is_instance_valid(obj):
 			obj.queue_free()
@@ -340,7 +350,7 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 			item_collected.emit(item_type)
 	else:
 		print("Item expired (not clicked): ", Item.keys()[item_type])
-		if is_endless:
+		if is_endless and !(item_type == Item.GARBAGE or item_type == Item.SHOES):
 			LivesManager.lose_life()
 
 	if enable_drop_wave and not drop_wave_triggered and wave_one_objects.is_empty():
@@ -351,8 +361,8 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 			pass
 
 func _on_wave_timeout() -> void:
-	
-	if is_game_over:
+	# Guard: Stop execution if node is freed, outside tree, or game over
+	if not is_inside_tree() or is_game_over or current_pattern == -1:
 		return
 
 	if is_endless:
@@ -422,7 +432,6 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 			_animate_drop_in(obj, pos, delay_index)
 
 func play_pattern(number: int):
-	
 	if is_game_over:
 		return
 		
@@ -497,5 +506,9 @@ func play_pattern(number: int):
 				6: spawn_random_pop_in_rect(Item.RAT, count, current_parent)
 				7: spawn_random_pop_in_rect(Item.SACK, count, current_parent)
 
-	var wave_timer = get_tree().create_timer(time_duration_perBatch, false)
-	wave_timer.timeout.connect(_on_wave_timeout)
+	# Disconnect existing timer if one is already active
+	if active_wave_timer and active_wave_timer.timeout.is_connected(_on_wave_timeout):
+		active_wave_timer.timeout.disconnect(_on_wave_timeout)
+
+	active_wave_timer = get_tree().create_timer(time_duration_perBatch, false)
+	active_wave_timer.timeout.connect(_on_wave_timeout)

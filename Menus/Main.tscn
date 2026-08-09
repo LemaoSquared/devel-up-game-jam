@@ -326,11 +326,10 @@ script = ExtResource("1_7x3k8")
 final_cutscene = ExtResource("3_g2jn8")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
-visible = false
 
 [node name="FadeRect" type="ColorRect" parent="CanvasLayer" unique_id=1786602749]
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = -1
+anchor_right = 1.0147569
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -869,7 +868,7 @@ script = ExtResource("5_vocn1")
 process_mode = 1
 visible = false
 top_level = true
-offset_right = 1150.0
+offset_right = 1167.0
 offset_bottom = 650.0
 script = ExtResource("18_vl1oa")
 
@@ -972,6 +971,7 @@ vertical_alignment = 1
 
 [connection signal="pressed" from="StartPanel/Start" to="BackgroundManager" method="_on_start_pressed"]
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]
+[connection signal="pressed" from="StartPanel/EndlessStart" to="BackgroundManager" method="_on_endless_start_pressed"]
 [connection signal="pressed" from="StartPanel/EndlessStart" to="StartPanel" method="_on_endless_start_pressed"]
 [connection signal="timeout" from="ProgressBar/Timer" to="ProgressBar" method="_on_timer_timeout"]
 [connection signal="pressed" from="Pause/VBoxContainer/Resume" to="Pause" method="_on_resume_pressed"]
