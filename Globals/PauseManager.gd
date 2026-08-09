@@ -1,8 +1,6 @@
 extends Node
-
 signal game_paused
 signal game_unpaused
-
 var is_paused: bool = false
 var pause_enabled: bool = false  
 
@@ -12,10 +10,10 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not pause_enabled:
 		return
-
-	if event.is_action_pressed("pause"):
+	if event.is_action_pressed("pause") and not event.is_echo():
 		toggle_pause()
 		get_viewport().set_input_as_handled()
+		print("PRESSED PAUSED")
 
 func enable_pause() -> void:
 	pause_enabled = true
@@ -30,13 +28,9 @@ func toggle_pause() -> void:
 		pause_game()
 
 func pause_game() -> void:
+	is_paused = true
 	get_tree().paused = true
-
-func show_pause_menu() -> void:
-	$Pause.visible = true
-
-func hide_pause_menu() -> void:
-	$Pause.visible = false
+	game_paused.emit()
 
 func unpause_game() -> void:
 	is_paused = false

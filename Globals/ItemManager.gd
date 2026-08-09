@@ -497,5 +497,5 @@ func play_pattern(number: int):
 				6: spawn_random_pop_in_rect(Item.RAT, count, current_parent)
 				7: spawn_random_pop_in_rect(Item.SACK, count, current_parent)
 
-	var wave_timer = get_tree().create_timer(time_duration_perBatch, true)
+	var wave_timer = get_tree().create_timer(time_duration_perBatch, false)
 	wave_timer.timeout.connect(_on_wave_timeout)

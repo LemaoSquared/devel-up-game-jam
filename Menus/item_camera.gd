@@ -18,7 +18,7 @@ func _ready() -> void:
 	camera_area.input_event.connect(_on_area_input_event)
 	camera_area.input_pickable = true
 
-	var timer := get_tree().create_timer(Duration)
+	var timer := get_tree().create_timer(Duration, false)
 	timer.timeout.connect(_on_duration_expired)
 	start_floating(self)
 
