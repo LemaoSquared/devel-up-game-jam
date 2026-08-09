@@ -2,6 +2,7 @@ extends Node2D
 signal popped_out(obj: Node)
 const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 const GIFT = preload("uid://fojbgtm48t6b")
+const POLAROID = preload("uid://d1yvy81a81kxm")
 
 var is_popping: bool = false
 var points_value: int = 0
@@ -33,8 +34,9 @@ func _on_area_input_event(
 		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
 		gift.visible = true
 		gift.play("default")
+		AudioManager.play_sound(POLAROID)
 		await gift.animation_finished
-		pop_out()
+		pop_out(true)
 
 func appear() -> void:
 	var target_scale := scale
@@ -61,10 +63,12 @@ func start_tilting_loop(obj: Node2D) -> void:
 	tween.tween_property(obj, "rotation", tilt_angle, duration * 2.0)
 	tween.tween_property(obj, "rotation", 0.0, duration)
 
-func pop_out() -> void:
+func pop_out(is_clicked) -> void:
 	if is_popping:
 		return
 	is_popping = true
+	if is_clicked: 
+		ScoreManager.score += 20
 	polaroid.input_pickable = false
 
 	if points_value != 0:

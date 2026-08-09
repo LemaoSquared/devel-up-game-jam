@@ -2,10 +2,12 @@
 
 [ext_resource type="Shader" uid="uid://d2jeis1lksurj" path="res://Shaders/pixelater.gdshader" id="1_daqg1"]
 [ext_resource type="Script" uid="uid://bt20uxnuh7dwk" path="res://Menus/final_cutscene.gd" id="1_p3wk3"]
-[ext_resource type="Texture2D" uid="uid://dfp5ygdkbg8rt" path="res://Assets/BackgroundGrave.png" id="2_d30gm"]
+[ext_resource type="Texture2D" uid="uid://d0qayh47g6u6k" path="res://Assets/BackgroundGravePolish.png" id="3_q7s1o"]
 [ext_resource type="Texture2D" uid="uid://cctenblpladj4" path="res://Assets/Character Sprite/EndIdle1.png" id="4_34sbx"]
 [ext_resource type="Texture2D" uid="uid://xdl7124u5wa7" path="res://Assets/Character Sprite/Walking_Outside.png" id="4_t7ibe"]
 [ext_resource type="Texture2D" uid="uid://dhvp0fpg828fg" path="res://Assets/Character Sprite/walk_to_stand-Sheet.png" id="5_t7ibe"]
+[ext_resource type="Texture2D" uid="uid://d3yb3n37t5ojd" path="res://Assets/Object Assets/camera-Sheet.png" id="7_g2m8j"]
+[ext_resource type="Script" uid="uid://uqxvrg1abja5" path="res://Menus/camera_effects.gd" id="8_b6n2d"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_p3wk3"]
 shader = ExtResource("1_daqg1")
@@ -198,6 +200,62 @@ animations = [{
 "speed": 8.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_gvesa"]
+atlas = ExtResource("7_g2m8j")
+region = Rect2(0, 0, 85, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t1dcv"]
+atlas = ExtResource("7_g2m8j")
+region = Rect2(85, 0, 85, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pl6hg"]
+atlas = ExtResource("7_g2m8j")
+region = Rect2(170, 0, 85, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_20q88"]
+atlas = ExtResource("7_g2m8j")
+region = Rect2(255, 0, 85, 49)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_hf7om"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gvesa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t1dcv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pl6hg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_20q88")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="Curve" id="Curve_q7s1o"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_36c8c"]
+curve = SubResource("Curve_q7s1o")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_b6n2d"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(41.945, 20, 1)
+emission_shape = 1
+emission_sphere_radius = 17.54
+direction = Vector3(-1, 0, 0)
+spread = 180.0
+initial_velocity_max = 12.29
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_36c8c")
+
 [node name="FinalCutscene" type="Node2D" unique_id=779027990]
 process_mode = 3
 script = ExtResource("1_p3wk3")
@@ -212,7 +270,7 @@ offset_right = 1152.0
 offset_bottom = 648.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_d30gm")
+texture = ExtResource("3_q7s1o")
 expand_mode = 1
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1759505320]
@@ -221,3 +279,36 @@ position = Vector2(545, 463.99997)
 scale = Vector2(2.25, 2.25)
 sprite_frames = SubResource("SpriteFrames_5c5y6")
 animation = &"walk_to_stand"
+
+[node name="Button" type="Button" parent="." unique_id=1658923211]
+self_modulate = Color(1, 1, 1, 0)
+offset_left = 976.0
+offset_top = 248.0
+offset_right = 1072.0
+offset_bottom = 312.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Button" unique_id=1577629390]
+process_mode = 3
+position = Vector2(48.00003, 24)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_hf7om")
+autoplay = "default"
+frame_progress = 0.81605047
+metadata/_edit_lock_ = true
+
+[node name="CameraEffects" type="CanvasLayer" parent="." unique_id=25056617]
+visible = false
+script = ExtResource("8_b6n2d")
+
+[node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=356237054]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=747425648]
+position = Vector2(505, 329)
+amount = 32
+process_material = SubResource("ParticleProcessMaterial_b6n2d")
