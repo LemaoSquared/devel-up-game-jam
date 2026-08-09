@@ -32,9 +32,11 @@ func _ready() -> void:
 
 
 func _on_progress_bar_countdown_finished() -> void:
+	PauseManager.disable_pause()
 	await _run_game_over_sequence()
 	
 func _on_lives_depleted() -> void:
+	PauseManager.disable_pause()
 	ItemManager.stop_endless()
 	await _run_game_over_sequence()
 	

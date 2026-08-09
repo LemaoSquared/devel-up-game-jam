@@ -55,8 +55,7 @@ func launch() -> void:
 		return
 
 	var life_timer := get_tree().create_timer(
-		lifetime,
-		true
+		lifetime, false
 	)
 	life_timer.timeout.connect(_on_lifetime_expired)
 func _spread_apart() -> void:

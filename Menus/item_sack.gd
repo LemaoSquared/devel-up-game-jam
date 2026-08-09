@@ -48,7 +48,7 @@ func _ready() -> void:
 	sack_sprite.region_filter_clip_enabled = true
 	update_sack_sprite()
 
-	var timer = get_tree().create_timer(Duration)
+	var timer = get_tree().create_timer(Duration, false)
 	timer.timeout.connect(_on_duration_expired)
 
 	start_tilting_loop(self)
