@@ -23,6 +23,7 @@ color = Color(0.9999997, 0.5979619, 0.10219275, 1)
 [node name="Particles" type="Node2D" unique_id=1635401699]
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1546279001]
+process_mode = 3
 top_level = true
 z_index = 1000
 position = Vector2(-2, 4)
