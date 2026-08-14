@@ -45,10 +45,10 @@ func _on_quit_pressed() -> void:
 	Engine.time_scale = 1.0
 	PauseManager.unpause_game()
 	PauseManager.disable_pause()
+	ItemManager.is_game_over = true 
+	ItemManager.clear_objects()
 	SceneTransition.reload_scene()
 	AudioManager.stop_music()
-	ItemManager.clear_objects()
-	ItemManager.is_game_over = true # Ensures any pending async callbacks abort safely
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.play_music(STREET)
 	queue_free()
