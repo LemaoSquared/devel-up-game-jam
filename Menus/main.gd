@@ -5,10 +5,14 @@ extends Node2D
 const GameOverScreen = preload("uid://dh364flg18d2j")
 const CutsceneScene = preload("uid://bqfwjyhkbhn82")
 @onready var progress_bar: ProgressBar = $ProgressBar
+@onready var pause_button: TextureButton = $"Pause Button"
+
 @onready var pause_panel: Panel = $CanvasLayer2/Pause
+
 const BACKYARD = preload("uid://c13kxu5fitd1y")
 
 func _ready() -> void:
+	pause_button.visible = false
 	progress_bar.countdown_finished.connect(_on_progress_bar_countdown_finished)
 	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fade_rect.modulate.a = 1.0
@@ -51,6 +55,7 @@ func _on_lives_depleted() -> void:
 func _run_game_over_sequence(show_cutscene: bool = true) -> void:
 	await $Transition.transition()
 	$Background.retreat_cinematic_bars()
+	
 
 	if show_cutscene:
 		var cutscene := CutsceneScene.instantiate()

@@ -32,7 +32,8 @@
 [ext_resource type="Texture2D" uid="uid://c0b5fuudbemxp" path="res://Assets/Polaroid Pictures/polaroid2.png" id="21_qn5f4"]
 [ext_resource type="Texture2D" uid="uid://xdl7124u5wa7" path="res://Assets/Character Sprite/Walking_Outside.png" id="21_y8skh"]
 [ext_resource type="FontFile" uid="uid://cqwfub3g65jm6" path="res://Assets/Baby Night.otf" id="29_qn5f4"]
-[ext_resource type="Script" uid="uid://dvph0r1e7kdci" path="res://Menus/pause_panel.gd" id="33_ydmdm"]
+[ext_resource type="Texture2D" uid="uid://om4hstnd8h0c" path="res://Assets/Aseprite Files/pause_button.png" id="33_ydmdm"]
+[ext_resource type="Script" uid="uid://dcnsfgxlkspfm" path="res://Menus/pause_button.gd" id="34_lugpe"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i0d87"]
 shader = ExtResource("2_yng6g")
@@ -318,8 +319,17 @@ height = 742
 use_hdr = true
 fill_from = Vector2(0, 0.004347826)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frjpc"]
-bg_color = Color(0.79658896, 0.52589, 0.38620448, 1)
+[sub_resource type="AtlasTexture" id="AtlasTexture_hf7om"]
+atlas = ExtResource("33_ydmdm")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_78vf1"]
+atlas = ExtResource("33_ydmdm")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vdyg7"]
+atlas = ExtResource("33_ydmdm")
+region = Rect2(0, 48, 48, 48)
 
 [node name="Main" type="Node2D" unique_id=1521551065]
 script = ExtResource("1_7x3k8")
@@ -933,44 +943,16 @@ theme_override_font_sizes/font_size = 30
 text = "Version 1.1"
 horizontal_alignment = 2
 
-[node name="CanvasLayer2" type="CanvasLayer" parent="." unique_id=191738156]
-
-[node name="Pause" type="Panel" parent="CanvasLayer2" unique_id=1883136500]
-visible = false
-offset_left = 237.0
-offset_top = 172.0
-offset_right = 837.0
-offset_bottom = 522.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_frjpc")
-script = ExtResource("33_ydmdm")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/Pause" unique_id=1996106132]
-layout_mode = 0
-offset_top = 103.0
-offset_right = 600.0
-offset_bottom = 206.0
-theme_override_constants/separation = 60
-
-[node name="Resume" type="Button" parent="CanvasLayer2/Pause/VBoxContainer" unique_id=1902629026]
-layout_mode = 2
-theme_override_font_sizes/font_size = 60
-text = "Resume"
-
-[node name="Quit" type="Button" parent="CanvasLayer2/Pause/VBoxContainer" unique_id=1204244886]
-layout_mode = 2
-theme_override_font_sizes/font_size = 60
-text = "Quit"
-
-[node name="Label" type="Label" parent="CanvasLayer2/Pause" unique_id=1002909359]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 83.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 50
-text = "Pause"
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="Pause Button" type="TextureButton" parent="." unique_id=1299455263]
+offset_left = 8.0
+offset_top = 72.0
+offset_right = 56.0
+offset_bottom = 120.0
+texture_normal = SubResource("AtlasTexture_hf7om")
+texture_pressed = SubResource("AtlasTexture_78vf1")
+texture_hover = SubResource("AtlasTexture_vdyg7")
+stretch_mode = 0
+script = ExtResource("34_lugpe")
 
 [connection signal="pressed" from="StartPanel/Start" to="BackgroundManager" method="_on_start_pressed"]
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]

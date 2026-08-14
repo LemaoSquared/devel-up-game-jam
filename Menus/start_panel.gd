@@ -12,6 +12,7 @@ const TAPTAP = preload("uid://bnvtg6wxrfprs")
 
 @onready var entity: AnimatedSprite2D = $"../Entity"
 @onready var background_manager: Node2D = $"../BackgroundManager"
+@onready var pause_button: TextureButton = $"../Pause Button"
 
 @export var spawn_area: Control
 
@@ -106,6 +107,11 @@ func _on_start_pressed() -> void:
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "modulate:a", 0.0, 0.6)
 	tween.tween_callback(queue_free)
+		
+	pause_button.visible = true
+
+# --- START2 BUTTON LOGIC ---
+func _on_start2_hovered() -> void:
 
 # --- ENDLESS START BUTTON LOGIC ---
 func _on_endless_hovered() -> void:
@@ -161,6 +167,8 @@ func _on_endless_start_pressed() -> void:
 	LivesManager.reset_lives()
 	ItemManager.start_endless()
 	ItemManager.is_game_over = false
+	
+	pause_button.visible = true
 	
 	# Spawn treat effect at Endless button position
 	var obj = OBJECT_SCENE.instantiate()
