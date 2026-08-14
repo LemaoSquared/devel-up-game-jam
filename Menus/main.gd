@@ -17,23 +17,37 @@ func _ready() -> void:
 	tween.set_trans(Tween.TRANS_SINE)
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(fade_rect, "modulate:a", 0.0, 1.0)
-
+	
+	#Story
 	$StartPanel.game_started.connect($Background.close_cinematic_bars)
 	$StartPanel.game_started.connect($ProgressBar.start_countdown)
 	$StartPanel.game_started.connect(PauseManager.enable_pause)
-
+	
+	#Endless
+	$StartPanel.endless_started.connect($Background.close_cinematic_bars)
+	$StartPanel.endless_started.connect(PauseManager.enable_pause)
+	LivesManager.game_over.connect(_on_lives_depleted)
+	
 	$StartPanel.visible = true
 
 
 func _on_progress_bar_countdown_finished() -> void:
-	await $Transition.transition()
-
-	$Background.retreat_cinematic_bars()
+	PauseManager.disable_pause()
+	await _run_game_over_sequence()
 	
+func _on_lives_depleted() -> void:
+	PauseManager.disable_pause()
+	ItemManager.stop_endless()
+	await _run_game_over_sequence()
+	
+
+func _run_game_over_sequence() -> void:
+	await $Transition.transition()
+	$Background.retreat_cinematic_bars()
+
 	var cutscene := CutsceneScene.instantiate()
 	add_child(cutscene)
 	await $Transition.Return()
-	
 
 	if cutscene.has_signal("cutscene_finished"):
 		AudioManager.stop_music()

@@ -52,6 +52,7 @@ func _ready():
 func _on_start_pressed() -> void:
 	start_sequence()
 
+
 func start_sequence():
 	var next_index = current_index + 1
 	if next_index >= backgrounds.size():
@@ -105,3 +106,7 @@ func _apply_state():
 			bg.process_mode = Node.PROCESS_MODE_INHERIT
 		else:
 			bg.process_mode = Node.PROCESS_MODE_DISABLED
+
+
+func _on_endless_start_pressed() -> void:
+	start_sequence()

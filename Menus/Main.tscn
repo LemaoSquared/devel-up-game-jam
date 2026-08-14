@@ -32,6 +32,7 @@
 [ext_resource type="Texture2D" uid="uid://c0b5fuudbemxp" path="res://Assets/Polaroid Pictures/polaroid2.png" id="21_qn5f4"]
 [ext_resource type="Texture2D" uid="uid://xdl7124u5wa7" path="res://Assets/Character Sprite/Walking_Outside.png" id="21_y8skh"]
 [ext_resource type="FontFile" uid="uid://cqwfub3g65jm6" path="res://Assets/Baby Night.otf" id="29_qn5f4"]
+[ext_resource type="Script" uid="uid://dvph0r1e7kdci" path="res://Menus/pause_panel.gd" id="33_ydmdm"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i0d87"]
 shader = ExtResource("2_yng6g")
@@ -317,16 +318,18 @@ height = 742
 use_hdr = true
 fill_from = Vector2(0, 0.004347826)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frjpc"]
+bg_color = Color(0.79658896, 0.52589, 0.38620448, 1)
+
 [node name="Main" type="Node2D" unique_id=1521551065]
 script = ExtResource("1_7x3k8")
 final_cutscene = ExtResource("3_g2jn8")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
-visible = false
 
 [node name="FadeRect" type="ColorRect" parent="CanvasLayer" unique_id=1786602749]
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = -1
+anchor_right = 1.0147569
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -817,7 +820,7 @@ offset_bottom = 348.0
 scale = Vector2(4, 4)
 texture_normal = ExtResource("5_unj6y")
 
-[node name="Label" type="Label" parent="StartPanel" unique_id=107870984]
+[node name="Story" type="Label" parent="StartPanel" unique_id=107870984]
 layout_mode = 0
 offset_left = 359.0
 offset_top = 331.0
@@ -827,7 +830,7 @@ theme_override_fonts/font = ExtResource("29_qn5f4")
 theme_override_font_sizes/font_size = 37
 text = "Story Mode"
 
-[node name="Start2" type="TextureButton" parent="StartPanel" unique_id=1310882319]
+[node name="EndlessStart" type="TextureButton" parent="StartPanel" unique_id=1310882319]
 self_modulate = Color(3.080368e-06, 0.8493475, 0.97114426, 1)
 texture_filter = 1
 layout_mode = 0
@@ -838,7 +841,7 @@ offset_bottom = 543.0
 scale = Vector2(4, 4)
 texture_normal = ExtResource("5_unj6y")
 
-[node name="Label2" type="Label" parent="StartPanel" unique_id=2127646751]
+[node name="Endless" type="Label" parent="StartPanel" unique_id=2127646751]
 layout_mode = 0
 offset_left = 359.0
 offset_top = 511.0
@@ -865,7 +868,7 @@ script = ExtResource("5_vocn1")
 process_mode = 1
 visible = false
 top_level = true
-offset_right = 1150.0
+offset_right = 1167.0
 offset_bottom = 650.0
 script = ExtResource("18_vl1oa")
 
@@ -930,6 +933,46 @@ theme_override_font_sizes/font_size = 30
 text = "Version 1.1"
 horizontal_alignment = 2
 
+[node name="Pause" type="Panel" parent="." unique_id=1883136500]
+offset_left = 237.0
+offset_top = 172.0
+offset_right = 837.0
+offset_bottom = 522.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_frjpc")
+script = ExtResource("33_ydmdm")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Pause" unique_id=1996106132]
+layout_mode = 0
+offset_top = 103.0
+offset_right = 600.0
+offset_bottom = 206.0
+theme_override_constants/separation = 60
+
+[node name="Resume" type="Button" parent="Pause/VBoxContainer" unique_id=1902629026]
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+text = "Resume"
+
+[node name="Quit" type="Button" parent="Pause/VBoxContainer" unique_id=1204244886]
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+text = "Quit"
+
+[node name="Label" type="Label" parent="Pause" unique_id=1002909359]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 83.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 50
+text = "Pause"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [connection signal="pressed" from="StartPanel/Start" to="BackgroundManager" method="_on_start_pressed"]
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]
+[connection signal="pressed" from="StartPanel/EndlessStart" to="BackgroundManager" method="_on_endless_start_pressed"]
+[connection signal="pressed" from="StartPanel/EndlessStart" to="StartPanel" method="_on_endless_start_pressed"]
 [connection signal="timeout" from="ProgressBar/Timer" to="ProgressBar" method="_on_timer_timeout"]
+[connection signal="pressed" from="Pause/VBoxContainer/Resume" to="Pause" method="_on_resume_pressed"]
+[connection signal="pressed" from="Pause/VBoxContainer/Quit" to="Pause" method="_on_quit_pressed"]

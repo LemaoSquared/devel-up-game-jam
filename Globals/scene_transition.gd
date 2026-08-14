@@ -12,7 +12,7 @@ func _ready() -> void:
 		return
 		
 	# Ensure the node handles processing even if the main game tree is paused
-	process_mode = PROCESS_MODE_ALWAYS
+	#process_mode = PROCESS_MODE_ALWAYS
 	
 	# Reset pivot and grab starting position cleanly
 	await get_tree().process_frame # Wait one frame for the layout engine to calculate true size
@@ -39,21 +39,23 @@ func run_animation_test() -> void:
 	
 	is_testing = false
 
-func swipe_in() -> void:
+func swipe_in(ignore_pause: bool = false) -> void:
 	if not is_instance_valid(transition_rect): return
 	
 	var screen_width = get_viewport().get_visible_rect().size.x
 	transition_rect.position.x = screen_width
 	
 	var tween = create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS if ignore_pause else Tween.TWEEN_PAUSE_STOP)
 	tween.set_trans(Tween.TRANS_LINEAR)
 	tween.tween_property(transition_rect, "position:x", -1536.0, swipe_speed)
 	await tween.finished
 
-func swipe_out() -> void:
+func swipe_out(ignore_pause: bool = false) -> void:
 	if not is_instance_valid(transition_rect): return
 	
 	var tween = create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS if ignore_pause else Tween.TWEEN_PAUSE_STOP)
 	tween.set_trans(Tween.TRANS_LINEAR)
 	
 	var screen_width = get_viewport().get_visible_rect().size.x

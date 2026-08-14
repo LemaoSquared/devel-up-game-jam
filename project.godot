@@ -30,6 +30,7 @@ ParticleManager="*uid://cj4m3gvncgfyn"
 ScoreManager="*uid://bj1sl56gfowe6"
 SceneTransition="*uid://dlpmt1xdaclks"
 WindowManager="*uid://lo33st6fr55x"
+LivesManager="*uid://dajsf3pjvrkf8"
 
 [display]
 
@@ -46,7 +47,8 @@ version_control/autoload_on_startup=true
 
 pause={
 "deadzone": 0.2,
-"events": []
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194305,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
 }
 
 [physics]

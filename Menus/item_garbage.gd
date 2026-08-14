@@ -16,7 +16,7 @@ func _ready() -> void:
 	add_to_group("camera_targets")
 	$Garbage.input_event.connect(_on_area_input_event)
 	$Garbage.input_pickable = true
-	var timer = get_tree().create_timer(Duration)
+	var timer = get_tree().create_timer(Duration, false)
 	timer.timeout.connect(_on_duration_expired)
 	global_position.x += randi_range(-20,20)
 	global_position.y += randi_range(-20,20)

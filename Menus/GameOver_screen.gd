@@ -71,6 +71,8 @@ func _retry_button_pressed() -> void:
 	Engine.time_scale = 1.0
 	PauseManager.unpause_game()
 	PauseManager.disable_pause()
+	ItemManager.stop_endless()
+	ItemManager.clear_objects()
 	# ---------------------------------------------------------------------------------
 	SceneTransition.reload_scene()
 	await get_tree().create_timer(0.4).timeout

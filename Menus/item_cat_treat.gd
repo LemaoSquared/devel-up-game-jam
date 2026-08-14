@@ -26,7 +26,7 @@ func _ready() -> void:
 	$Treat.input_event.connect(_on_area_input_event)
 	$Treat.input_pickable = true
 	gift.visible = false
-	var timer = get_tree().create_timer(Duration)
+	var timer = get_tree().create_timer(Duration, false)
 	timer.timeout.connect(_on_duration_expired)
 	start_tilting_loop(self)
 

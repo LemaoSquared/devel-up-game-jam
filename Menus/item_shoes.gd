@@ -40,7 +40,7 @@ func _ready() -> void:
 	$Shoes.input_event.connect(_on_area_input_event)
 	$Shoes.input_pickable = true
 
-	var timer = get_tree().create_timer(pop_duration_seconds, true)
+	var timer = get_tree().create_timer(pop_duration_seconds, false)
 	timer.timeout.connect(_on_duration_expired)
 
 
@@ -89,7 +89,7 @@ func _on_duration_expired() -> void:
 	if is_popping:
 		return
 	var stagger = randf_range(0.0, fall_stagger_max)
-	var timer = get_tree().create_timer(stagger, true)
+	var timer = get_tree().create_timer(stagger, false)
 	timer.timeout.connect(func():
 		if not is_popping:
 			fall_and_disappear()
