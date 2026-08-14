@@ -65,7 +65,7 @@ texture = SubResource("AtlasTexture_frjpc")
 
 [node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=1673341156]
 visible = false
-self_modulate = Color(0.76931274, 0.9773807, 0, 1)
+self_modulate = Color(0.9677065, 0.8902362, 7.70092e-07, 1)
 position = Vector2(-5.684342e-14, -40)
 scale = Vector2(3.0222223, 3.0222223)
 sprite_frames = SubResource("SpriteFrames_a6wth")

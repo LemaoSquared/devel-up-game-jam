@@ -106,4 +106,8 @@ rotation = -0.2617994
 texture = SubResource("AtlasTexture_qup64")
 expand_mode = 1
 
+[node name="ColorRect2" type="ColorRect" parent="." unique_id=1773615071]
+offset_right = 1167.0
+offset_bottom = 659.0
+
 [connection signal="pressed" from="ColorRect/retry" to="." method="_on_button_pressed"]

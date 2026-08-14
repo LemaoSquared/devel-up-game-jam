@@ -12,7 +12,6 @@
 [ext_resource type="Texture2D" uid="uid://dr62whdowon4v" path="res://Assets/Store Background/store foreground1.png" id="4_u4s41"]
 [ext_resource type="Texture2D" uid="uid://b0m2w2mm7nwef" path="res://Assets/Object Assets/Yarn.png" id="5_unj6y"]
 [ext_resource type="Script" uid="uid://p6cxsl6y2wbp" path="res://Menus/progress_bar.gd" id="5_vocn1"]
-[ext_resource type="Script" uid="uid://73b5003yewl7" path="res://Menus/pause.gd" id="6_dy2tn"]
 [ext_resource type="Texture2D" uid="uid://denywa1lffa25" path="res://Assets/MiddleRound_OutsideStore/L5_Buildings1_start.png" id="7_1jmi0"]
 [ext_resource type="Texture2D" uid="uid://byhccumq5oxra" path="res://Assets/MiddleRound_OutsideStore/L1_Background.png" id="8_1jmi0"]
 [ext_resource type="Texture2D" uid="uid://4ptraxkm8603" path="res://Assets/MiddleRound_OutsideStore/L8_Poste.png" id="8_5u0mb"]
@@ -26,9 +25,15 @@
 [ext_resource type="Script" uid="uid://c38s48g8inaho" path="res://Menus/transition.gd" id="18_vl1oa"]
 [ext_resource type="Texture2D" uid="uid://2ttarh1ia1sg" path="res://Assets/Character Sprite/Walking_Final.png" id="19_gg5gl"]
 [ext_resource type="Script" uid="uid://dlk7tml3vurxy" path="res://Menus/player_positioning.gd" id="19_i0d87"]
+[ext_resource type="Texture2D" uid="uid://dtw1brm8e1a4y" path="res://Assets/Polaroid Pictures/polaroid3.png" id="19_vwlca"]
 [ext_resource type="Texture2D" uid="uid://ctdlkr6ndmejf" path="res://Assets/TitlePage.png" id="20_hdwr6"]
 [ext_resource type="Texture2D" uid="uid://cux2g4psvqi7f" path="res://Assets/Character Sprite/outsideIdle.png" id="20_vwlca"]
+[ext_resource type="Texture2D" uid="uid://cco8j71lo8gv1" path="res://Assets/Polaroid Pictures/polaroid1.png" id="20_y8skh"]
+[ext_resource type="Texture2D" uid="uid://c0b5fuudbemxp" path="res://Assets/Polaroid Pictures/polaroid2.png" id="21_qn5f4"]
 [ext_resource type="Texture2D" uid="uid://xdl7124u5wa7" path="res://Assets/Character Sprite/Walking_Outside.png" id="21_y8skh"]
+[ext_resource type="FontFile" uid="uid://cqwfub3g65jm6" path="res://Assets/Baby Night.otf" id="29_qn5f4"]
+[ext_resource type="Texture2D" uid="uid://om4hstnd8h0c" path="res://Assets/Aseprite Files/pause_button.png" id="33_ydmdm"]
+[ext_resource type="Script" uid="uid://dcnsfgxlkspfm" path="res://Menus/pause_button.gd" id="34_lugpe"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i0d87"]
 shader = ExtResource("2_yng6g")
@@ -73,6 +78,34 @@ shader_parameter/controlEdges = false
 shader = ExtResource("2_yng6g")
 shader_parameter/pixelation = 3.000000095
 shader_parameter/controlEdges = false
+
+[sub_resource type="Gradient" id="Gradient_y8skh"]
+colors = PackedColorArray(1, 0.56078434, 0.972549, 0.46666667, 1, 0.70980394, 0.3529412, 0.69411767)
+metadata/_snap_count = 15
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_36c8c"]
+gradient = SubResource("Gradient_y8skh")
+fill_from = Vector2(0.10750853, 0.90273035)
+
+[sub_resource type="Curve" id="Curve_gg5gl"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_qn5f4"]
+curve = SubResource("Curve_gg5gl")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kgah6"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(41.945, 20, 1)
+emission_shape = 1
+emission_sphere_radius = 17.54
+direction = Vector3(-1, 0, 0)
+initial_velocity_min = 37.19
+initial_velocity_max = 122.95
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_qn5f4")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qn5f4"]
 atlas = ExtResource("19_gg5gl")
@@ -261,8 +294,8 @@ animations = [{
 }]
 
 [sub_resource type="Gradient" id="Gradient_l0led"]
-offsets = PackedFloat32Array(0, 0.1626506, 0.27644232, 0.71875, 1)
-colors = PackedColorArray(1, 1, 1, 0, 0, 0, 0, 0.1882353, 0, 0, 0, 0.43529412, 0, 0, 0, 0.75686276, 0, 0, 0, 1)
+offsets = PackedFloat32Array(0, 0.46193773, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.75686276, 0, 0, 0, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_oi3uc"]
 gradient = SubResource("Gradient_l0led")
@@ -271,7 +304,7 @@ gradient = SubResource("Gradient_l0led")
 bg_color = Color(0.8990849, 0.899085, 0.89908487, 0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l0led"]
-bg_color = Color(0, 0, 0, 1)
+bg_color = Color(1, 1, 1, 1)
 
 [sub_resource type="Gradient" id="Gradient_gg5gl"]
 offsets = PackedFloat32Array(0, 0.2, 0.8, 1)
@@ -286,11 +319,24 @@ height = 742
 use_hdr = true
 fill_from = Vector2(0, 0.004347826)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_hf7om"]
+atlas = ExtResource("33_ydmdm")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_78vf1"]
+atlas = ExtResource("33_ydmdm")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vdyg7"]
+atlas = ExtResource("33_ydmdm")
+region = Rect2(0, 48, 48, 48)
+
 [node name="Main" type="Node2D" unique_id=1521551065]
 script = ExtResource("1_7x3k8")
 final_cutscene = ExtResource("3_g2jn8")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
+visible = false
 
 [node name="FadeRect" type="ColorRect" parent="CanvasLayer" unique_id=1786602749]
 anchors_preset = 15
@@ -305,7 +351,7 @@ metadata/_edit_use_anchors_ = true
 [node name="BackgroundManager" type="Node2D" parent="." unique_id=742304184 node_paths=PackedStringArray("backgrounds")]
 script = ExtResource("2_k4a18")
 backgrounds = [NodePath("IntroBackground"), NodePath("StoreBackground"), NodePath("OutsideBackground")]
-durations = Array[float]([0.0, 49.0, 42.0])
+durations = Array[float]([0.0, 49.0, 46.0])
 loop_sequence = false
 
 [node name="IntroBackground" type="Node2D" parent="BackgroundManager" unique_id=111680989]
@@ -672,14 +718,26 @@ centered = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 1150.0
+offset_right = 1167.0
 offset_bottom = 650.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(1, 1, 1, 0)
+color = Color(0, 0, 0, 0.38431373)
 script = ExtResource("1_j1rpa")
-metadata/_edit_lock_ = true
+
+[node name="Gradient" type="TextureRect" parent="Background" unique_id=1385319185]
+visible = false
+self_modulate = Color(1, 1, 0.99607843, 0)
+layout_mode = 0
+offset_right = 1168.0
+offset_bottom = 651.0
+texture = SubResource("GradientTexture2D_36c8c")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Background/Gradient" unique_id=947434616]
+position = Vector2(505, 329)
+amount = 64
+process_material = SubResource("ParticleProcessMaterial_kgah6")
 
 [node name="BlackPanelUP" type="ColorRect" parent="Background" unique_id=1603293193]
 top_level = true
@@ -700,6 +758,36 @@ offset_top = 648.0
 offset_bottom = 704.0
 grow_horizontal = 2
 color = Color(0, 0, 0, 1)
+
+[node name="Polaroid_1" type="TextureRect" parent="Background" unique_id=1181744193]
+top_level = true
+layout_mode = 0
+offset_left = -884.0
+offset_top = 31.0
+offset_right = -220.88892
+offset_bottom = 404.0
+texture = ExtResource("19_vwlca")
+expand_mode = 1
+
+[node name="Polaroid_2" type="TextureRect" parent="Background" unique_id=817282495]
+top_level = true
+layout_mode = 0
+offset_left = -1255.0
+offset_top = 231.0
+offset_right = -591.8889
+offset_bottom = 604.0
+texture = ExtResource("20_y8skh")
+expand_mode = 1
+
+[node name="Polaroid_3" type="TextureRect" parent="Background" unique_id=2052868313]
+top_level = true
+layout_mode = 0
+offset_left = -390.0
+offset_top = 188.0
+offset_right = 273.11108
+offset_bottom = 561.0
+texture = ExtResource("21_qn5f4")
+expand_mode = 1
 
 [node name="Entity" type="AnimatedSprite2D" parent="." unique_id=1100770989]
 position = Vector2(448.00003, 520)
@@ -736,18 +824,50 @@ texture = ExtResource("20_hdwr6")
 [node name="Start" type="TextureButton" parent="StartPanel" unique_id=1916219]
 texture_filter = 1
 layout_mode = 0
-offset_left = 281.0
-offset_top = 288.0
-offset_right = 313.0
-offset_bottom = 320.0
+offset_left = 259.0
+offset_top = 316.0
+offset_right = 291.0
+offset_bottom = 348.0
 scale = Vector2(4, 4)
 texture_normal = ExtResource("5_unj6y")
 
+[node name="Label" type="Label" parent="StartPanel" unique_id=107870984]
+layout_mode = 0
+offset_left = 359.0
+offset_top = 331.0
+offset_right = 503.0
+offset_bottom = 369.0
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 37
+text = "Story Mode"
+
+[node name="Start2" type="TextureButton" parent="StartPanel" unique_id=1310882319]
+self_modulate = Color(3.080368e-06, 0.8493475, 0.97114426, 1)
+texture_filter = 1
+layout_mode = 0
+offset_left = 256.0
+offset_top = 511.0
+offset_right = 288.0
+offset_bottom = 543.0
+scale = Vector2(4, 4)
+texture_normal = ExtResource("5_unj6y")
+
+[node name="Label2" type="Label" parent="StartPanel" unique_id=2127646751]
+layout_mode = 0
+offset_left = 359.0
+offset_top = 511.0
+offset_right = 522.0
+offset_bottom = 549.0
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 37
+text = "Endless Mode"
+
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=170122126]
 offset_left = -18.0
-offset_top = 34.0
+offset_top = 53.0
 offset_right = 1162.0
-offset_bottom = 64.0
+offset_bottom = 71.0
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_styles/background = SubResource("StyleBoxFlat_7x3k8")
 theme_override_styles/fill = SubResource("StyleBoxFlat_l0led")
 show_percentage = false
@@ -756,66 +876,22 @@ script = ExtResource("5_vocn1")
 [node name="Timer" type="Timer" parent="ProgressBar" unique_id=2042900797]
 
 [node name="Transition" type="ColorRect" parent="." unique_id=1234018471]
+process_mode = 1
 visible = false
+top_level = true
 offset_right = 1150.0
 offset_bottom = 650.0
 script = ExtResource("18_vl1oa")
 
-[node name="Pause" type="Panel" parent="." unique_id=1802693864]
-visible = false
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 387.0
-offset_top = 107.0
-offset_right = 787.0
-offset_bottom = 507.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("6_dy2tn")
-
-[node name="Label" type="Label" parent="Pause" unique_id=1631249989]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 7.0
-offset_bottom = 87.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 50
-text = "PAUSED"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Resume" type="Button" parent="Pause" unique_id=175952647]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 103.0
-offset_bottom = 203.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 40
-text = "RESUME"
-
-[node name="Quit" type="Button" parent="Pause" unique_id=1410822424]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -152.0
-offset_bottom = -52.0
-grow_horizontal = 2
-grow_vertical = 0
-
 [node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
+visible = false
 script = ExtResource("15_aai8a")
 
 [node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=1467674545]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 14.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -839,6 +915,45 @@ offset_bottom = 54.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_5c5y6")
+
+[node name="TutorialLabel" type="Label" parent="." unique_id=2130771760]
+offset_left = 49.0
+offset_top = 137.0
+offset_right = 408.0
+offset_bottom = 177.0
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 43
+text = "Click Items to Wrap Them"
+
+[node name="Label" type="Label" parent="." unique_id=1230464535]
+offset_left = 18.0
+offset_top = 603.0
+offset_right = 168.0
+offset_bottom = 641.0
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 30
+text = "F - Full Screen"
+
+[node name="Version Label" type="Label" parent="." unique_id=1849655685]
+offset_left = 994.0
+offset_top = 621.0
+offset_right = 1144.0
+offset_bottom = 659.0
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 30
+text = "Version 1.1"
+horizontal_alignment = 2
+
+[node name="Pause Button" type="TextureButton" parent="." unique_id=1299455263]
+offset_left = 8.0
+offset_top = 72.0
+offset_right = 56.0
+offset_bottom = 120.0
+texture_normal = SubResource("AtlasTexture_hf7om")
+texture_pressed = SubResource("AtlasTexture_78vf1")
+texture_hover = SubResource("AtlasTexture_vdyg7")
+stretch_mode = 0
+script = ExtResource("34_lugpe")
 
 [connection signal="pressed" from="StartPanel/Start" to="BackgroundManager" method="_on_start_pressed"]
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]
