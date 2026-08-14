@@ -76,7 +76,7 @@ theme_override_colors/font_hover_color = Color(0.5764706, 0.27450982, 0.35686275
 theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("3_j685f")
 theme_override_font_sizes/font_size = 116
-text = "try again"
+text = "replay"
 flat = true
 
 [node name="Middle" type="TextureRect" parent="." unique_id=893753874]
