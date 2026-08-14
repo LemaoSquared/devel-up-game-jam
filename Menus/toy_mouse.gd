@@ -1,5 +1,11 @@
 extends Node2D
 signal popped_out(obj: Node, was_clicked: bool)
+
+#POLAROID
+@export var polaroid_scene: PackedScene = preload(
+	"res://Menus/item_polaroid.tscn"
+)
+@export var polaroid_texture: Texture2D
 @export var speed: float = 60.0         
 @export var speed_increase: float = 40.0 
 @export var jump_distance: float = 40.0  
@@ -20,6 +26,7 @@ const GIFT = preload("uid://fojbgtm48t6b")
 @onready var gift: AnimatedSprite2D = $GiftAnimation
 
 func _ready() -> void:
+	add_to_group("camera_targets")
 	animated_sprite.sprite_frames.set_animation_loop("rat_toy", true)
 	animated_sprite.play("rat_toy")
 	area.input_pickable = true
@@ -42,14 +49,17 @@ func _process(delta: float) -> void:
 func _on_area_input_event(_viewport, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_on_clicked()
+		
 func _on_clicked() -> void:
 	if is_jumping or is_finished:
 		return
 	AudioManager.play_sound(MOUSE)
-	ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
+	ParticleManager.spawn_particle(CLICK_PARTICLE, global_position)
 	click_count += 1
 	speed += speed_increase
 	if click_count >= max_clicks:
+		is_finished = true          
+		area.input_pickable = false 
 		AudioManager.play_sound(GIFT)
 		gift.visible = true
 		gift.play("default")
@@ -57,6 +67,7 @@ func _on_clicked() -> void:
 		_pop_and_disappear()
 	else:
 		_jump()
+		
 func _jump() -> void:
 	is_jumping = true
 	var target_x = position.x + jump_distance * direction
@@ -101,4 +112,27 @@ func _on_lifetime_expired() -> void:
 	tween.finished.connect(func():
 		popped_out.emit(self, false)
 		queue_free())
-		
+
+func transform_to_polaroid() -> void:
+	var polaroid := polaroid_scene.instantiate() as Node2D
+	get_parent().add_child(polaroid)
+
+	polaroid.global_position = global_position
+	polaroid.global_rotation = global_rotation
+	polaroid.scale = scale
+
+	var photo_sprite := polaroid.get_node_or_null(
+		"Polaroid/Sprite2D"
+	) as Sprite2D
+
+	if photo_sprite != null and polaroid_texture != null:
+		photo_sprite.texture = polaroid_texture
+
+	if ItemManager.has_method("register_spawned_object"):
+		ItemManager.register_spawned_object(polaroid)
+
+	if polaroid.has_method("appear"):
+		polaroid.appear()
+
+	popped_out.emit(self, true)
+	queue_free()

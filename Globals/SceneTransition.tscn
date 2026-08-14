@@ -1,9 +1,9 @@
-[gd_scene format=3 uid="uid://l02c4gi6t62d"]
+[gd_scene format=3 uid="uid://dlpmt1xdaclks"]
 
 [ext_resource type="Script" uid="uid://dwtigpib18m84" path="res://Globals/scene_transition.gd" id="1_53viq"]
 
 [sub_resource type="Gradient" id="Gradient_mbgq0"]
-offsets = PackedFloat32Array(0, 0.2, 0.8, 1)
+offsets = PackedFloat32Array(0, 0.06666667, 0.93333334, 1)
 colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0)
 metadata/_snap_count = 15
 metadata/_snap_enabled = true

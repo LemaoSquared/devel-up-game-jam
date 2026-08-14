@@ -4,6 +4,7 @@ signal popped_out(obj: Node)
 const SACK = preload("uid://844bkgax2wrd")
 const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 const SACK_OPEN = preload("uid://d3nlvoeoqtbyp")
+const SACK_PARTICLE = preload("uid://bncb0rx7oecq0")
 
 const POINTS_PER_CLICK: int = 10
 @onready var gift: AnimatedSprite2D = $GiftAnimation
@@ -18,7 +19,7 @@ var is_transforming: bool = false
 
 var is_gravity: bool = false
 var is_popping: bool = false
-
+var is_finishing: bool = false 
 const Duration: float = 15.0
 const REQUIRED_CLICKS: int = 10
 
@@ -71,25 +72,58 @@ func _on_area_input_event(
 func hit_sack() -> void:
 	if is_popping:
 		return
-	ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
+		
+	ParticleManager.spawn_particle(CLICK_PARTICLE, global_position)
 	AudioManager.play_sound(SACK)
 	click_count += 1
 	print("Sack clicked: ", click_count)
 	
 	ScoreManager.add_points(POINTS_PER_CLICK)
-
 	play_fish_effect()
 	play_hit_animation()
 
 	if click_count >= REQUIRED_CLICKS:
+		is_popping = true             
+		sack.input_pickable = false   
 		AudioManager.play_sound(SACK_OPEN)
+		ParticleManager.spawn_particle(SACK_PARTICLE, global_position)
+		
+		# --- VISUAL FIX: Hide the old sack so only the gift animation shows ---
+		sack_sprite.visible = false
+		
 		gift.visible = true
 		gift.play("default")
 		await gift.animation_finished
-		pop_out(true)
+		
+		# Call pop_out cleanly (ignoring the is_popping check)
+		_execute_pop_out(true)
 		return
 
 	update_sack_sprite()
+
+
+func _on_duration_expired() -> void:
+	if is_popping:
+		return
+	_execute_pop_out(false)
+
+
+# Split the logic into a private execution method to safely bypass the guard check
+func _execute_pop_out(was_clicked: bool = false) -> void:
+	is_popping = true
+	sack.input_pickable = false
+
+	if hit_tween and hit_tween.is_valid():
+		hit_tween.kill()
+
+	# Match the two-parameter signature you defined in popped_out(obj, was_clicked)
+	popped_out.emit(self, was_clicked)
+
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_BACK)
+	tween.set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2.ZERO, 0.3)
+	tween.tween_callback(queue_free)
 
 func start_tilting_loop(obj: Node2D) -> void:
 	var tilt_angle: float = deg_to_rad(8.0)
@@ -177,11 +211,6 @@ func play_hit_animation() -> void:
 	)
 
 
-func _on_duration_expired() -> void:
-	if is_popping:
-		return
-
-	pop_out(false)
 
 
 func pop_out(was_clicked: bool = false) -> void:

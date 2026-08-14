@@ -2,9 +2,14 @@ extends Node2D
 @export var final_cutscene: PackedScene
 @onready var background_manager: Node2D = $BackgroundManager
 @onready var fade_rect: ColorRect = $CanvasLayer/FadeRect
+const GameOverScreen = preload("uid://dh364flg18d2j")
+const CutsceneScene = preload("uid://bqfwjyhkbhn82")
+@onready var progress_bar: ProgressBar = $ProgressBar
+
+const BACKYARD = preload("uid://c13kxu5fitd1y")
 
 func _ready() -> void:
-	background_manager.sequence_finished.connect(_on_background_sequence_finished)
+	progress_bar.countdown_finished.connect(_on_progress_bar_countdown_finished)
 	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fade_rect.modulate.a = 1.0
 
@@ -18,9 +23,22 @@ func _ready() -> void:
 	$StartPanel.game_started.connect(PauseManager.enable_pause)
 
 	$StartPanel.visible = true
+
+
+func _on_progress_bar_countdown_finished() -> void:
+	await $Transition.transition()
+
+	$Background.retreat_cinematic_bars()
 	
-func _on_background_sequence_finished() -> void:
-	if final_cutscene:
-		SceneTransition.change_scene(final_cutscene)
-	else:
-		push_error("Main Script: No final cutscene assigned in the Inspector!")
+	var cutscene := CutsceneScene.instantiate()
+	add_child(cutscene)
+	await $Transition.Return()
+	
+
+	if cutscene.has_signal("cutscene_finished"):
+		AudioManager.stop_music()
+		AudioManager.play_music(BACKYARD)
+		await cutscene.cutscene_finished
+		var game_over := GameOverScreen.instantiate()
+		add_child(game_over)
+		background_manager.reset()

@@ -10,6 +10,7 @@ func _ready() -> void:
 	sfx_player.bus = "Master"
 	sfx_player.process_mode = Node.PROCESS_MODE_ALWAYS
 	sfx_player.play()
+	
 	playback = sfx_player.get_stream_playback()
 
 	bgm_player.bus = "Master"
