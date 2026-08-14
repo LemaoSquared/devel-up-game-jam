@@ -33,26 +33,29 @@ func _ready() -> void:
 
 func _on_progress_bar_countdown_finished() -> void:
 	PauseManager.disable_pause()
-	await _run_game_over_sequence()
+	await _run_game_over_sequence(true)
 	
 func _on_lives_depleted() -> void:
 	PauseManager.disable_pause()
 	ItemManager.stop_endless()
-	await _run_game_over_sequence()
+	await _run_game_over_sequence(false)
 	
 
-func _run_game_over_sequence() -> void:
+func _run_game_over_sequence(show_cutscene: bool = true) -> void:
 	await $Transition.transition()
 	$Background.retreat_cinematic_bars()
 
-	var cutscene := CutsceneScene.instantiate()
-	add_child(cutscene)
-	await $Transition.Return()
+	if show_cutscene:
+		var cutscene := CutsceneScene.instantiate()
+		add_child(cutscene)
+		await $Transition.Return()
+		if cutscene.has_signal("cutscene_finished"):
+			AudioManager.stop_music()
+			AudioManager.play_music(BACKYARD)
+			await cutscene.cutscene_finished
+	else:
+		await $Transition.Return()
 
-	if cutscene.has_signal("cutscene_finished"):
-		AudioManager.stop_music()
-		AudioManager.play_music(BACKYARD)
-		await cutscene.cutscene_finished
-		var game_over := GameOverScreen.instantiate()
-		add_child(game_over)
-		background_manager.reset()
+	var game_over := GameOverScreen.instantiate()
+	add_child(game_over)
+	background_manager.reset()
