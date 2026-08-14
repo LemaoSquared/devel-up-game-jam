@@ -11,6 +11,7 @@ const TAPTAP = preload("uid://bnvtg6wxrfprs")
 
 @onready var entity: AnimatedSprite2D = $"../Entity"
 @onready var background_manager: Node2D = $"../BackgroundManager"
+@onready var pause_button: TextureButton = $"../Pause Button"
 
 @export var spawn_area: Control
 
@@ -99,6 +100,8 @@ func _on_start_pressed() -> void:
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "modulate:a", 0.0, 0.6)
 	tween.tween_callback(queue_free)
+		
+	pause_button.visible = true
 
 # --- START2 BUTTON LOGIC ---
 func _on_start2_hovered() -> void:
@@ -149,6 +152,8 @@ func _on_start2_pressed() -> void:
 	ScoreManager.reset_score()
 	ItemManager.current_pattern = 1
 	ItemManager.play_pattern(1)
+	
+	pause_button.visible = true
 	
 	var obj = OBJECT_SCENE.instantiate()
 	get_tree().current_scene.add_child(obj)

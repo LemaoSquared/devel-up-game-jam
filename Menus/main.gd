@@ -5,10 +5,13 @@ extends Node2D
 const GameOverScreen = preload("uid://dh364flg18d2j")
 const CutsceneScene = preload("uid://bqfwjyhkbhn82")
 @onready var progress_bar: ProgressBar = $ProgressBar
+@onready var pause_button: TextureButton = $"Pause Button"
+
 
 const BACKYARD = preload("uid://c13kxu5fitd1y")
 
 func _ready() -> void:
+	pause_button.visible = false
 	progress_bar.countdown_finished.connect(_on_progress_bar_countdown_finished)
 	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fade_rect.modulate.a = 1.0
@@ -42,3 +45,5 @@ func _on_progress_bar_countdown_finished() -> void:
 		var game_over := GameOverScreen.instantiate()
 		add_child(game_over)
 		background_manager.reset()
+	
+	pause_button.visible = false
