@@ -936,6 +936,7 @@ horizontal_alignment = 2
 [node name="CanvasLayer2" type="CanvasLayer" parent="." unique_id=191738156]
 
 [node name="Pause" type="Panel" parent="CanvasLayer2" unique_id=1883136500]
+visible = false
 offset_left = 237.0
 offset_top = 172.0
 offset_right = 837.0
