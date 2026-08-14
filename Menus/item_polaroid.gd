@@ -30,6 +30,10 @@ func _on_area_input_event(
 		and event.pressed
 		and event.button_index == MOUSE_BUTTON_LEFT
 	):
+		
+		is_popping = true 
+		polaroid.input_pickable = false
+		
 		AudioManager.play_sound(GIFT)
 		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
 		gift.visible = true

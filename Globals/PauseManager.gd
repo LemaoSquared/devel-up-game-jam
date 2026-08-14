@@ -20,6 +20,8 @@ func enable_pause() -> void:
 
 func disable_pause() -> void:
 	pause_enabled = false
+	if is_paused:
+		unpause_game()
 
 func toggle_pause() -> void:
 	if is_paused:

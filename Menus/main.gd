@@ -5,7 +5,7 @@ extends Node2D
 const GameOverScreen = preload("uid://dh364flg18d2j")
 const CutsceneScene = preload("uid://bqfwjyhkbhn82")
 @onready var progress_bar: ProgressBar = $ProgressBar
-
+@onready var pause_panel: Panel = $CanvasLayer2/Pause
 const BACKYARD = preload("uid://c13kxu5fitd1y")
 
 func _ready() -> void:
@@ -21,38 +21,48 @@ func _ready() -> void:
 	#Story
 	$StartPanel.game_started.connect($Background.close_cinematic_bars)
 	$StartPanel.game_started.connect($ProgressBar.start_countdown)
-	$StartPanel.game_started.connect(PauseManager.enable_pause)
+	$StartPanel.game_started.connect(_on_game_start_enable_pause)
 	
 	#Endless
 	$StartPanel.endless_started.connect($Background.close_cinematic_bars)
-	$StartPanel.endless_started.connect(PauseManager.enable_pause)
+	$StartPanel.endless_started.connect(_on_game_start_enable_pause)
 	LivesManager.game_over.connect(_on_lives_depleted)
 	
 	$StartPanel.visible = true
 
-
+func _on_game_start_enable_pause() -> void:
+	PauseManager.enable_pause()
+	pause_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+	
 func _on_progress_bar_countdown_finished() -> void:
 	PauseManager.disable_pause()
-	await _run_game_over_sequence()
+	pause_panel.visible = false
+	pause_panel.process_mode = Node.PROCESS_MODE_DISABLED
+	await _run_game_over_sequence(true)
 	
 func _on_lives_depleted() -> void:
 	PauseManager.disable_pause()
 	ItemManager.stop_endless()
-	await _run_game_over_sequence()
+	pause_panel.visible = false
+	pause_panel.process_mode = Node.PROCESS_MODE_DISABLED
+	await _run_game_over_sequence(false)
 	
 
-func _run_game_over_sequence() -> void:
+func _run_game_over_sequence(show_cutscene: bool = true) -> void:
 	await $Transition.transition()
 	$Background.retreat_cinematic_bars()
 
-	var cutscene := CutsceneScene.instantiate()
-	add_child(cutscene)
-	await $Transition.Return()
+	if show_cutscene:
+		var cutscene := CutsceneScene.instantiate()
+		add_child(cutscene)
+		await $Transition.Return()
+		if cutscene.has_signal("cutscene_finished"):
+			AudioManager.stop_music()
+			AudioManager.play_music(BACKYARD)
+			await cutscene.cutscene_finished
+	else:
+		await $Transition.Return()
 
-	if cutscene.has_signal("cutscene_finished"):
-		AudioManager.stop_music()
-		AudioManager.play_music(BACKYARD)
-		await cutscene.cutscene_finished
-		var game_over := GameOverScreen.instantiate()
-		add_child(game_over)
-		background_manager.reset()
+	var game_over := GameOverScreen.instantiate()
+	add_child(game_over)
+	background_manager.reset()

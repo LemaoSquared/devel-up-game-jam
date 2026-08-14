@@ -1,14 +1,12 @@
-extends Panel  # change if Pause's root type is different (e.g. Control, Panel)
+extends Panel 
 
 @onready var resume_button: Button = $VBoxContainer/Resume
 @onready var quit_button: Button = $VBoxContainer/Quit
 const STREET = preload("uid://c6xk46jpedco4")
 
-# Flag to prevent multiple clicks during countdown
 var is_counting_down: bool = false
 
 func _ready() -> void:
-	# This node must run even while paused, so it can respond to button presses
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 	visible = false
@@ -20,6 +18,8 @@ func _ready() -> void:
 	quit_button.pressed.connect(_on_quit_pressed)
 
 func _on_game_paused() -> void:
+	if not PauseManager.pause_enabled:
+		return
 	visible = true
 
 func _on_game_unpaused() -> void:
@@ -45,10 +45,10 @@ func _on_quit_pressed() -> void:
 	Engine.time_scale = 1.0
 	PauseManager.unpause_game()
 	PauseManager.disable_pause()
+	ItemManager.is_game_over = true 
+	ItemManager.clear_objects()
 	SceneTransition.reload_scene()
 	AudioManager.stop_music()
-	ItemManager.clear_objects()
-	ItemManager.is_game_over = true # Ensures any pending async callbacks abort safely
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.play_music(STREET)
 	queue_free()
