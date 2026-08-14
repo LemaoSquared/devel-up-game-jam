@@ -84,9 +84,10 @@ func _on_start_pressed() -> void:
 	
 	ItemManager.area = spawn_area
 	ScoreManager.reset_score()
+	ItemManager.is_game_over = false
 	ItemManager.current_pattern = 1
 	ItemManager.play_pattern(1)
-	ItemManager.is_game_over = false
+	
 	
 	var obj = OBJECT_SCENE.instantiate()
 	get_tree().current_scene.add_child(obj)

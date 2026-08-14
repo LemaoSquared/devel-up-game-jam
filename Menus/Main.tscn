@@ -933,7 +933,10 @@ theme_override_font_sizes/font_size = 30
 text = "Version 1.1"
 horizontal_alignment = 2
 
-[node name="Pause" type="Panel" parent="." unique_id=1883136500]
+[node name="CanvasLayer2" type="CanvasLayer" parent="." unique_id=191738156]
+
+[node name="Pause" type="Panel" parent="CanvasLayer2" unique_id=1883136500]
+visible = false
 offset_left = 237.0
 offset_top = 172.0
 offset_right = 837.0
@@ -941,24 +944,24 @@ offset_bottom = 522.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_frjpc")
 script = ExtResource("33_ydmdm")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Pause" unique_id=1996106132]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/Pause" unique_id=1996106132]
 layout_mode = 0
 offset_top = 103.0
 offset_right = 600.0
 offset_bottom = 206.0
 theme_override_constants/separation = 60
 
-[node name="Resume" type="Button" parent="Pause/VBoxContainer" unique_id=1902629026]
+[node name="Resume" type="Button" parent="CanvasLayer2/Pause/VBoxContainer" unique_id=1902629026]
 layout_mode = 2
 theme_override_font_sizes/font_size = 60
 text = "Resume"
 
-[node name="Quit" type="Button" parent="Pause/VBoxContainer" unique_id=1204244886]
+[node name="Quit" type="Button" parent="CanvasLayer2/Pause/VBoxContainer" unique_id=1204244886]
 layout_mode = 2
 theme_override_font_sizes/font_size = 60
 text = "Quit"
 
-[node name="Label" type="Label" parent="Pause" unique_id=1002909359]
+[node name="Label" type="Label" parent="CanvasLayer2/Pause" unique_id=1002909359]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -974,5 +977,5 @@ vertical_alignment = 1
 [connection signal="pressed" from="StartPanel/EndlessStart" to="BackgroundManager" method="_on_endless_start_pressed"]
 [connection signal="pressed" from="StartPanel/EndlessStart" to="StartPanel" method="_on_endless_start_pressed"]
 [connection signal="timeout" from="ProgressBar/Timer" to="ProgressBar" method="_on_timer_timeout"]
-[connection signal="pressed" from="Pause/VBoxContainer/Resume" to="Pause" method="_on_resume_pressed"]
-[connection signal="pressed" from="Pause/VBoxContainer/Quit" to="Pause" method="_on_quit_pressed"]
+[connection signal="pressed" from="CanvasLayer2/Pause/VBoxContainer/Resume" to="CanvasLayer2/Pause" method="_on_resume_pressed"]
+[connection signal="pressed" from="CanvasLayer2/Pause/VBoxContainer/Quit" to="CanvasLayer2/Pause" method="_on_quit_pressed"]
