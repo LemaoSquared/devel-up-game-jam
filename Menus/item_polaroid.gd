@@ -31,6 +31,7 @@ func _on_area_input_event(
 		and event.button_index == MOUSE_BUTTON_LEFT
 	):
 		
+		#is_popping = true 
 		polaroid.input_pickable = false
 		
 		AudioManager.play_sound(GIFT)
