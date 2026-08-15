@@ -5,7 +5,6 @@ extends Node2D
 const GameOverScreen = preload("uid://dh364flg18d2j")
 const CutsceneScene = preload("uid://bqfwjyhkbhn82")
 @onready var progress_bar: ProgressBar = $ProgressBar
-@onready var pause_panel: Panel = $CanvasLayer2/Pause
 const BACKYARD = preload("uid://c13kxu5fitd1y")
 
 func _ready() -> void:
@@ -32,19 +31,13 @@ func _ready() -> void:
 
 func _on_game_start_enable_pause() -> void:
 	PauseManager.enable_pause()
-	pause_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	
 func _on_progress_bar_countdown_finished() -> void:
 	PauseManager.disable_pause()
-	pause_panel.visible = false
-	pause_panel.process_mode = Node.PROCESS_MODE_DISABLED
-	await _run_game_over_sequence(true)
 	
 func _on_lives_depleted() -> void:
 	PauseManager.disable_pause()
 	ItemManager.stop_endless()
-	pause_panel.visible = false
-	pause_panel.process_mode = Node.PROCESS_MODE_DISABLED
 	await _run_game_over_sequence(false)
 	
 
