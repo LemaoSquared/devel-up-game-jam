@@ -13,10 +13,12 @@ const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 
 var is_finished: bool = false
 var has_launched: bool = false
+var is_popping: bool = false
 
 var sardine_index: int = 0
 var total_sardines: int = 1
 var spawn_delay: float = 0.0
+
 
 @onready var sardine_area: Area2D = $Sardines
 @onready var gift: AnimatedSprite2D = $GiftAnimation
@@ -55,8 +57,7 @@ func launch() -> void:
 		return
 
 	var life_timer := get_tree().create_timer(
-		lifetime,
-		true
+		lifetime, false
 	)
 	life_timer.timeout.connect(_on_lifetime_expired)
 func _spread_apart() -> void:
@@ -108,6 +109,7 @@ func _spread_apart() -> void:
 
 	if not is_finished:
 		sardine_area.input_pickable = true
+		
 func _on_input_event(
 	_viewport,
 	event: InputEvent,
@@ -121,6 +123,10 @@ func _on_input_event(
 		and event.pressed
 		and event.button_index == MOUSE_BUTTON_LEFT
 	):
+		
+		is_popping = true  
+		sardine_area.input_pickable = false
+		
 		AudioManager.play_sound(GIFT)
 		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
 		gift.visible = true

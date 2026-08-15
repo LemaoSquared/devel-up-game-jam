@@ -2,6 +2,7 @@ extends Node2D
 
 signal popped_out(obj: Node)
 const TRASH = preload("uid://bnyi53tue8oe2")
+const TRASH_PARTICLE = preload("uid://bqldp717ro0a4")
 
 @export var polaroid_scene: PackedScene = preload(
 	"res://Menus/item_polaroid.tscn"
@@ -15,7 +16,7 @@ func _ready() -> void:
 	add_to_group("camera_targets")
 	$Garbage.input_event.connect(_on_area_input_event)
 	$Garbage.input_pickable = true
-	var timer = get_tree().create_timer(Duration)
+	var timer = get_tree().create_timer(Duration, false)
 	timer.timeout.connect(_on_duration_expired)
 	global_position.x += randi_range(-20,20)
 	global_position.y += randi_range(-20,20)
@@ -37,6 +38,7 @@ func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		AudioManager.play_sound(TRASH)
+		ParticleManager.spawn_particle(TRASH_PARTICLE,global_position)
 		pop_out(true)
 
 func _on_duration_expired() -> void:
