@@ -2,6 +2,7 @@ extends Node2D
 signal popped_out(obj: Node, was_clicked: bool)
 
 const TRASH = preload("uid://bnyi53tue8oe2")
+const TRASH_PARTICLE = preload("uid://bqldp717ro0a4")
 
 @export var polaroid_scene: PackedScene = preload(
 	"res://Menus/item_polaroid.tscn"
@@ -39,7 +40,7 @@ func _ready() -> void:
 	$Shoes.input_event.connect(_on_area_input_event)
 	$Shoes.input_pickable = true
 
-	var timer = get_tree().create_timer(pop_duration_seconds, true)
+	var timer = get_tree().create_timer(pop_duration_seconds, false)
 	timer.timeout.connect(_on_duration_expired)
 
 
@@ -81,20 +82,21 @@ func _on_area_input_event(_viewport: Viewport, event: InputEvent, _shape_idx: in
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		AudioManager.play_sound(TRASH)
+		ParticleManager.spawn_particle(TRASH_PARTICLE,global_position)
 		pop_out(true)
 
 func _on_duration_expired() -> void:
 	if is_popping:
 		return
 	var stagger = randf_range(0.0, fall_stagger_max)
-	var timer = get_tree().create_timer(stagger, true)
+	var timer = get_tree().create_timer(stagger, false)
 	timer.timeout.connect(func():
 		if not is_popping:
 			fall_and_disappear()
 	)
 
 
-func pop_out(is_clicked) -> void:
+func pop_out(_is_clicked) -> void:
 	string.visible = false
 	is_popping = true
 	is_hanging = false
