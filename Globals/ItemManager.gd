@@ -454,7 +454,7 @@ func play_pattern(number: int):
 		1: item_count = [10,0,0,0,0,0,0,0,1]
 		2: item_count = [10,0,0,0,0,0,0,0,0]
 		
-		3: item_count = [10,0,5,0,0,0,0,0,0]
+		3: item_count = [10,0,5,0,0,0,0,0,1]
 		4: item_count = [10,0,5,0,0,0,0,0,0]
 		
 		5: item_count = [0,10,0,0,0,0,0,0,0]
