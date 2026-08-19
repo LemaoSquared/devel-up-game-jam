@@ -1,6 +1,7 @@
 extends TextureRect
 const STREET = preload("uid://c6xk46jpedco4")
 @onready var tutorial_label: Label = $"../TutorialLabel"
+@onready var lives: HBoxContainer = $"../Lives"
 
 signal game_started
 signal endless_started
@@ -137,7 +138,6 @@ func _on_endless_start_pressed() -> void:
 	if is_transitioning:
 		return
 	is_transitioning = true
-
 	if hover_tween:
 		hover_tween.kill()
 	if hover_tween2:
@@ -162,6 +162,7 @@ func _on_endless_start_pressed() -> void:
 	LivesManager.reset_lives()
 	ItemManager.start_endless()
 	ItemManager.is_game_over = false
+	lives.visible = true
 	
 	# Spawn treat effect at Endless button position
 	var obj = OBJECT_SCENE.instantiate()

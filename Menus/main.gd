@@ -6,6 +6,7 @@ const GameOverScreen = preload("uid://dh364flg18d2j")
 const CutsceneScene = preload("uid://bqfwjyhkbhn82")
 @onready var progress_bar: ProgressBar = $ProgressBar
 const BACKYARD = preload("uid://c13kxu5fitd1y")
+@onready var lives: HBoxContainer = $Lives
 
 func _ready() -> void:
 	# Connect progress bar timer to story completion handler
@@ -63,7 +64,7 @@ func _run_game_over_sequence(show_cutscene: bool = true) -> void:
 			await cutscene.cutscene_finished
 	else:
 		await $Transition.Return()
-
+	lives.visible = false
 	var game_over := GameOverScreen.instantiate()
 	$Background.retreat_cinematic_bars()
 	add_child(game_over)
