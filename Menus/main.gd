@@ -42,16 +42,18 @@ func _on_story_mode_completed() -> void:
 	await _run_game_over_sequence(true)
 
 func _on_lives_depleted() -> void:
+	if !ItemManager.is_endless:
+		return
 	PauseManager.disable_pause()
 	ItemManager.stop_endless()
 	# Depleting lives skips the cutscene (show_cutscene = false)
 	await _run_game_over_sequence(false)
 
 func _run_game_over_sequence(show_cutscene: bool = true) -> void:
-	await $Transition.transition()
-	$Background.retreat_cinematic_bars()
 
 	if show_cutscene:
+		await $Transition.transition()
+		$Background.retreat_cinematic_bars()
 		var cutscene := CutsceneScene.instantiate()
 		add_child(cutscene)
 		await $Transition.Return()
@@ -63,5 +65,6 @@ func _run_game_over_sequence(show_cutscene: bool = true) -> void:
 		await $Transition.Return()
 
 	var game_over := GameOverScreen.instantiate()
+	$Background.retreat_cinematic_bars()
 	add_child(game_over)
 	background_manager.reset()

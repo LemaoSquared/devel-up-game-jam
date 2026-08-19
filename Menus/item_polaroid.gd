@@ -2,6 +2,10 @@ extends Node2D
 
 const GIFT = preload("uid://fojbgtm48t6b")
 signal popped_out(obj: Node, was_clicked: bool)
+const POLAROID_TEXTURE = preload("uid://d1yvy81a81kxm")
+
+# --- Polaroid Sound Effect ---
+const POLAROID_SFX = preload("res://SFX/Polaroid.wav")
 
 var is_popping: bool = false
 const Duration: float = 8.0 # Standard display time before falling off screen
@@ -9,6 +13,7 @@ const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 
 @onready var area_2d: Area2D = $Polaroid
 @onready var photo_sprite: Sprite2D = $Polaroid/Sprite2D
+@onready var gift_front: AnimatedSprite2D = $GiftAnimation
 
 func _ready() -> void:
 	add_to_group("polaroid")
@@ -17,6 +22,9 @@ func _ready() -> void:
 	if area_2d:
 		area_2d.input_event.connect(_on_area_input_event)
 		area_2d.input_pickable = true
+		
+	if gift_front:
+		gift_front.visible = false
 		
 	start_tilting_loop(self)
 
@@ -50,7 +58,7 @@ func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -
 		if area_2d:
 			area_2d.input_pickable = false
 			
-		AudioManager.play_sound(GIFT)
+		AudioManager.play_sound(POLAROID_SFX)
 		ParticleManager.spawn_particle(CLICK_PARTICLE, global_position)
 		pop_out(true)
 
@@ -58,6 +66,13 @@ func pop_out(is_clicked = false) -> void:
 	is_popping = true
 	popped_out.emit(self, is_clicked)
 	
+	# Play gift animation over/on top of the polaroid without hiding it
+	if gift_front:
+		gift_front.visible = true
+		# photo_sprite stays visible here!
+		gift_front.play("default")
+		await gift_front.animation_finished
+
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_IN)

@@ -60,6 +60,13 @@ var area
 var active_wave_timer: SceneTreeTimer = null
 var missed_items_in_current_wave: int = 0
 
+# Class to hold state for a specific wave batch
+class WaveBatch:
+	var has_missed_item: bool = false  # Tracks if ANY item was missed this wave
+	var is_finished: bool = false
+
+var current_wave_batch: WaveBatch = null
+
 # Endless
 var is_endless: bool = false
 var endless_pattern_number: int = 1
@@ -150,6 +157,7 @@ func _spawn_drop_grid(obj_type, count: int = -1, parent: Node = null) -> void:
 		available_cells = _get_available_cells(0)
 
 	var spawn_total = min(final_count, available_cells.size())
+	var batch_reference = current_wave_batch
 
 	for index in range(spawn_total):
 		var cell = available_cells[index]
@@ -176,7 +184,7 @@ func _spawn_drop_grid(obj_type, count: int = -1, parent: Node = null) -> void:
 		target_parent.add_child(obj)
 
 		if obj.has_signal("popped_out"):
-			obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
+			obj.popped_out.connect(_on_object_popped_out.bind(obj_type, batch_reference))
 
 		spawned_objects.append(obj)
 		wave_one_objects.append(obj)
@@ -249,7 +257,9 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 			obj.camera_activated.connect(camera_effects.activate_camera_effect)
 		else:
 			push_warning("ItemManager: CameraEffects node was not found.")
-	obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
+			
+	var batch_reference = current_wave_batch
+	obj.popped_out.connect(_on_object_popped_out.bind(obj_type, batch_reference))
 	spawned_objects.append(obj)
 	wave_one_objects.append(obj)
 
@@ -297,8 +307,9 @@ func clear_objects() -> void:
 	scored_objects.clear()
 	occupied_cells.clear()
 	missed_items_in_current_wave = 0
+	current_wave_batch = null
 
-func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void:
+func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int, batch_ref: WaveBatch) -> void:
 	if obj in scored_objects:
 		return  
 	scored_objects.append(obj)
@@ -308,7 +319,6 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 	if was_clicked:
 		print("Clicked item: ", Item.keys()[item_type])
 		
-		# Check if shoes or garbage were clicked -> reduce life/HP
 		if item_type == Item.SHOES or item_type == Item.GARBAGE:
 			if LivesManager.has_method("lose_life"):
 				LivesManager.lose_life()
@@ -326,7 +336,6 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 			item_collected.emit(Item.POLAROID)
 	else:
 		print("Item expired (not clicked): ", Item.keys()[item_type])
-		# Garbage and shoes timing out (was_clicked == false) should NOT trigger HP loss / miss penalty
 		var is_excluded_from_miss: bool = (
 			item_type == Item.GARBAGE or
 			item_type == Item.SHOES or
@@ -335,7 +344,14 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 			item_type == Item.POLAROID
 		)
 		if is_endless and not is_excluded_from_miss:
-			missed_items_in_current_wave += 1
+			if batch_ref and not batch_ref.is_finished:
+				batch_ref.has_missed_item = true
+			elif batch_ref and batch_ref.is_finished:
+				# If the wave already ended and a late item falls, trigger 1 HP loss immediately
+				if not batch_ref.has_missed_item:
+					batch_ref.has_missed_item = true
+					if LivesManager.has_method("lose_life"):
+						LivesManager.lose_life()
 
 	if enable_drop_wave and not drop_wave_triggered and wave_one_objects.is_empty():
 		drop_wave_triggered = true
@@ -344,8 +360,12 @@ func _on_wave_timeout() -> void:
 	if not is_inside_tree() or is_game_over or current_pattern == -1:
 		return
 
-	if is_endless and missed_items_in_current_wave > 0:
-		LivesManager.lose_life()
+	# Deduct AT MOST 1 life per wave if there was at least one missed item/yarn
+	if current_wave_batch:
+		current_wave_batch.is_finished = true
+		if is_endless and current_wave_batch.has_missed_item:
+			if LivesManager.has_method("lose_life"):
+				LivesManager.lose_life()
 
 	if is_endless:
 		if LivesManager.lives <= 0:
@@ -361,6 +381,7 @@ func _on_wave_timeout() -> void:
 		print("Endless loop #", endless_loop_count, " — wave time now: ", time_duration_perBatch)
 		play_pattern(endless_pattern_number)
 		return
+		
 	current_pattern += 1
 	var pattern_base = ((current_pattern - 1) * 2) + 1
 	var chosen_pattern = pattern_base + randi_range(0, 1)
@@ -374,8 +395,9 @@ func register_spawned_object(obj: Node, obj_type = null) -> void:
 	if obj == null:
 		return
 	if obj.has_signal("popped_out"):
+		var batch_reference = current_wave_batch
 		if obj_type != null:
-			obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
+			obj.popped_out.connect(_on_object_popped_out.bind(obj_type, batch_reference))
 		else:
 			push_warning("ItemManager: register_spawned_object called without obj_type.")
 	spawned_objects.append(obj)
@@ -401,7 +423,8 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 
 	var obj = rat.instantiate()
 	target_parent.add_child(obj)
-	obj.popped_out.connect(_on_object_popped_out.bind(Item.RAT))
+	var batch_reference = current_wave_batch
+	obj.popped_out.connect(_on_object_popped_out.bind(Item.RAT, batch_reference))
 	spawned_objects.append(obj)
 	wave_one_objects.append(obj)
 	obj.set_direction(dir, target_end_x)
@@ -415,6 +438,9 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 func play_pattern(number: int):
 	if is_game_over:
 		return
+		
+	current_wave_batch = WaveBatch.new()
+	
 	occupied_cells.clear()
 	wave_one_objects.clear()
 	drop_wave_triggered = false

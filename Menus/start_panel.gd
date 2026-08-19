@@ -81,7 +81,7 @@ func _on_start_pressed() -> void:
 	
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.stop_music()
-	AudioManager.play_music(TAPTAP)
+	#AudioManager.play_music(TAPTAP)
 	
 	ItemManager.area = spawn_area
 	ScoreManager.reset_score()
@@ -155,7 +155,7 @@ func _on_endless_start_pressed() -> void:
 
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.stop_music()
-	AudioManager.play_music(KATKAT)
+	#AudioManager.play_music(KATKAT)
 
 	ItemManager.area = spawn_area
 	ScoreManager.reset_score()
