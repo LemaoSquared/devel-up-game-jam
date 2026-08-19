@@ -7,6 +7,7 @@ signal endless_started
 const SHOP_BELL = preload("uid://fswaj7rxfula")
 const OBJECT_SCENE = preload("res://Menus/item_cat_treat.tscn")
 const TAPTAP = preload("uid://bnvtg6wxrfprs")
+const KATKAT = preload("uid://dy575c21gytdn")
 
 @onready var label: Label = $Label
 
@@ -154,7 +155,7 @@ func _on_endless_start_pressed() -> void:
 
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.stop_music()
-	AudioManager.play_music(TAPTAP)
+	AudioManager.play_music(KATKAT)
 
 	ItemManager.area = spawn_area
 	ScoreManager.reset_score()

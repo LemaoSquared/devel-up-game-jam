@@ -436,7 +436,6 @@ texture = SubResource("AtlasTexture_lugpe")
 centered = false
 
 [node name="StoreBackground" type="Node2D" parent="BackgroundManager" unique_id=1692822279]
-visible = false
 
 [node name="Background" type="Node2D" parent="BackgroundManager/StoreBackground" unique_id=2000936904]
 material = SubResource("ShaderMaterial_k87b8")
@@ -498,7 +497,6 @@ texture = ExtResource("4_u4s41")
 centered = false
 
 [node name="OutsideBackground" type="Node2D" parent="BackgroundManager" unique_id=10526258]
-visible = false
 
 [node name="L1_Background" type="Node2D" parent="BackgroundManager/OutsideBackground" unique_id=1073209159]
 script = ExtResource("2_u4s41")

@@ -8,7 +8,9 @@ const CutsceneScene = preload("uid://bqfwjyhkbhn82")
 const BACKYARD = preload("uid://c13kxu5fitd1y")
 
 func _ready() -> void:
-	progress_bar.countdown_finished.connect(_on_progress_bar_countdown_finished)
+	# Connect progress bar timer to story completion handler
+	progress_bar.countdown_finished.connect(_on_story_mode_completed)
+	
 	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fade_rect.modulate.a = 1.0
 
@@ -17,12 +19,12 @@ func _ready() -> void:
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(fade_rect, "modulate:a", 0.0, 1.0)
 	
-	#Story
+	# Story
 	$StartPanel.game_started.connect($Background.close_cinematic_bars)
 	$StartPanel.game_started.connect($ProgressBar.start_countdown)
 	$StartPanel.game_started.connect(_on_game_start_enable_pause)
 	
-	#Endless
+	# Endless
 	$StartPanel.endless_started.connect($Background.close_cinematic_bars)
 	$StartPanel.endless_started.connect(_on_game_start_enable_pause)
 	LivesManager.game_over.connect(_on_lives_depleted)
@@ -31,15 +33,19 @@ func _ready() -> void:
 
 func _on_game_start_enable_pause() -> void:
 	PauseManager.enable_pause()
-	
-func _on_progress_bar_countdown_finished() -> void:
+
+func _on_story_mode_completed() -> void:
 	PauseManager.disable_pause()
-	
+	if ItemManager.has_method("stop_spawning"):
+		ItemManager.stop_spawning()
+	# Triggers game over sequence WITH the cutscene (show_cutscene = true)
+	await _run_game_over_sequence(true)
+
 func _on_lives_depleted() -> void:
 	PauseManager.disable_pause()
 	ItemManager.stop_endless()
+	# Depleting lives skips the cutscene (show_cutscene = false)
 	await _run_game_over_sequence(false)
-	
 
 func _run_game_over_sequence(show_cutscene: bool = true) -> void:
 	await $Transition.transition()
