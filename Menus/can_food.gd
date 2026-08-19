@@ -23,17 +23,33 @@ const CAN = preload("uid://hufov8jcs0i2")
 func _ready() -> void:
 	gift.visible = false
 	add_to_group("camera_targets")
-	click_area.input_pickable = true
-	click_area.input_event.connect(_on_input_event)
+	# Disabled standard area input pickable in favor of global _input handling
+	click_area.input_pickable = false
+	
 	anim_sprite.animation = "Can_Foood"
 	anim_sprite.frame = 0
 	anim_sprite.stop()
 	var life_timer = get_tree().create_timer(lifetime, true)
 	life_timer.timeout.connect(_on_lifetime_expired)
 
-func _on_input_event(_viewport, event, _shape_idx) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_advance_frame()
+# --- Multi-touch & Mouse Input Handling ---
+func _input(event: InputEvent) -> void:
+	if is_finished or click_count >= MAX_CLICKS:
+		return
+		
+	var click_pos = Vector2.ZERO
+	var is_triggered: bool = false
+	
+	if event is InputEventScreenTouch and event.pressed:
+		click_pos = event.position
+		is_triggered = true
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		click_pos = event.position
+		is_triggered = true
+		
+	if is_triggered:
+		if global_position.distance_to(click_pos) < 64.0: # Adjust radius if needed
+			_advance_frame()
 
 func _advance_frame() -> void:
 	if is_finished or click_count >= MAX_CLICKS:

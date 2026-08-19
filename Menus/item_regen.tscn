@@ -1,41 +1,41 @@
 [gd_scene format=3 uid="uid://dob1ia3610l7e"]
 
-[ext_resource type="Texture2D" uid="uid://d3yb3n37t5ojd" path="res://Assets/Object Assets/camera-Sheet.png" id="1_pe2m3"]
 [ext_resource type="Script" uid="uid://ptowl8a43884" path="res://Menus/item_regen.gd" id="1_xwksl"]
+[ext_resource type="Texture2D" uid="uid://b0esjdnwfryuq" path="res://Assets/Object Assets/Flying Heart-Sheet.png" id="2_xwksl"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_3owqy"]
 radius = 36.345562
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_xjh5j"]
-atlas = ExtResource("1_pe2m3")
-region = Rect2(0, 0, 85, 49)
+[sub_resource type="AtlasTexture" id="AtlasTexture_17gv5"]
+atlas = ExtResource("2_xwksl")
+region = Rect2(0, 0, 70, 48)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_b676p"]
-atlas = ExtResource("1_pe2m3")
-region = Rect2(85, 0, 85, 49)
+[sub_resource type="AtlasTexture" id="AtlasTexture_jipbq"]
+atlas = ExtResource("2_xwksl")
+region = Rect2(70, 0, 70, 48)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ys7d3"]
-atlas = ExtResource("1_pe2m3")
-region = Rect2(170, 0, 85, 49)
+[sub_resource type="AtlasTexture" id="AtlasTexture_i5mnu"]
+atlas = ExtResource("2_xwksl")
+region = Rect2(140, 0, 70, 48)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_a5npv"]
-atlas = ExtResource("1_pe2m3")
-region = Rect2(255, 0, 85, 49)
+[sub_resource type="AtlasTexture" id="AtlasTexture_tgwhe"]
+atlas = ExtResource("2_xwksl")
+region = Rect2(210, 0, 70, 48)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_4gg5x"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_xjh5j")
+"texture": SubResource("AtlasTexture_17gv5")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_b676p")
+"texture": SubResource("AtlasTexture_jipbq")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ys7d3")
+"texture": SubResource("AtlasTexture_i5mnu")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_a5npv")
+"texture": SubResource("AtlasTexture_tgwhe")
 }],
 "loop": 1,
 "name": &"default",
@@ -56,6 +56,8 @@ script = ExtResource("1_xwksl")
 shape = SubResource("CircleShape2D_3owqy")
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="Regen" unique_id=795591976]
-modulate = Color(1, 0.15294118, 1, 1)
-scale = Vector2(2, 2)
+modulate = Color(0.99999994, 0.122068815, 0.10821051, 1)
+position = Vector2(-9.536743e-07, -9)
+scale = Vector2(2.7031248, 2.703125)
 sprite_frames = SubResource("SpriteFrames_4gg5x")
+autoplay = "default"

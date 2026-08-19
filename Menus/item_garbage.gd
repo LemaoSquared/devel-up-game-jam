@@ -17,8 +17,8 @@ const Duration: float = 6.0
 
 func _ready() -> void:
 	add_to_group("camera_targets")
-	$Garbage.input_event.connect(_on_area_input_event)
-	$Garbage.input_pickable = true
+	# Disabled standard area input pickable in favor of global _input handling
+	$Garbage.input_pickable = false
 
 	if gift:
 		gift.visible = false
@@ -41,13 +41,29 @@ func start_tilting_loop(obj: Node2D) -> void:
 	tween.tween_property(obj, "rotation", tilt_angle, duration * 2.0)
 	tween.tween_property(obj, "rotation", 0.0, duration)
 
-func _on_area_input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int) -> void:
+# --- Multi-touch & Mouse Input Handling ---
+func _input(event: InputEvent) -> void:
 	if is_popping:
 		return
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		AudioManager.play_sound(TRASH)
-		ParticleManager.spawn_particle(TRASH_PARTICLE, global_position)
-		pop_out(true)
+		
+	var click_pos = Vector2.ZERO
+	var is_triggered: bool = false
+	
+	if event is InputEventScreenTouch and event.pressed:
+		click_pos = event.position
+		is_triggered = true
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		click_pos = event.position
+		is_triggered = true
+		
+	if is_triggered:
+		if global_position.distance_to(click_pos) < 64.0: # Adjust radius if needed
+			trigger_click()
+
+func trigger_click() -> void:
+	AudioManager.play_sound(TRASH)
+	ParticleManager.spawn_particle(TRASH_PARTICLE, global_position)
+	pop_out(true)
 
 func _on_duration_expired() -> void:
 	if is_popping:
@@ -59,10 +75,7 @@ func pop_out(is_clicked: bool = false) -> void:
 		return
 	is_popping = true
 
-	# Disable input so it can't be clicked multiple times while popping out
 	$Garbage.input_pickable = false
-
-	# Pass the actual click status instead of hardcoding true!
 	popped_out.emit(self, is_clicked)
 
 	var tween = create_tween()

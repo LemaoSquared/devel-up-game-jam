@@ -37,8 +37,8 @@ var anchor_position: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	add_to_group("camera_targets")
-	$Yarn.input_event.connect(_on_area_input_event)
-	$Yarn.input_pickable = true
+	# We disable standard input pickable since we handle touch/mouse via global _input
+	$Yarn.input_pickable = false
 
 	var timer = get_tree().create_timer(pop_duration_seconds, false)
 	timer.timeout.connect(_on_duration_expired)
@@ -78,13 +78,31 @@ func spawn_drop_and_hang(target_global_pos: Vector2, anchor_global_pos: Vector2,
 	drop_tween.tween_callback(func(): is_hanging = true)
 
 
-func _on_area_input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int) -> void:
+# --- Multi-touch & Mouse Input Handling ---
+func _input(event: InputEvent) -> void:
 	if is_popping:
 		return
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		AudioManager.play_sound(GIFT)
-		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
-		pop_out(true)
+		
+	var click_pos = Vector2.ZERO
+	var is_triggered: bool = false
+	
+	# Check for touch or mouse click
+	if event is InputEventScreenTouch and event.pressed:
+		click_pos = event.position
+		is_triggered = true
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		click_pos = event.position
+		is_triggered = true
+		
+	if is_triggered:
+		# Check if this input's screen position falls within this item's radius
+		if global_position.distance_to(click_pos) < 64.0: # Adjust radius if needed
+			trigger_click()
+
+func trigger_click() -> void:
+	AudioManager.play_sound(GIFT)
+	ParticleManager.spawn_particle(CLICK_PARTICLE, global_position)
+	pop_out(true)
 
 func _on_duration_expired() -> void:
 	if is_popping:

@@ -1,6 +1,6 @@
 extends Node2D
 
-signal popped_out(obj: Node)
+signal popped_out(obj: Node, was_clicked: bool)
 const SACK = preload("uid://844bkgax2wrd")
 const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 const SACK_OPEN = preload("uid://d3nlvoeoqtbyp")
@@ -41,8 +41,8 @@ var hit_tween: Tween
 func _ready() -> void:
 	add_to_group("camera_targets")
 
-	sack.input_event.connect(_on_area_input_event)
-	sack.input_pickable = true
+	# Disabled standard area input pickable in favor of global _input handling
+	sack.input_pickable = false
 
 	sack_sprite.region_enabled = true
 	sack_sprite.region_filter_clip_enabled = true
@@ -53,20 +53,24 @@ func _ready() -> void:
 
 	start_tilting_loop(self)
 
-func _on_area_input_event(
-	_viewport: Node,
-	event: InputEvent,
-	_shape_idx: int
-) -> void:
+# --- Multi-touch & Mouse Input Handling ---
+func _input(event: InputEvent) -> void:
 	if is_popping:
 		return
-
-	if (
-		event is InputEventMouseButton
-		and event.pressed
-		and event.button_index == MOUSE_BUTTON_LEFT
-	):
-		hit_sack()
+		
+	var click_pos = Vector2.ZERO
+	var is_triggered: bool = false
+	
+	if event is InputEventScreenTouch and event.pressed:
+		click_pos = event.position
+		is_triggered = true
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		click_pos = event.position
+		is_triggered = true
+		
+	if is_triggered:
+		if global_position.distance_to(click_pos) < 64.0: # Adjust radius if needed
+			hit_sack()
 
 
 func hit_sack() -> void:
@@ -175,7 +179,7 @@ func transform_to_polaroid() -> void:
 		photo_sprite.texture = polaroid_texture
 
 	if polaroid.has_method("setup"):
-		polaroid.setup(REQUIRED_CLICKS * POINTS_PER_CLICK)  
+		polaroid.setup(REQUIRED_CLICKS *POINTS_PER_CLICK)  
 
 	if ItemManager.has_method("register_spawned_object"):
 		ItemManager.register_spawned_object(polaroid)
@@ -209,8 +213,6 @@ func play_hit_animation() -> void:
 		Vector2.ONE,
 		0.08
 	)
-
-
 
 
 func pop_out(was_clicked: bool = false) -> void:

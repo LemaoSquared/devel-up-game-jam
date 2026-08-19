@@ -13,27 +13,31 @@ const Duration: float = 6.0
 
 func _ready() -> void:
 	sprite_2d.play("default")
-	camera_area.input_event.connect(_on_area_input_event)
-	camera_area.input_pickable = true
+	# Disabled standard area input pickable in favor of global _input handling
+	camera_area.input_pickable = false
 
 	var timer := get_tree().create_timer(Duration, false)
 	timer.timeout.connect(_on_duration_expired)
 	start_floating(self)
 
-func _on_area_input_event(
-	_viewport: Node,
-	event: InputEvent,
-	_shape_idx: int
-) -> void:
+# --- Multi-touch & Mouse Input Handling ---
+func _input(event: InputEvent) -> void:
 	if is_popping:
 		return
-
-	if (
-		event is InputEventMouseButton
-		and event.pressed
-		and event.button_index == MOUSE_BUTTON_LEFT
-	):
-		activate_camera()
+		
+	var click_pos = Vector2.ZERO
+	var is_triggered: bool = false
+	
+	if event is InputEventScreenTouch and event.pressed:
+		click_pos = event.position
+		is_triggered = true
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		click_pos = event.position
+		is_triggered = true
+		
+	if is_triggered:
+		if global_position.distance_to(click_pos) < 64.0: # Adjust radius if needed
+			activate_camera()
 
 func activate_camera() -> void:
 	AudioManager.play_sound(CAMERA)
@@ -75,7 +79,6 @@ func pop_out() -> void:
 	is_popping = true
 	camera_area.input_pickable = false
 	# When it expires without being clicked, pass was_clicked = false and Item.CAMERA (3)
-	# ItemManager already ignores CAMERA for missing penalties, keeping HP completely safe!
 	popped_out.emit(self, false, 3)
 
 	var tween := create_tween()

@@ -26,8 +26,8 @@ func _ready() -> void:
 	visible = false
 	scale = Vector2.ZERO
 
+	# Disabled standard area input pickable in favor of global _input handling
 	sardine_area.input_pickable = false
-	sardine_area.input_event.connect(_on_input_event)
 	start_tilting_loop(self)
 
 func start_tilting_loop(obj: Node2D) -> void:
@@ -88,25 +88,36 @@ func _spread_apart() -> void:
 
 	if not is_finished:
 		sardine_area.input_pickable = true
-		
-func _on_input_event(_viewport, event: InputEvent, _shape_idx: int) -> void:
-	if is_finished:
-		return
 
-	if (
-		event is InputEventMouseButton
-		and event.pressed
-		and event.button_index == MOUSE_BUTTON_LEFT
-	):
-		is_popping = true  
-		sardine_area.input_pickable = false
+# --- Multi-touch & Mouse Input Handling ---
+func _input(event: InputEvent) -> void:
+	if is_finished or not sardine_area.input_pickable:
+		return
 		
-		AudioManager.play_sound(GIFT)
-		ParticleManager.spawn_particle(CLICK_PARTICLE, global_position)
-		gift.visible = true
-		gift.play("default")
-		await gift.animation_finished
-		pop_out(true) # FIXED: Explicitly pass true when clicked!
+	var click_pos = Vector2.ZERO
+	var is_triggered: bool = false
+	
+	if event is InputEventScreenTouch and event.pressed:
+		click_pos = event.position
+		is_triggered = true
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		click_pos = event.position
+		is_triggered = true
+		
+	if is_triggered:
+		if global_position.distance_to(click_pos) < 64.0: # Adjust radius if needed
+			trigger_click()
+
+func trigger_click() -> void:
+	is_popping = true  
+	sardine_area.input_pickable = false
+	
+	AudioManager.play_sound(GIFT)
+	ParticleManager.spawn_particle(CLICK_PARTICLE, global_position)
+	gift.visible = true
+	gift.play("default")
+	await gift.animation_finished
+	pop_out(true)
 
 func pop_out(was_clicked: bool = false) -> void:
 	if is_finished:
