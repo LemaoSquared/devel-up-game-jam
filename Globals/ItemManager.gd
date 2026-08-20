@@ -40,8 +40,8 @@ enum Item {
 
 @export_group("Spawn Settings")
 @export var spawn_type: SpawnType = SpawnType.GRID
-@export var pattern_columns: int = 12
-@export var pattern_rows: int = 4
+@export var pattern_columns: int = 15
+@export var pattern_rows: int = 5
 @export var enable_drop_wave: bool = true
 @export var spawn_count: int = 10
 
@@ -319,21 +319,15 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int, batch_r
 	if was_clicked:
 		print("Clicked item: ", Item.keys()[item_type])
 		
+		# Penalty hazards
 		if item_type == Item.SHOES or item_type == Item.GARBAGE:
 			if LivesManager.has_method("lose_life"):
 				LivesManager.lose_life()
 			return
 		
-		var is_special_item: bool = (
-			item_type == Item.CAMERA or
-			item_type == Item.REGEN or
-			item_type == Item.POLAROID
-		)
-		
-		if is_special_item:
-			item_collected.emit(item_type)
-		else:
-			item_collected.emit(Item.POLAROID)
+		# Emit the actual item type so ScoreManager gets TREAT (5 pts), YARN (5 pts), etc.
+		item_collected.emit(item_type)
+
 	else:
 		print("Item expired (not clicked): ", Item.keys()[item_type])
 		var is_excluded_from_miss: bool = (
@@ -347,7 +341,6 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int, batch_r
 			if batch_ref and not batch_ref.is_finished:
 				batch_ref.has_missed_item = true
 			elif batch_ref and batch_ref.is_finished:
-				# If the wave already ended and a late item falls, trigger 1 HP loss immediately
 				if not batch_ref.has_missed_item:
 					batch_ref.has_missed_item = true
 					if LivesManager.has_method("lose_life"):
@@ -453,36 +446,36 @@ func play_pattern(number: int):
 
 	var item_count = []
 	match number:
-		1: item_count = [10,0,10,1,10,0,0,0,1]
-		2: item_count = [10,0,0,0,0,0,0,0,0]
-		3: item_count = [10,0,5,0,0,0,0,0,1]
-		4: item_count = [10,0,5,0,0,0,0,0,0]
-		5: item_count = [0,10,0,0,0,0,0,0,0]
-		6: item_count = [5,5,0,0,0,0,0,0,0]
-		7: item_count = [5,5,5,0,0,0,0,0,0]
-		8: item_count = [0,10,5,0,0,0,0,0,0]
-		9: item_count = [10,0,0,1,0,0,0,0,0]
-		10: item_count = [0,10,0,1,0,0,0,0,0]
-		11: item_count = [3,0,0,0,0,2,0,0,0]
-		12: item_count = [0,3,0,0,0,2,0,0,0]
-		13: item_count = [0,15,0,0,5,0,0,0,0]
-		14: item_count = [15,0,0,0,5,0,0,0,0]
-		15: item_count = [0,3,0,0,5,2,0,0,0]
-		16: item_count = [9,0,5,0,0,1,0,0,0]
-		17: item_count = [3,0,0,0,0,0,2,0,0]
-		18: item_count = [0,3,0,0,0,0,2,0,0]
-		19: item_count = [0,3,0,1,5,0,2,0,0]
-		20: item_count = [9,0,5,1,0,0,1,0,0]
-		21: item_count = [0,2,10,0,0,1,2,0,0]
-		22: item_count = [2,0,0,0,10,2,1,0,0]
-		23: item_count = [0,0,0,0,0,0,0,2,0]
-		24: item_count = [0,4,0,0,0,1,0,1,0]
-		25: item_count = [20,0,10,1,0,0,0,0,0]
-		26: item_count = [5,20,0,1,10,0,0,0,0]
-		27: item_count = [0,0,10,0,10,0,0,2,0]
-		28: item_count = [4,0,5,0,5,0,1,1,0]
-		29: item_count = [2,10,15,0,0,0,3,0,0]
-		30: item_count = [10,4,0,0,15,1,0,1,0]
+		1: item_count = [15, 0, 0, 0, 0, 0, 0, 0, 0]
+		2: item_count = [15, 0, 0, 0, 0, 0, 0, 0, 0]
+		3: item_count = [20, 0, 5, 0, 0, 0, 0, 0, 0]
+		4: item_count = [20, 0, 5, 0, 0, 0, 0, 0, 0]
+		5: item_count = [0, 20, 0, 0, 0, 0, 0, 0, 0]
+		6: item_count = [10, 10, 0, 0, 0, 0, 0, 0, 0]
+		7: item_count = [15, 15, 5, 0, 0, 0, 0, 0, 0]
+		8: item_count = [0, 30, 5, 0, 0, 0, 0, 0, 0]
+		9: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0]
+		10: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0]
+		11: item_count = [13, 0, 0, 0, 0, 2, 0, 0, 0]
+		12: item_count = [0, 13, 0, 0, 0, 2, 0, 0, 0]
+		13: item_count = [0, 25, 0, 0, 5, 0, 0, 0, 0]
+		14: item_count = [25, 0, 0, 0, 5, 0, 0, 0, 0]
+		15: item_count = [0, 1, 0, 0, 5, 4, 0, 0, 0]
+		16: item_count = [7, 0, 5, 0, 0, 3, 0, 0, 0]
+		17: item_count = [13, 0, 0, 0, 0, 0, 2, 0, 0]
+		18: item_count = [0, 13, 0, 0, 0, 0, 2, 0, 0]
+		19: item_count = [0, 0, 15, 1, 0, 10, 0, 0, 0]
+		20: item_count = [0, 0, 0, 1, 0, 0, 25, 0, 0]
+		21: item_count = [0, 0, 10, 0, 0, 5, 0, 0, 0]
+		22: item_count = [0, 0, 0, 0, 10, 0, 5, 0, 0]
+		23: item_count = [0, 0, 0, 0, 0, 0, 0, 2, 0]
+		24: item_count = [0, 4, 0, 0, 0, 1, 0, 1, 0]
+		25: item_count = [20, 0, 20, 1, 0, 0, 0, 0, 0]
+		26: item_count = [0, 20, 0, 1, 20, 0, 0, 0, 0]
+		27: item_count = [10, 0, 10, 0, 0, 0, 0, 3, 0]
+		28: item_count = [4, 0, 0, 0, 10, 6, 0, 0, 0]
+		29: item_count = [0, 14, 15, 0, 0, 6, 0, 0, 0]
+		30: item_count = [20, 0, 0, 0, 15, 0, 0, 3, 0]
 
 	for i in range(item_count.size()):
 		var count = item_count[i]

@@ -792,8 +792,7 @@ autoplay = "outside_idle"
 script = ExtResource("19_i0d87")
 
 [node name="ReferenceRect" type="ReferenceRect" parent="." unique_id=690342108]
-visible = false
-offset_left = 256.0
+offset_left = 277.0
 offset_top = 149.0
 offset_right = 1074.0
 offset_bottom = 541.0
