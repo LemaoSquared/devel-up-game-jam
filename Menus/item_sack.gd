@@ -6,7 +6,7 @@ const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 const SACK_OPEN = preload("uid://d3nlvoeoqtbyp")
 const SACK_PARTICLE = preload("uid://bncb0rx7oecq0")
 
-const POINTS_PER_CLICK: int = 10
+const POINTS_PER_CLICK: int = 5
 @onready var gift: AnimatedSprite2D = $GiftAnimation
 
 #POLAROID
@@ -20,7 +20,7 @@ var is_transforming: bool = false
 var is_gravity: bool = false
 var is_popping: bool = false
 var is_finishing: bool = false 
-const Duration: float = 15.0
+const Duration: float = 6.0
 const REQUIRED_CLICKS: int = 10
 
 var click_count: int = 0

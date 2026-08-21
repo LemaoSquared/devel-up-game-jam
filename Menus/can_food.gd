@@ -13,7 +13,7 @@ signal popped_out(obj, was_clicked: bool)
 
 var click_count: int = 0
 const MAX_CLICKS: int = 3
-@export var lifetime: float = 12.0
+@export var lifetime: float = 6.0
 var is_finished: bool = false
 var sardines_remaining: int = 0
 
