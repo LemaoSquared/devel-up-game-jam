@@ -11,6 +11,10 @@ func _ready() -> void:
 	texture_hover = null
 	texture_pressed = null
 	
+	# Enable toggle mode and set the initial state to ON
+	toggle_mode = true
+	button_pressed = true
+	
 	toggled.connect(_on_toggled)
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)

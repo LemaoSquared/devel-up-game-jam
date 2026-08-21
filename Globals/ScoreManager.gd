@@ -4,11 +4,11 @@ var score: int = 0
 var point_values := {
 	ItemManager.Item.TREAT: 5,
 	ItemManager.Item.GARBAGE: -30,
-	ItemManager.Item.RAT: 30,
+	ItemManager.Item.RAT: 20,
 	ItemManager.Item.YARN: 5,
 	ItemManager.Item.SHOES: -30,
 	ItemManager.Item.SACK: 0,
-	ItemManager.Item.SARDINE: 10,  
+	ItemManager.Item.SARDINE: 5,  
 	ItemManager.Item.CAMERA: 0,
 	ItemManager.Item.POLAROID: 20,
 	ItemManager.Item.REGEN: 0,

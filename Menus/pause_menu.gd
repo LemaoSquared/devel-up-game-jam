@@ -154,12 +154,10 @@ func _on_quit_pressed() -> void:
 	AudioManager.play_music(STREET)
 	
 func _on_music_pressed() -> void:
-	# Add your music toggle logic here
-	pass
+	AudioManager.toggle_music()
 	
 func _on_sfx_pressed() -> void:
-	# Add your SFX toggle logic here
-	pass
+	AudioManager.toggle_sfx()
 
 func _reset_game_state() -> void:
 	get_tree().paused = false

@@ -129,7 +129,7 @@ func pop_out(was_clicked: bool = false) -> void:
 	popped_out.emit(self, was_clicked)
 	
 	if was_clicked:
-		ScoreManager.add_points(10)
+		ScoreManager.add_points(5)
 
 	var tween := create_tween()
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
