@@ -19,17 +19,15 @@ var sardine_index: int = 0
 var total_sardines: int = 1
 var spawn_delay: float = 0.0
 
-
 @onready var sardine_area: Area2D = $Sardines
 @onready var gift: AnimatedSprite2D = $GiftAnimation
-
 
 func _ready() -> void:
 	visible = false
 	scale = Vector2.ZERO
 
+	# Disabled standard area input pickable in favor of global _input handling
 	sardine_area.input_pickable = false
-	sardine_area.input_event.connect(_on_input_event)
 	start_tilting_loop(self)
 
 func start_tilting_loop(obj: Node2D) -> void:
@@ -56,16 +54,11 @@ func launch() -> void:
 	if is_finished:
 		return
 
-	var life_timer := get_tree().create_timer(
-		lifetime, false
-	)
+	var life_timer := get_tree().create_timer(lifetime, false)
 	life_timer.timeout.connect(_on_lifetime_expired)
+
 func _spread_apart() -> void:
-	var offsets := get_fan_offsets(
-		total_sardines,
-		spacing_x,
-		upward_distance
-	)
+	var offsets := get_fan_offsets(total_sardines, spacing_x, upward_distance)
 
 	if sardine_index < 0 or sardine_index >= offsets.size():
 		push_error("Invalid sardine_index: " + str(sardine_index))
@@ -75,10 +68,7 @@ func _spread_apart() -> void:
 	var target_position := starting_position + offsets[sardine_index]
 
 	if spawn_delay > 0.0:
-		await get_tree().create_timer(
-			spawn_delay,
-			true
-		).timeout
+		await get_tree().create_timer(spawn_delay, true).timeout
 
 	if is_finished:
 		return
@@ -91,49 +81,43 @@ func _spread_apart() -> void:
 	tween.set_ease(Tween.EASE_OUT)
 	tween.set_parallel(true)
 
-	tween.tween_property(
-		self,
-		"global_position",
-		target_position,
-		spread_duration
-	)
-
-	tween.tween_property(
-		self,
-		"scale",
-		Vector2.ONE,
-		0.3
-	)
+	tween.tween_property(self, "global_position", target_position, spread_duration)
+	tween.tween_property(self, "scale", Vector2.ONE, 0.3)
 
 	await tween.finished
 
 	if not is_finished:
 		sardine_area.input_pickable = true
-		
-func _on_input_event(
-	_viewport,
-	event: InputEvent,
-	_shape_idx: int
-) -> void:
-	if is_finished:
+
+# --- Multi-touch & Mouse Input Handling ---
+func _input(event: InputEvent) -> void:
+	if is_finished or not sardine_area.input_pickable:
 		return
-
-	if (
-		event is InputEventMouseButton
-		and event.pressed
-		and event.button_index == MOUSE_BUTTON_LEFT
-	):
 		
-		is_popping = true  
-		sardine_area.input_pickable = false
+	var click_pos = Vector2.ZERO
+	var is_triggered: bool = false
+	
+	if event is InputEventScreenTouch and event.pressed:
+		click_pos = event.position
+		is_triggered = true
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		click_pos = event.position
+		is_triggered = true
 		
-		AudioManager.play_sound(GIFT)
-		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
-		gift.visible = true
-		gift.play("default")
-		await gift.animation_finished
-		pop_out()
+	if is_triggered:
+		if global_position.distance_to(click_pos) < 64.0: # Adjust radius if needed
+			trigger_click()
 
+func trigger_click() -> void:
+	is_popping = true  
+	sardine_area.input_pickable = false
+	
+	AudioManager.play_sound(GIFT)
+	ParticleManager.spawn_particle(CLICK_PARTICLE, global_position)
+	gift.visible = true
+	gift.play("default")
+	await gift.animation_finished
+	pop_out(true)
 
 func pop_out(was_clicked: bool = false) -> void:
 	if is_finished:
@@ -153,22 +137,10 @@ func pop_out(was_clicked: bool = false) -> void:
 	tween.set_ease(Tween.EASE_IN)
 	tween.set_parallel(true)
 
-	tween.tween_property(
-		self,
-		"scale",
-		Vector2.ZERO,
-		0.25
-	)
-
-	tween.tween_property(
-		self,
-		"position:y",
-		position.y - 15.0,
-		0.25
-	)
+	tween.tween_property(self, "scale", Vector2.ZERO, 0.25)
+	tween.tween_property(self, "position:y", position.y - 15.0, 0.25)
 
 	tween.chain().tween_callback(queue_free)
-
 
 func _on_lifetime_expired() -> void:
 	if is_finished:
@@ -176,18 +148,13 @@ func _on_lifetime_expired() -> void:
 
 	pop_out(false)
 
-static func get_fan_offsets(
-	count: int,
-	sx: float = 90.0,
-	up_distance: float = 100.0
-) -> Array[Vector2]:
-	
+static func get_fan_offsets(count: int, sx: float = 90.0, up_distance: float = 100.0) -> Array[Vector2]:
 	if count == 3:
 		return [
-		Vector2(-sx, -25),
-		Vector2(0, -35),
-		Vector2(sx, -25)
-	]
+			Vector2(-sx, -25),
+			Vector2(0, -35),
+			Vector2(sx, -25)
+		]
 
 	var offsets: Array[Vector2] = []
 
@@ -202,11 +169,6 @@ static func get_fan_offsets(
 
 	for i in range(count):
 		var horizontal_step := i - middle
-		offsets.append(
-			Vector2(
-				horizontal_step * sx,
-				-up_distance
-			)
-		)
+		offsets.append(Vector2(horizontal_step * sx, -up_distance))
 
 	return offsets

@@ -1,12 +1,14 @@
 extends TextureRect
 const STREET = preload("uid://c6xk46jpedco4")
 @onready var tutorial_label: Label = $"../TutorialLabel"
+@onready var lives: HBoxContainer = $"../Lives"
 
 signal game_started
 signal endless_started
 const SHOP_BELL = preload("uid://fswaj7rxfula")
 const OBJECT_SCENE = preload("res://Menus/item_cat_treat.tscn")
 const TAPTAP = preload("uid://bnvtg6wxrfprs")
+const KATKAT = preload("uid://dy575c21gytdn")
 
 @onready var label: Label = $Label
 
@@ -136,7 +138,6 @@ func _on_endless_start_pressed() -> void:
 	if is_transitioning:
 		return
 	is_transitioning = true
-
 	if hover_tween:
 		hover_tween.kill()
 	if hover_tween2:
@@ -154,13 +155,14 @@ func _on_endless_start_pressed() -> void:
 
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.stop_music()
-	AudioManager.play_music(TAPTAP)
+	#AudioManager.play_music(KATKAT)
 
 	ItemManager.area = spawn_area
 	ScoreManager.reset_score()
 	LivesManager.reset_lives()
 	ItemManager.start_endless()
 	ItemManager.is_game_over = false
+	lives.visible = true
 	
 	# Spawn treat effect at Endless button position
 	var obj = OBJECT_SCENE.instantiate()

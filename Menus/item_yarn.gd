@@ -1,5 +1,5 @@
 extends Node2D
-signal popped_out(obj: Node)
+signal popped_out(obj: Node, was_clicked: bool)
 const GIFT = preload("uid://fojbgtm48t6b")
 const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 
@@ -24,7 +24,7 @@ enum SettleStyle { BOUNCE, SPRING, SWAY }
 @export_group("Timeout Fall Settings")
 @export var fall_away_duration: float = 1.0
 @export var fall_away_spin_degrees: float = 90.0
-@export var fall_away_screen_buffer: float = 150.0   
+@export var fall_away_screen_buffer: float = 150.0    
 
 var is_popping: bool = false
 var is_hanging: bool = false
@@ -37,8 +37,8 @@ var anchor_position: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	add_to_group("camera_targets")
-	$Yarn.input_event.connect(_on_area_input_event)
-	$Yarn.input_pickable = true
+	# We disable standard input pickable since we handle touch/mouse via global _input
+	$Yarn.input_pickable = false
 
 	var timer = get_tree().create_timer(pop_duration_seconds, false)
 	timer.timeout.connect(_on_duration_expired)
@@ -78,13 +78,31 @@ func spawn_drop_and_hang(target_global_pos: Vector2, anchor_global_pos: Vector2,
 	drop_tween.tween_callback(func(): is_hanging = true)
 
 
-func _on_area_input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int) -> void:
+# --- Multi-touch & Mouse Input Handling ---
+func _input(event: InputEvent) -> void:
 	if is_popping:
 		return
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		AudioManager.play_sound(GIFT)
-		ParticleManager.spawn_particle(CLICK_PARTICLE,global_position)
-		pop_out()
+		
+	var click_pos = Vector2.ZERO
+	var is_triggered: bool = false
+	
+	# Check for touch or mouse click
+	if event is InputEventScreenTouch and event.pressed:
+		click_pos = event.position
+		is_triggered = true
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		click_pos = event.position
+		is_triggered = true
+		
+	if is_triggered:
+		# Check if this input's screen position falls within this item's radius
+		if global_position.distance_to(click_pos) < 64.0: # Adjust radius if needed
+			trigger_click()
+
+func trigger_click() -> void:
+	AudioManager.play_sound(GIFT)
+	ParticleManager.spawn_particle(CLICK_PARTICLE, global_position)
+	pop_out(true)
 
 func _on_duration_expired() -> void:
 	if is_popping:
@@ -97,11 +115,11 @@ func _on_duration_expired() -> void:
 	)
 
 
-func pop_out(_is_clicked = false) -> void:
+func pop_out(is_clicked: bool = false) -> void:
 	string.visible = false
 	is_popping = true
 	is_hanging = false
-	popped_out.emit(self, true)
+	popped_out.emit(self, is_clicked)
 	
 	gift_front.visible = true
 	gift_front.play("default")
@@ -118,6 +136,7 @@ func fall_and_disappear() -> void:
 	string.visible = false
 	is_popping = true
 	is_hanging = false
+	# Explicitly pass false so ItemManager knows it expired / wasn't clicked
 	popped_out.emit(self, false)
 
 	var viewport_height = get_viewport_rect().size.y
@@ -151,7 +170,7 @@ func transform_to_polaroid() -> void:
 		photo_sprite.texture = polaroid_texture
 
 	if ItemManager.has_method("register_spawned_object"):
-		ItemManager.register_spawned_object(polaroid)
+		ItemManager.register_spawned_object(polaroid, ItemManager.Item.POLAROID)
 
 	if polaroid.has_method("appear"):
 		polaroid.appear()

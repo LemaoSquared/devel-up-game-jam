@@ -10,7 +10,8 @@ var point_values := {
 	ItemManager.Item.SACK: 0,
 	ItemManager.Item.SARDINE: 10,  
 	ItemManager.Item.CAMERA: 0,
-	ItemManager.Item.POLAROID: 20
+	ItemManager.Item.POLAROID: 20,
+	ItemManager.Item.REGEN: 0,
 }
 
 func _ready():

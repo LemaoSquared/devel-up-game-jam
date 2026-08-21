@@ -11,10 +11,11 @@ signal item_collected(item_type: int)
 @export var camera: PackedScene = preload("res://Menus/item_camera.tscn")
 @export var rat: PackedScene = preload("res://Menus/toy_mouse.tscn")
 @export var regen: PackedScene = preload("res://Menus/item_regen.tscn")
+@export var polaroid: PackedScene = preload("res://Menus/item_polaroid.tscn")
 
 @export var min_spawn_distance: float = 64.0
 @export var max_placement_attempts: int = 30
-enum Spawner {BOTTOM_RIGHT, BOTTOM_LEFT, BOTH}
+enum Spawner { BOTTOM_RIGHT, BOTTOM_LEFT, BOTH }
 var rat_corner: Spawner = Spawner.BOTTOM_RIGHT
 
 enum SpawnType { RANDOM, GRID }
@@ -39,8 +40,8 @@ enum Item {
 
 @export_group("Spawn Settings")
 @export var spawn_type: SpawnType = SpawnType.GRID
-@export var pattern_columns: int = 12
-@export var pattern_rows: int = 4
+@export var pattern_columns: int = 15
+@export var pattern_rows: int = 5
 @export var enable_drop_wave: bool = true
 @export var spawn_count: int = 10
 
@@ -48,15 +49,23 @@ var time_duration_perBatch: float = 6.0
 var spawned_objects: Array[Node] = []
 var wave_one_objects: Array[Node] = []
 var drop_wave_triggered: bool = false
-var batch_start_time: float = 0.0                      
+var batch_start_time: float = 0.0					
 var current_area: Control
 var current_parent: Node
 var current_pattern
 var scored_objects: Array[Node] = []
 var area
 
-# Wave Timer Reference
+# Wave Tracking
 var active_wave_timer: SceneTreeTimer = null
+var missed_items_in_current_wave: int = 0
+
+# Class to hold state for a specific wave batch
+class WaveBatch:
+	var has_missed_item: bool = false  # Tracks if ANY item was missed this wave
+	var is_finished: bool = false
+
+var current_wave_batch: WaveBatch = null
 
 # Endless
 var is_endless: bool = false
@@ -64,8 +73,8 @@ var endless_pattern_number: int = 1
 var is_game_over: bool = false
 var endless_loop_count: int = 0
 var base_time_duration_perBatch: float = 6.0  
-@export var endless_speed_step: float = 0.5    
-@export var endless_min_wave_time: float = 2.5    
+@export var endless_speed_step: float = 0.5     
+@export var endless_min_wave_time: float = 2.5     
 
 # --- Shared Grid & Distance Tracking ---
 var occupied_cells: Array[Vector2i] = []
@@ -94,32 +103,22 @@ func stop_endless() -> void:
 	is_game_over = true
 	clear_objects()
 
-# Returns available grid positions enforcing a minimum neighbor distance rule
 func _get_available_cells(min_cell_distance: int = 1) -> Array[Vector2i]:
 	var available: Array[Vector2i] = []
-	
 	for r in range(pattern_rows):
 		for c in range(pattern_columns):
 			var candidate = Vector2i(c, r)
-			
-			# 1. Skip if already occupied
 			if occupied_cells.has(candidate):
 				continue
-				
-			# 2. Check distance against all currently occupied cells
 			var is_too_close: bool = false
 			for occupied in occupied_cells:
 				var dist_x = abs(candidate.x - occupied.x)
 				var dist_y = abs(candidate.y - occupied.y)
-				
-				# If within min_cell_distance (including diagonals), block cell
 				if dist_x <= min_cell_distance and dist_y <= min_cell_distance:
 					is_too_close = true
 					break
-			
 			if not is_too_close:
 				available.append(candidate)
-				
 	available.shuffle()
 	return available
 
@@ -129,7 +128,6 @@ func spawn_random_pop_in_rect(obj_type, count: int = -1, parent: Node = null) ->
 
 	current_area = area
 	current_parent = target_parent
-	
 	match spawn_type:
 		SpawnType.RANDOM:
 			pass
@@ -154,19 +152,16 @@ func _spawn_drop_grid(obj_type, count: int = -1, parent: Node = null) -> void:
 	)
 	var anchor_y = area.global_position.y - drop_start_height
 
-	# 1. Try fetching padded cells (no adjacent spawns) for mobile touch readability
 	var available_cells = _get_available_cells(1)
-	
-	# 2. Fallback: If grid is getting crowded, allow adjacent cells
 	if available_cells.size() < final_count:
 		available_cells = _get_available_cells(0)
 
 	var spawn_total = min(final_count, available_cells.size())
+	var batch_reference = current_wave_batch
 
 	for index in range(spawn_total):
 		var cell = available_cells[index]
-		occupied_cells.append(cell) # Reserve cell
-		
+		occupied_cells.append(cell)
 		var c = cell.x
 		var r = cell.y
 
@@ -178,7 +173,6 @@ func _spawn_drop_grid(obj_type, count: int = -1, parent: Node = null) -> void:
 		var pos = cell_origin + cell_size / 2.0
 		var anchor_pos = Vector2(pos.x, anchor_y)
 		var obj: Node
-		
 		match obj_type:
 			Item.YARN:
 				obj = yarn.instantiate()
@@ -187,11 +181,10 @@ func _spawn_drop_grid(obj_type, count: int = -1, parent: Node = null) -> void:
 			_:
 				push_warning("ItemManager: Unsupported drop item: " + str(obj_type))
 				continue
-				
 		target_parent.add_child(obj)
 
 		if obj.has_signal("popped_out"):
-			obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
+			obj.popped_out.connect(_on_object_popped_out.bind(obj_type, batch_reference))
 
 		spawned_objects.append(obj)
 		wave_one_objects.append(obj)
@@ -210,30 +203,21 @@ func _spawn_grid(area: Control, count: int, target_parent: Node, obj_type) -> vo
 	if obj_type == Item.RAT:
 		_spawn_rats(count, cell_size, target_parent)
 		return
-	
-	# 1. Try fetching padded cells (1-cell spacing buffer)
 	var available_cells = _get_available_cells(1)
-	
-	# 2. Fallback: If space is tight, allow standard adjacent cells
 	if available_cells.size() < count:
 		available_cells = _get_available_cells(0)
-		
 	var spawn_total = min(count, available_cells.size())
 
 	for index in range(spawn_total):
 		var cell = available_cells[index]
-		occupied_cells.append(cell) # Reserve cell
-		
+		occupied_cells.append(cell)
 		var c = cell.x
 		var r = cell.y
 
 		var cell_origin = area.global_position + Vector2(c * cell_size.x, r * cell_size.y)
 		var pos = cell_origin + cell_size / 2.0
-		
-		# Tighter offset so items stay nicely centered in their touch targets
 		pos.x += randi_range(-10, 10)
 		pos.y += randi_range(-10, 10)
-		
 		_instantiate_object(pos, target_parent, index, obj_type)
 
 func _spawn_rats(count: int, cell_size: Vector2, target_parent: Node) -> void:
@@ -263,19 +247,19 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 		Item.RAT: obj = rat.instantiate()
 		Item.SACK: obj = sack.instantiate()
 		Item.REGEN: obj = regen.instantiate()
+		Item.POLAROID: obj = polaroid.instantiate()
 	target_parent.add_child(obj)
-	
 	if obj.has_method("launch"):
 		obj.launch()
-	
 	if obj.has_signal("camera_activated"):
 		var camera_effects := get_tree().get_first_node_in_group("camera_effects")
 		if camera_effects != null:
 			obj.camera_activated.connect(camera_effects.activate_camera_effect)
 		else:
 			push_warning("ItemManager: CameraEffects node was not found.")
-	
-	obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
+			
+	var batch_reference = current_wave_batch
+	obj.popped_out.connect(_on_object_popped_out.bind(obj_type, batch_reference))
 	spawned_objects.append(obj)
 	wave_one_objects.append(obj)
 
@@ -310,22 +294,7 @@ func _animate_drop_in(obj: Node, pos: Vector2, delay_index: int) -> void:
 		tween.set_ease(Tween.EASE_OUT)
 		tween.tween_property(obj, "global_position", pos, drop_duration).set_delay(delay_index * 0.05)
 
-func _find_valid_position(existing: Array[Vector2]) -> Variant:
-	for attempt in range(max_placement_attempts):
-		var rand_x = randf_range(0, area.size.x)
-		var rand_y = randf_range(0, area.size.y)
-		var candidate = area.global_position + Vector2(rand_x, rand_y)
-		var far_enough = true
-		for p in existing:
-			if candidate.distance_to(p) < min_spawn_distance:
-				far_enough = false
-				break
-		if far_enough:
-			return candidate
-	return null
-
 func clear_objects() -> void:
-	# Immediately stop pending wave timer callbacks
 	if active_wave_timer and active_wave_timer.timeout.is_connected(_on_wave_timeout):
 		active_wave_timer.timeout.disconnect(_on_wave_timeout)
 		active_wave_timer = null
@@ -337,8 +306,10 @@ func clear_objects() -> void:
 	wave_one_objects.clear()
 	scored_objects.clear()
 	occupied_cells.clear()
+	missed_items_in_current_wave = 0
+	current_wave_batch = null
 
-func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void:
+func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int, batch_ref: WaveBatch) -> void:
 	if obj in scored_objects:
 		return  
 	scored_objects.append(obj)
@@ -347,26 +318,47 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 
 	if was_clicked:
 		print("Clicked item: ", Item.keys()[item_type])
-		if is_endless and (item_type == Item.GARBAGE or item_type == Item.SHOES):
-			LivesManager.lose_life()
-		else:
-			item_collected.emit(item_type)
+		
+		# Penalty hazards
+		if item_type == Item.SHOES or item_type == Item.GARBAGE:
+			if LivesManager.has_method("lose_life"):
+				LivesManager.lose_life()
+			return
+		
+		# Emit the actual item type so ScoreManager gets TREAT (5 pts), YARN (5 pts), etc.
+		item_collected.emit(item_type)
+
 	else:
 		print("Item expired (not clicked): ", Item.keys()[item_type])
-		if is_endless and !(item_type == Item.GARBAGE or item_type == Item.SHOES):
-			LivesManager.lose_life()
+		var is_excluded_from_miss: bool = (
+			item_type == Item.GARBAGE or
+			item_type == Item.SHOES or
+			item_type == Item.CAMERA or
+			item_type == Item.REGEN or
+			item_type == Item.POLAROID
+		)
+		if is_endless and not is_excluded_from_miss:
+			if batch_ref and not batch_ref.is_finished:
+				batch_ref.has_missed_item = true
+			elif batch_ref and batch_ref.is_finished:
+				if not batch_ref.has_missed_item:
+					batch_ref.has_missed_item = true
+					if LivesManager.has_method("lose_life"):
+						LivesManager.lose_life()
 
 	if enable_drop_wave and not drop_wave_triggered and wave_one_objects.is_empty():
 		drop_wave_triggered = true
-		var elapsed = (Time.get_ticks_msec() / 1000.0) - batch_start_time
-		var remaining = max(0.0, time_duration_perBatch - elapsed)
-		if remaining > 0.0:
-			pass
 
 func _on_wave_timeout() -> void:
-	# Guard: Stop execution if node is freed, outside tree, or game over
 	if not is_inside_tree() or is_game_over or current_pattern == -1:
 		return
+
+	# Deduct AT MOST 1 life per wave if there was at least one missed item/yarn
+	if current_wave_batch:
+		current_wave_batch.is_finished = true
+		if is_endless and current_wave_batch.has_missed_item:
+			if LivesManager.has_method("lose_life"):
+				LivesManager.lose_life()
 
 	if is_endless:
 		if LivesManager.lives <= 0:
@@ -379,7 +371,7 @@ func _on_wave_timeout() -> void:
 				endless_min_wave_time,
 				base_time_duration_perBatch - (endless_loop_count * endless_speed_step)
 			)
-			print("Endless loop #", endless_loop_count, " — wave time now: ", time_duration_perBatch)
+		print("Endless loop #", endless_loop_count, " — wave time now: ", time_duration_perBatch)
 		play_pattern(endless_pattern_number)
 		return
 		
@@ -396,8 +388,9 @@ func register_spawned_object(obj: Node, obj_type = null) -> void:
 	if obj == null:
 		return
 	if obj.has_signal("popped_out"):
+		var batch_reference = current_wave_batch
 		if obj_type != null:
-			obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
+			obj.popped_out.connect(_on_object_popped_out.bind(obj_type, batch_reference))
 		else:
 			push_warning("ItemManager: register_spawned_object called without obj_type.")
 	spawned_objects.append(obj)
@@ -423,7 +416,8 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 
 	var obj = rat.instantiate()
 	target_parent.add_child(obj)
-	obj.popped_out.connect(_on_object_popped_out.bind(Item.RAT))
+	var batch_reference = current_wave_batch
+	obj.popped_out.connect(_on_object_popped_out.bind(Item.RAT, batch_reference))
 	spawned_objects.append(obj)
 	wave_one_objects.append(obj)
 	obj.set_direction(dir, target_end_x)
@@ -438,63 +432,50 @@ func play_pattern(number: int):
 	if is_game_over:
 		return
 		
-	# Clear grid memory completely for the new wave
+	current_wave_batch = WaveBatch.new()
+	
 	occupied_cells.clear()
 	wave_one_objects.clear()
 	drop_wave_triggered = false
+	missed_items_in_current_wave = 0 
 	batch_start_time = Time.get_ticks_msec() / 1000.0
 
 	current_parent = get_tree().current_scene 
 	if number > 30:
 		return
-	print("PLAYING PATTERN " + str(number))
 
 	var item_count = []
 	match number:
-		1: item_count = [10,0,0,0,0,0,0,0,1]
-		2: item_count = [10,0,0,0,0,0,0,0,0]
-		
-		3: item_count = [10,0,5,0,0,0,0,0,0]
-		4: item_count = [10,0,5,0,0,0,0,0,0]
-		
-		5: item_count = [0,10,0,0,0,0,0,0,0]
-		6: item_count = [5,5,0,0,0,0,0,0,0]
-
-		7: item_count = [5,5,5,0,0,0,0,0,0]
-		8: item_count = [0,10,5,0,0,0,0,0,0]
-
-		9: item_count = [10,0,0,1,0,0,0,0,0]
-		10: item_count = [0,10,0,1,0,0,0,0,0]
-		
-		11: item_count = [3,0,0,0,0,2,0,0,0]
-		12: item_count = [0,3,0,0,0,2,0,0,0]
-		
-		13: item_count = [0,15,0,0,5,0,0,0,0]
-		14: item_count = [15,0,0,0,5,0,0,0,0]
-		
-		15: item_count = [0,3,0,0,5,2,0,0,0]
-		16: item_count = [9,0,5,0,0,1,0,0,0]
-
-		17: item_count = [3,0,0,0,0,0,2,0,0]
-		18: item_count = [0,3,0,0,0,0,2,0,0]
-
-		19: item_count = [0,3,0,1,5,0,2,0,0]
-		20: item_count = [9,0,5,1,0,0,1,0,0]
-		
-		21: item_count = [0,2,10,0,0,1,2,0,0]
-		22: item_count = [2,0,0,0,10,2,1,0,0]
-		
-		23: item_count = [0,0,0,0,0,0,0,2,0]
-		24: item_count = [0,4,0,0,0,1,0,1,0]
-		
-		25: item_count = [20,0,10,1,0,0,0,0,0]
-		26: item_count = [5,20,0,1,10,0,0,0,0]
-
-		27: item_count = [0,0,10,0,10,0,0,2,0]
-		28: item_count = [4,0,5,0,5,0,1,1,0]
-
-		29: item_count = [2,10,15,0,0,0,3,0,0]
-		30: item_count = [10,4,0,0,15,1,0,1,0]
+		1: item_count = [15, 0, 0, 0, 0, 0, 0, 0, 0]
+		2: item_count = [15, 0, 0, 0, 0, 0, 0, 0, 0]
+		3: item_count = [20, 0, 5, 0, 0, 0, 0, 0, 0]
+		4: item_count = [20, 0, 5, 0, 0, 0, 0, 0, 0]
+		5: item_count = [0, 20, 0, 0, 0, 0, 0, 0, 0]
+		6: item_count = [10, 10, 0, 0, 0, 0, 0, 0, 0]
+		7: item_count = [15, 15, 5, 0, 0, 0, 0, 0, 0]
+		8: item_count = [0, 30, 5, 0, 0, 0, 0, 0, 0]
+		9: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0]
+		10: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0]
+		11: item_count = [13, 0, 0, 0, 0, 2, 0, 0, 0]
+		12: item_count = [0, 13, 0, 0, 0, 2, 0, 0, 0]
+		13: item_count = [0, 25, 0, 0, 5, 0, 0, 0, 0]
+		14: item_count = [25, 0, 0, 0, 5, 0, 0, 0, 0]
+		15: item_count = [0, 1, 0, 0, 5, 4, 0, 0, 0]
+		16: item_count = [7, 0, 5, 0, 0, 3, 0, 0, 0]
+		17: item_count = [13, 0, 0, 0, 0, 0, 2, 0, 0]
+		18: item_count = [0, 13, 0, 0, 0, 0, 2, 0, 0]
+		19: item_count = [0, 0, 25, 1, 0, 0, 0, 0, 0]
+		20: item_count = [0, 0, 0, 1, 25, 0, 0, 0, 0]
+		21: item_count = [0, 0, 10, 0, 0, 5, 0, 0, 0]
+		22: item_count = [0, 0, 0, 0, 10, 0, 5, 0, 0]
+		23: item_count = [15, 0, 0, 0, 0, 0, 0, 2, 0]
+		24: item_count = [0, 1, 0, 0, 0, 4, 0, 1, 0]
+		25: item_count = [20, 0, 20, 1, 0, 0, 0, 0, 0]
+		26: item_count = [0, 20, 0, 1, 20, 0, 0, 0, 0]
+		27: item_count = [10, 0, 10, 0, 0, 0, 0, 3, 0]
+		28: item_count = [4, 0, 0, 0, 10, 6, 0, 0, 0]
+		29: item_count = [0, 14, 15, 0, 0, 6, 0, 0, 0]
+		30: item_count = [20, 0, 0, 0, 15, 0, 0, 3, 0]
 
 	for i in range(item_count.size()):
 		var count = item_count[i]
@@ -510,7 +491,6 @@ func play_pattern(number: int):
 				7: spawn_random_pop_in_rect(Item.SACK, count, current_parent)
 				8: spawn_random_pop_in_rect(Item.REGEN, count, current_parent)
 
-	# Disconnect existing timer if one is already active
 	if active_wave_timer and active_wave_timer.timeout.is_connected(_on_wave_timeout):
 		active_wave_timer.timeout.disconnect(_on_wave_timeout)
 

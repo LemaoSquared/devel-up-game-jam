@@ -29,14 +29,17 @@ func _ready() -> void:
 	add_to_group("camera_targets")
 	animated_sprite.sprite_frames.set_animation_loop("rat_toy", true)
 	animated_sprite.play("rat_toy")
-	area.input_pickable = true
-	area.input_event.connect(_on_area_input_event)
+	# Disabled standard area input pickable in favor of global _input handling
+	area.input_pickable = false
+	
 	var life_timer = get_tree().create_timer(lifetime, true)
 	life_timer.timeout.connect(_on_lifetime_expired)
+
 func set_direction(dir: int, target_end_x: float) -> void:
 	direction = dir
 	end_x = target_end_x
 	animated_sprite.flip_h = direction < 0
+
 func _process(delta: float) -> void:
 	if is_finished:
 		return
@@ -46,10 +49,26 @@ func _process(delta: float) -> void:
 		_reach_end()
 	elif direction < 0 and position.x <= end_x:
 		_reach_end()
-func _on_area_input_event(_viewport, event: InputEvent, _shape_idx: int) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_on_clicked()
+
+# --- Multi-touch & Mouse Input Handling ---
+func _input(event: InputEvent) -> void:
+	if is_finished:
+		return
 		
+	var click_pos = Vector2.ZERO
+	var is_triggered: bool = false
+	
+	if event is InputEventScreenTouch and event.pressed:
+		click_pos = event.position
+		is_triggered = true
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		click_pos = event.position
+		is_triggered = true
+		
+	if is_triggered:
+		if global_position.distance_to(click_pos) < 64.0: # Adjust radius if needed
+			_on_clicked()
+
 func _on_clicked() -> void:
 	if is_jumping or is_finished:
 		return
@@ -58,8 +77,8 @@ func _on_clicked() -> void:
 	click_count += 1
 	speed += speed_increase
 	if click_count >= max_clicks:
-		is_finished = true          
-		area.input_pickable = false 
+		is_finished = true         
+		area.input_pickable = false # Fixed missing assignment value here
 		AudioManager.play_sound(GIFT)
 		gift.visible = true
 		gift.play("default")
@@ -67,7 +86,7 @@ func _on_clicked() -> void:
 		_pop_and_disappear()
 	else:
 		_jump()
-		
+
 func _jump() -> void:
 	is_jumping = true
 	var target_x = position.x + jump_distance * direction
@@ -77,8 +96,10 @@ func _jump() -> void:
 	tween.tween_property(self, "position:x", target_x, jump_duration)
 	tween.parallel().tween_method(_apply_hop_arc, 0.0, 1.0, jump_duration)
 	tween.finished.connect(func(): is_jumping = false)
+
 func _apply_hop_arc(t: float) -> void:
 	animated_sprite.position.y = -sin(t * PI) * jump_height
+
 func _pop_and_disappear() -> void:
 	is_finished = true
 	is_jumping = true
@@ -93,11 +114,13 @@ func _pop_and_disappear() -> void:
 		popped_out.emit(self, true)
 		queue_free()
 	)
+
 func _reach_end() -> void:
 	is_finished = true
 	area.input_pickable = false
 	animated_sprite.stop()
 	popped_out.emit(self, false)
+
 func _on_lifetime_expired() -> void:
 	if is_finished:
 		return   # already popped or reached end — nothing to do

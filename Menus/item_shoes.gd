@@ -4,9 +4,7 @@ signal popped_out(obj: Node, was_clicked: bool)
 const TRASH = preload("uid://bnyi53tue8oe2")
 const TRASH_PARTICLE = preload("uid://bqldp717ro0a4")
 
-@export var polaroid_scene: PackedScene = preload(
-	"res://Menus/item_polaroid.tscn"
-)
+@export var polaroid_scene: PackedScene = preload("res://Menus/item_polaroid.tscn")
 @export var polaroid_texture: Texture2D
 
 @export_group("Pop Settings")
@@ -26,7 +24,7 @@ enum SettleStyle { BOUNCE, SPRING, SWAY }
 @export_group("Timeout Fall Settings")
 @export var fall_away_duration: float = 1.0
 @export var fall_away_spin_degrees: float = 90.0
-@export var fall_away_screen_buffer: float = 150.0   
+@export var fall_away_screen_buffer: float = 150.0    
 
 var is_popping: bool = false
 var is_hanging: bool = false
@@ -34,15 +32,13 @@ var hang_length: float = 0.0
 var idle_time: float = 0.0
 var anchor_position: Vector2 = Vector2.ZERO
 
-
 func _ready() -> void:
 	add_to_group("camera_targets")
-	$Shoes.input_event.connect(_on_area_input_event)
-	$Shoes.input_pickable = true
+	# Disabled standard area input pickable in favor of global _input handling
+	$Shoes.input_pickable = false
 
 	var timer = get_tree().create_timer(pop_duration_seconds, false)
 	timer.timeout.connect(_on_duration_expired)
-
 
 func _process(delta: float) -> void:
 	if is_hanging and idle_sway_enabled and not is_popping:
@@ -50,7 +46,6 @@ func _process(delta: float) -> void:
 		var angle = deg_to_rad(idle_sway_amplitude_deg) * sin(idle_time * idle_sway_speed)
 		global_position = anchor_position + Vector2(sin(angle), cos(angle)) * hang_length
 		rotation = angle * 0.8
-
 
 func spawn_drop_and_hang(target_global_pos: Vector2, anchor_global_pos: Vector2, delay: float = 0.0) -> void:
 	anchor_position = anchor_global_pos
@@ -76,14 +71,29 @@ func spawn_drop_and_hang(target_global_pos: Vector2, anchor_global_pos: Vector2,
 	drop_tween.tween_property(self, "global_position", target_global_pos, total_duration).set_delay(delay)
 	drop_tween.tween_callback(func(): is_hanging = true)
 
-
-func _on_area_input_event(_viewport: Viewport, event: InputEvent, _shape_idx: int) -> void:
+# --- Multi-touch & Mouse Input Handling ---
+func _input(event: InputEvent) -> void:
 	if is_popping:
 		return
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		AudioManager.play_sound(TRASH)
-		ParticleManager.spawn_particle(TRASH_PARTICLE,global_position)
-		pop_out(true)
+		
+	var click_pos = Vector2.ZERO
+	var is_triggered: bool = false
+	
+	if event is InputEventScreenTouch and event.pressed:
+		click_pos = event.position
+		is_triggered = true
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		click_pos = event.position
+		is_triggered = true
+		
+	if is_triggered:
+		if global_position.distance_to(click_pos) < 64.0: # Adjust radius if needed
+			trigger_click()
+
+func trigger_click() -> void:
+	AudioManager.play_sound(TRASH)
+	ParticleManager.spawn_particle(TRASH_PARTICLE, global_position)
+	pop_out(true)
 
 func _on_duration_expired() -> void:
 	if is_popping:
@@ -95,8 +105,9 @@ func _on_duration_expired() -> void:
 			fall_and_disappear()
 	)
 
-
-func pop_out(_is_clicked) -> void:
+func pop_out(_is_clicked: bool = false) -> void:
+	if is_popping:
+		return
 	string.visible = false
 	is_popping = true
 	is_hanging = false
@@ -110,6 +121,8 @@ func pop_out(_is_clicked) -> void:
 	tween.tween_callback(queue_free)
 
 func fall_and_disappear() -> void:
+	if is_popping:
+		return
 	string.visible = false
 	is_popping = true
 	is_hanging = false
@@ -123,7 +136,7 @@ func fall_and_disappear() -> void:
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
 	tween.set_parallel(true)
 	tween.set_trans(Tween.TRANS_QUAD)
-	tween.set_ease(Tween.EASE_IN)  
+	tween.set_ease(Tween.EASE_IN)    
 
 	tween.tween_property(self, "global_position", fall_target, fall_away_duration)
 	tween.tween_property(self, "rotation", rotation + deg_to_rad(fall_away_spin_degrees), fall_away_duration)
@@ -131,25 +144,39 @@ func fall_and_disappear() -> void:
 	tween.chain().tween_callback(queue_free)
 
 func transform_to_polaroid() -> void:
-	var polaroid := polaroid_scene.instantiate() as Node2D
-	get_parent().add_child(polaroid)
+	if is_popping:
+		return
+	string.visible = false
+	is_popping = true
+	is_hanging = false
 
+	if popped_out.is_connected(ItemManager._on_object_popped_out):
+		popped_out.disconnect(ItemManager._on_object_popped_out)
+
+	ItemManager.spawned_objects.erase(self)
+	ItemManager.wave_one_objects.erase(self)
+
+	if polaroid_scene == null:
+		polaroid_scene = load("res://Menus/item_polaroid.tscn")
+
+	var polaroid := polaroid_scene.instantiate() as Node2D
+	if polaroid == null:
+		queue_free()
+		return
+
+	get_parent().add_child(polaroid)
 	polaroid.global_position = global_position
 	polaroid.global_rotation = global_rotation
 	polaroid.scale = scale
 
-	var photo_sprite := polaroid.get_node_or_null(
-		"Polaroid/Sprite2D"
-	) as Sprite2D
-
+	var photo_sprite := polaroid.get_node_or_null("Polaroid/Sprite2D") as Sprite2D
 	if photo_sprite != null and polaroid_texture != null:
 		photo_sprite.texture = polaroid_texture
 
 	if ItemManager.has_method("register_spawned_object"):
-		ItemManager.register_spawned_object(polaroid)
+		ItemManager.register_spawned_object(polaroid, ItemManager.Item.POLAROID)
 
 	if polaroid.has_method("appear"):
 		polaroid.appear()
 
-	popped_out.emit(self, true)
 	queue_free()
