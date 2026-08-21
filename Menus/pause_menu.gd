@@ -5,6 +5,8 @@ extends CanvasLayer
 
 @onready var resume_button: TextureButton = $Hanger/Continue
 @onready var quit_button: TextureButton = $Hanger/Quit
+@onready var music: TextureButton = $Hanger/Music
+@onready var sfx: TextureButton = $Hanger/SFX
 
 const STREET = preload("uid://c6xk46jpedco4")
 
@@ -26,9 +28,13 @@ func _ready() -> void:
 	# Save their starting custom scales AND rotations
 	original_scales[resume_button] = resume_button.scale
 	original_scales[quit_button] = quit_button.scale
+	original_scales[music] = music.scale
+	original_scales[sfx] = sfx.scale
 	
 	original_rotations[resume_button] = resume_button.rotation_degrees
 	original_rotations[quit_button] = quit_button.rotation_degrees
+	original_rotations[music] = music.rotation_degrees
+	original_rotations[sfx] = sfx.rotation_degrees
 
 	# Connect Pause Signals
 	PauseManager.game_paused.connect(_on_game_paused)
@@ -37,12 +43,21 @@ func _ready() -> void:
 	# Connect Button Presses
 	resume_button.pressed.connect(_on_resume_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
+	music.pressed.connect(_on_music_pressed)
+	sfx.pressed.connect(_on_sfx_pressed)
 	
 	# Connect Button Hovers
 	resume_button.mouse_entered.connect(_on_button_hovered.bind(resume_button))
 	resume_button.mouse_exited.connect(_on_button_unhovered.bind(resume_button))
+	
 	quit_button.mouse_entered.connect(_on_button_hovered.bind(quit_button))
 	quit_button.mouse_exited.connect(_on_button_unhovered.bind(quit_button))
+	
+	music.mouse_entered.connect(_on_button_hovered.bind(music))
+	music.mouse_exited.connect(_on_button_unhovered.bind(music))
+	
+	sfx.mouse_entered.connect(_on_button_hovered.bind(sfx))
+	sfx.mouse_exited.connect(_on_button_unhovered.bind(sfx))
 
 # --- HOVER LOGIC ---
 
@@ -89,6 +104,8 @@ func _slide_in() -> void:
 
 	_swing_picture(resume_button)
 	_swing_picture(quit_button)
+	_swing_picture(music)
+	_swing_picture(sfx)
 
 func _swing_picture(btn: TextureButton) -> void:
 	var swing = create_tween()
@@ -110,9 +127,13 @@ func _slide_out() -> void:
 	
 	transition_tween.tween_property(resume_button, "rotation_degrees", original_rotations[resume_button] - 15.0, 0.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	transition_tween.tween_property(quit_button, "rotation_degrees", original_rotations[quit_button] - 10.0, 0.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	transition_tween.tween_property(music, "rotation_degrees", original_rotations[music] - 12.0, 0.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	transition_tween.tween_property(sfx, "rotation_degrees", original_rotations[sfx] - 6.0, 0.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	
 	_on_button_unhovered(resume_button)
 	_on_button_unhovered(quit_button)
+	_on_button_unhovered(music)
+	_on_button_unhovered(sfx)
 	
 	transition_tween.set_parallel(false)
 	transition_tween.tween_callback(func(): visible = false)
@@ -131,6 +152,14 @@ func _on_quit_pressed() -> void:
 	
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.play_music(STREET)
+	
+func _on_music_pressed() -> void:
+	# Add your music toggle logic here
+	pass
+	
+func _on_sfx_pressed() -> void:
+	# Add your SFX toggle logic here
+	pass
 
 func _reset_game_state() -> void:
 	get_tree().paused = false
@@ -146,3 +175,5 @@ func _reset_game_state() -> void:
 	
 	resume_button.rotation_degrees = original_rotations[resume_button]
 	quit_button.rotation_degrees = original_rotations[quit_button]
+	music.rotation_degrees = original_rotations[music]
+	sfx.rotation_degrees = original_rotations[sfx]

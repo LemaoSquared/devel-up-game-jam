@@ -7,9 +7,11 @@ const CutsceneScene = preload("uid://bqfwjyhkbhn82")
 @onready var progress_bar: ProgressBar = $ProgressBar
 const BACKYARD = preload("uid://c13kxu5fitd1y")
 @onready var lives: HBoxContainer = $Lives
+@onready var pause_button: TextureButton = $PauseButton
 
 func _ready() -> void:
-	# Connect progress bar timer to story completion handler
+	pause_button.visible = false
+	
 	progress_bar.countdown_finished.connect(_on_story_mode_completed)
 	
 	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -34,24 +36,27 @@ func _ready() -> void:
 
 func _on_game_start_enable_pause() -> void:
 	PauseManager.enable_pause()
+	await get_tree().create_timer(0.5).timeout
+	pause_button.visible = true
 
 func _on_story_mode_completed() -> void:
 	PauseManager.disable_pause()
+	pause_button.visible = false
+	
 	if ItemManager.has_method("stop_spawning"):
 		ItemManager.stop_spawning()
-	# Triggers game over sequence WITH the cutscene (show_cutscene = true)
 	await _run_game_over_sequence(true)
 
 func _on_lives_depleted() -> void:
 	if !ItemManager.is_endless:
 		return
 	PauseManager.disable_pause()
+	pause_button.visible = false
+	
 	ItemManager.stop_endless()
-	# Depleting lives skips the cutscene (show_cutscene = false)
 	await _run_game_over_sequence(false)
 
 func _run_game_over_sequence(show_cutscene: bool = true) -> void:
-
 	if show_cutscene:
 		await $Transition.transition()
 		$Background.retreat_cinematic_bars()
@@ -65,7 +70,12 @@ func _run_game_over_sequence(show_cutscene: bool = true) -> void:
 	else:
 		await $Transition.Return()
 	lives.visible = false
+	pause_button.visible = false
 	var game_over := GameOverScreen.instantiate()
 	$Background.retreat_cinematic_bars()
 	add_child(game_over)
 	background_manager.reset()
+
+
+func _on_pause_button_pressed() -> void:
+	PauseManager.pause_game()
