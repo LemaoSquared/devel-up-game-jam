@@ -2,7 +2,7 @@ class_name SardineItem
 extends Node2D
 signal popped_out(obj, was_clicked: bool)
 
-@export var lifetime: float = 6.0
+@export var lifetime: float = 12.0
 const GIFT = preload("uid://fojbgtm48t6b")
 const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 

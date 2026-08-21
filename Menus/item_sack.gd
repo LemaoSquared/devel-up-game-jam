@@ -20,7 +20,7 @@ var is_transforming: bool = false
 var is_gravity: bool = false
 var is_popping: bool = false
 var is_finishing: bool = false 
-const Duration: float = 6.0
+const Duration: float = 12.0
 const REQUIRED_CLICKS: int = 10
 
 var click_count: int = 0
