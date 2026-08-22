@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b6x6h0psc0h3r"
-path="res://.godot/imported/PolaroidPic1.png-aa0978c5bd9f7432fc816dcdb7171d42.ctex"
+uid="uid://cd1oko51pofm3"
+path="res://.godot/imported/polaroid5.png-d19746bf89841df2b4260bb41b9a9f17.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Polaroid Pictures/PolaroidPic1.png"
-dest_files=["res://.godot/imported/PolaroidPic1.png-aa0978c5bd9f7432fc816dcdb7171d42.ctex"]
+source_file="res://Assets/Polaroid Pictures/polaroid5.png"
+dest_files=["res://.godot/imported/polaroid5.png-d19746bf89841df2b4260bb41b9a9f17.ctex"]
 
 [params]
 
