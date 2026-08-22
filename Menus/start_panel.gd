@@ -2,8 +2,9 @@ extends TextureRect
 
 const STREET = preload("uid://c6xk46jpedco4")
 @onready var tutorial_label: Label = $"../TutorialLabel"
-@onready var lives: HBoxContainer = $"../Lives"
-@onready var score_label: Label = $"../ScoreLabel"
+@onready var endless_mode_ui: CanvasLayer = $"../EndlessModeUI"
+@onready var pause_button: TextureButton = $"../PauseButton"
+
 
 signal game_started
 signal endless_started
@@ -85,7 +86,7 @@ func _on_start_pressed() -> void:
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.stop_music()
 	AudioManager.play_music(TAPTAP)
-	
+	pause_button.visible = true
 	# Configure ItemManager for Story Mode
 	ItemManager.area = spawn_area
 	ItemManager.is_endless = false
@@ -159,13 +160,12 @@ func _on_endless_start_pressed() -> void:
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.stop_music()
 	AudioManager.play_music(KATKAT)
-
+	pause_button.visible = true
 	# Configure ItemManager and State for Endless Mode
 	ItemManager.area = spawn_area
 	ScoreManager.reset_score()
 	LivesManager.reset_lives()
-	lives.visible = true
-	score_label.visible = true
+	endless_mode_ui.visible = true
 	
 	# Start endless spawner loop
 	ItemManager.start_endless()

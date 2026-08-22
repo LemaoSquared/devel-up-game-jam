@@ -14,6 +14,8 @@ const FLOATING_LABEL = preload("uid://cu8xcr7igstbj")
 @export var rat: PackedScene = preload("res://Menus/toy_mouse.tscn")
 @export var regen: PackedScene = preload("res://Menus/item_regen.tscn")
 @export var polaroid: PackedScene = preload("res://Menus/item_polaroid.tscn")
+@export var gloves: PackedScene = preload("res://Menus/item_gloves.tscn")
+
 const NEXT_WAVE = preload("uid://dnvvary85k2lr")
 
 @export var min_spawn_distance: float = 64.0
@@ -24,16 +26,17 @@ var rat_corner: Spawner = Spawner.BOTTOM_RIGHT
 enum SpawnType { RANDOM, GRID }
 enum SpawnAnimation { POP_SCALE, DROP_IN }
 enum Item {
-	TREAT,
-	YARN,
-	GARBAGE,
-	CAMERA,
-	SHOES,
-	SARDINE,
-	RAT,
-	SACK,
-	REGEN,
-	POLAROID
+	TREAT,     # 0
+	YARN,      # 1
+	GARBAGE,   # 2
+	CAMERA,    # 3
+	SHOES,     # 4
+	SARDINE,   # 5
+	RAT,       # 6
+	SACK,      # 7
+	REGEN,     # 8
+	POLAROID,  # 9
+	GLOVES     # 10
 }
 
 @export_group("Animation Settings")
@@ -66,9 +69,16 @@ var missed_items_in_current_wave: int = 0
 # Pity System for HP Regen
 var regen_pity_counter: int = 0
 
-# Damage Leniency System Tracking
+# Pity System for Camera & Gloves
+var last_powerup_choice: int = -1
+var powerup_streak: int = 0
+
+# Damage Leniency & Defense System
 var lives_at_wave_start: int = 3
 var pending_leniency_bonus: float = 0.0
+var is_invincible: bool = false
+var glove_active: bool = false
+var active_i_frame_timer: SceneTreeTimer = null
 
 # Camera Conversion Tracking Flag
 var is_converting_to_polaroid: bool = false
@@ -89,7 +99,7 @@ class BatchData:
 
 var is_endless: bool = false
 var base_time_duration_perBatch: float = 6.0  
-@export var batch_speed_step: float = 0.5       
+@export var batch_speed_step: float = 0.5        
 @export var max_timer_reduction: float = 3.0  
 
 var total_batches_played: int = 0
@@ -170,8 +180,15 @@ func start_endless() -> void:
 	total_batches_played = 0
 	current_wave_in_batch = 0
 	regen_pity_counter = 0
+	last_powerup_choice = -1
+	powerup_streak = 0
 	pending_leniency_bonus = 0.0
 	time_duration_perBatch = base_time_duration_perBatch
+	
+	# Reset defensive states
+	glove_active = false
+	is_invincible = false
+	active_i_frame_timer = null
 	
 	clear_objects()
 	_refill_batch_bag()
@@ -232,10 +249,33 @@ func _inject_fifth_wave_powerup(wave_counts: Array) -> void:
 		if "max_lives" in LivesManager:
 			max_hp = LivesManager.max_lives
 
+	# Glove and Camera Selection with Pity System
+	var camera_or_glove: int = Item.CAMERA
+	if glove_active:
+		camera_or_glove = Item.CAMERA # Guaranteed camera if glove is already active
+	else:
+		# Pity check: If either power-up wins twice consecutively, force the other
+		if powerup_streak >= 2:
+			if last_powerup_choice == Item.CAMERA:
+				camera_or_glove = Item.GLOVES
+			else:
+				camera_or_glove = Item.CAMERA
+			powerup_streak = 1
+			last_powerup_choice = camera_or_glove
+		else:
+			var roll = randf() < 0.5
+			camera_or_glove = Item.CAMERA if roll else Item.GLOVES
+			
+			if camera_or_glove == last_powerup_choice:
+				powerup_streak += 1
+			else:
+				powerup_streak = 1
+				last_powerup_choice = camera_or_glove
+
 	var selected_powerup: int = Item.CAMERA
 
 	if current_hp >= max_hp:
-		selected_powerup = Item.CAMERA
+		selected_powerup = camera_or_glove
 		regen_pity_counter = 0 
 	elif current_hp == 2:
 		var base_chance: float = 0.25
@@ -244,7 +284,7 @@ func _inject_fifth_wave_powerup(wave_counts: Array) -> void:
 			selected_powerup = Item.REGEN
 			regen_pity_counter = 0 
 		else:
-			selected_powerup = Item.CAMERA
+			selected_powerup = camera_or_glove
 			regen_pity_counter += 1 
 	elif current_hp == 1:
 		var base_chance: float = 0.50
@@ -253,18 +293,23 @@ func _inject_fifth_wave_powerup(wave_counts: Array) -> void:
 			selected_powerup = Item.REGEN
 			regen_pity_counter = 0 
 		else:
-			selected_powerup = Item.CAMERA
+			selected_powerup = camera_or_glove
 			regen_pity_counter += 1 
 	else:
-		selected_powerup = Item.CAMERA
+		selected_powerup = camera_or_glove
 
 	var target_index: int = -1
 	match selected_powerup:
 		Item.CAMERA: target_index = 3
 		Item.REGEN: target_index = 8
+		Item.GLOVES: target_index = 10
+
+	while wave_counts.size() <= target_index:
+		wave_counts.append(0)
 
 	if target_index >= 0 and target_index < wave_counts.size():
 		wave_counts[target_index] += 1
+
 
 func _spawn_encoded_array(item_count: Array) -> void:
 	current_parent = get_tree().current_scene
@@ -282,6 +327,7 @@ func _spawn_encoded_array(item_count: Array) -> void:
 				7: spawn_random_pop_in_rect(Item.SACK, count, current_parent)
 				8: spawn_random_pop_in_rect(Item.REGEN, count, current_parent)
 				9: spawn_random_pop_in_rect(Item.POLAROID, count, current_parent)
+				10: spawn_random_pop_in_rect(Item.GLOVES, count, current_parent)
 
 # --- STORY MODE SPAWNING ---
 
@@ -367,7 +413,6 @@ func _prepare_wave_state() -> void:
 	missed_items_in_current_wave = 0 
 	batch_start_time = Time.get_ticks_msec() / 1000.0
 
-	# Record current lives at the start of this wave for leniency delta calculation
 	if LivesManager and "lives" in LivesManager:
 		lives_at_wave_start = LivesManager.lives
 	else:
@@ -377,9 +422,7 @@ func _start_wave_timer() -> void:
 	if active_wave_timer and active_wave_timer.timeout.is_connected(_on_wave_timeout):
 		active_wave_timer.timeout.disconnect(_on_wave_timeout)
 
-	# Apply leniency bonus dynamically to this wave timer only
 	var effective_duration = time_duration_perBatch + pending_leniency_bonus
-	# Consume the bonus so it only affects this single wave
 	pending_leniency_bonus = 0.0
 
 	active_wave_timer = get_tree().create_timer(effective_duration, false)
@@ -513,6 +556,7 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 		Item.SACK: obj = sack.instantiate()
 		Item.REGEN: obj = regen.instantiate()
 		Item.POLAROID: obj = polaroid.instantiate()
+		Item.GLOVES: obj = gloves.instantiate()
 	
 	if obj_type != Item.SACK:
 		if "lifetime" in obj:
@@ -534,7 +578,7 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 			obj.camera_activated.connect(func():
 				is_converting_to_polaroid = true
 				camera_effects.activate_camera_effect()
-				get_tree().create_timer(0.1, false, true, true).timeout.connect(func():
+				get_tree().create_timer(0.5, false, true, true).timeout.connect(func():
 					is_converting_to_polaroid = false
 				)
 			)
@@ -581,6 +625,9 @@ func clear_objects() -> void:
 		active_wave_timer.timeout.disconnect(_on_wave_timeout)
 		active_wave_timer = null
 
+	is_invincible = false
+	active_i_frame_timer = null
+
 	for obj in spawned_objects:
 		if is_instance_valid(obj):
 			obj.queue_free()
@@ -595,6 +642,13 @@ func clear_objects() -> void:
 func _inflict_damage() -> void:
 	if not is_endless:
 		return
+		
+	# Check Invincibility Frames (I-Frames)
+	if is_invincible:
+		return
+
+	# LOCK IMMEDIATELY so simultaneous hits in the same frame can't bypass it
+	is_invincible = true
 
 	if LivesManager.has_method("lose_life"):
 		LivesManager.lose_life()
@@ -621,12 +675,23 @@ func _inflict_damage() -> void:
 		Engine.time_scale = 1.0
 	else:
 		Engine.time_scale = 0.5
-		
-		var damage_timer = get_tree().create_timer(0.3, false, true, true)
+		var damage_timer = get_tree().create_timer(0.3, true, false, true)
 		damage_timer.timeout.connect(func():
 			if not is_game_over:
 				Engine.time_scale = 1.0
 		)
+		
+	# Disconnect any lingering previous timer connection safely
+	if active_i_frame_timer and active_i_frame_timer.timeout.is_connected(_on_i_frame_timeout):
+		active_i_frame_timer.timeout.disconnect(_on_i_frame_timeout)
+
+	# Trigger the 4.2 Second I-Frame countdown timer 
+	# (process_always=true, process_in_physics=false, ignore_time_scale=true)
+	active_i_frame_timer = get_tree().create_timer(4.2, true, false, true)
+	active_i_frame_timer.timeout.connect(_on_i_frame_timeout)
+
+func _on_i_frame_timeout() -> void:
+	is_invincible = false
 
 func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void:
 	if is_game_over or obj in scored_objects:
@@ -655,69 +720,104 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 				is_polaroid_item = true
 
 		var effective_item_type = Item.POLAROID if is_polaroid_item else item_type
+		var spawn_pos = obj.global_position if is_instance_valid(obj) else Vector2.ZERO
 		
-		var is_sardine_can: bool = (effective_item_type == Item.SARDINE and not (obj is SardineItem))
-
-		if is_sardine_can:
-			pass # Sardine container nets 0 points
-		else:
-			item_collected.emit(effective_item_type)
-			
-			# 3. Floating label handling with guaranteed score fallbacks
-			if FLOATING_LABEL:
-				var label_instance = FLOATING_LABEL.instantiate()
-				get_tree().current_scene.add_child(label_instance)
-				var spawn_pos = obj.global_position if is_instance_valid(obj) else Vector2.ZERO
+# --- HAZARD & GLOVE LOGIC ---
+		var is_hazard: bool = (effective_item_type == Item.GARBAGE or effective_item_type == Item.SHOES)
+		
+		if is_hazard:
+			if glove_active:
+				glove_active = false
 				
-				if effective_item_type == Item.REGEN:
-					if label_instance.has_method("setup_text"):
-						label_instance.setup_text("REGEN", Color.GREEN, spawn_pos)
+				# 1. Trigger the glove camera/screen effect
+				var camera_effects := get_tree().get_first_node_in_group("camera_effects")
+				if camera_effects and camera_effects.has_method("trigger_glove_effect"):
+					camera_effects.trigger_glove_effect()
+				
+				# 2. Stop time temporarily (Hitstop freeze for impact feel)
+				Engine.time_scale = 0.0
+				var hitstop_timer = get_tree().create_timer(0.25, true, true, true)
+				hitstop_timer.timeout.connect(func():
+					if not is_game_over:
+						Engine.time_scale = 1.0
+				)
+				
+				# 3. Stop/mute music temporarily for dramatic impact, then restore
+				var music_bus_idx = AudioServer.get_bus_index("Music")
+				if music_bus_idx == -1:
+					music_bus_idx = AudioServer.get_bus_index("Master")
+					
+				AudioServer.set_bus_mute(music_bus_idx, true)
+				var music_timer = get_tree().create_timer(0.25, true, true, true)
+				music_timer.timeout.connect(func():
+					AudioServer.set_bus_mute(music_bus_idx, false)
+				)
+
+				# 4. Spawn "BLOCKED!" floating text
+				if FLOATING_LABEL:
+					var block_label = FLOATING_LABEL.instantiate()
+					get_tree().current_scene.add_child(block_label)
+					if block_label.has_method("setup_text"):
+						block_label.setup_text("BLOCKED!", Color.ORANGE, spawn_pos)
 					else:
-						label_instance.queue_free()
-				elif effective_item_type == Item.CAMERA:
-					if label_instance.has_method("setup_text"):
-						label_instance.setup_text("CAMERA", Color.DEEP_SKY_BLUE, spawn_pos)
-					else:
-						label_instance.queue_free()
-				elif effective_item_type == Item.POLAROID:
+						block_label.queue_free()
+						
+				# 🛑 EARLY EXIT: No damage, no score reduction
+				return 
+			else:
+				# Take damage, but continue down the function so the negative score is applied
+				_inflict_damage() 
+		
+		# --- SARDINE CONTAINER SKIP ---
+		var is_sardine_can: bool = (effective_item_type == Item.SARDINE and not (obj is SardineItem))
+		if is_sardine_can:
+			return 
+			
+		# --- EMIT SCORE / COLLECTION ---
+		item_collected.emit(effective_item_type)
+		
+		# --- FLOATING LABELS FOR ALL ITEMS ---
+		if FLOATING_LABEL:
+			var label_instance = FLOATING_LABEL.instantiate()
+			get_tree().current_scene.add_child(label_instance)
+			
+			match effective_item_type:
+				Item.REGEN:
+					label_instance.setup_text("REGEN", Color.GREEN, spawn_pos)
+					
+					var camera_effects := get_tree().get_first_node_in_group("camera_effects")
+					if camera_effects and camera_effects.has_method("trigger_heal_effect"):
+						camera_effects.trigger_heal_effect()
+					var player_entity := get_tree().get_first_node_in_group("player")
+					if player_entity and player_entity.has_method("play_heal_effect"):
+						player_entity.play_heal_effect()
+						
+				Item.CAMERA:
+					label_instance.setup_text("CAMERA", Color.DEEP_SKY_BLUE, spawn_pos)
+					
+				Item.GLOVES:
+					glove_active = true 
+					label_instance.setup_text("GLOVE!", Color.YELLOW, spawn_pos)
+					
+					var camera_effects := get_tree().get_first_node_in_group("camera_effects")
+					if camera_effects and camera_effects.has_method("trigger_glove_effect"):
+						camera_effects.trigger_glove_effect()
+					
+				Item.POLAROID, Item.RAT:
 					if label_instance.has_method("setup"):
 						label_instance.setup(20, spawn_pos)
-					else:
-						label_instance.queue_free()
-				elif effective_item_type == Item.SACK:
+					
+				Item.TREAT, Item.YARN, Item.SARDINE:
 					if label_instance.has_method("setup"):
-						label_instance.setup(50, spawn_pos)
-					else:
-						label_instance.queue_free()
-				else:
-					var points = 10
-					match effective_item_type:
-						Item.TREAT: points = 10
-						Item.YARN: points = 15
-						Item.RAT: points = 25
-						Item.SARDINE: points = 0
-						_: points = 10
-
-					if ScoreManager and "point_values" in ScoreManager and ScoreManager.point_values is Dictionary:
-						if ScoreManager.point_values.has(effective_item_type):
-							points = ScoreManager.point_values[effective_item_type]
-
-					if points != 0 and label_instance.has_method("setup"):
-						label_instance.setup(points, spawn_pos)
-					else:
-						label_instance.queue_free()
-			
-		var is_hazard: bool = (effective_item_type == Item.GARBAGE or effective_item_type == Item.SHOES)
-		if is_hazard:
-			_inflict_damage()
-		elif effective_item_type == Item.REGEN:
-			var camera_effects := get_tree().get_first_node_in_group("camera_effects")
-			if camera_effects and camera_effects.has_method("trigger_heal_effect"):
-				camera_effects.trigger_heal_effect()
-				
-			var player_entity := get_tree().get_first_node_in_group("player")
-			if player_entity and player_entity.has_method("play_heal_effect"):
-				player_entity.play_heal_effect()
+						label_instance.setup(5, spawn_pos)
+					
+				Item.GARBAGE, Item.SHOES:
+					if label_instance.has_method("setup"):
+						label_instance.setup(-30, spawn_pos)
+					
+				_: 
+					if label_instance.has_method("setup"):
+						label_instance.setup(5, spawn_pos)
 	else:
 		var is_excluded_from_miss: bool = (
 			item_type == Item.GARBAGE or
@@ -725,7 +825,8 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 			item_type == Item.CAMERA or
 			item_type == Item.REGEN or
 			item_type == Item.POLAROID or
-			item_type == Item.SACK 
+			item_type == Item.SACK or
+			item_type == Item.GLOVES
 		)
 		if is_endless and not is_excluded_from_miss:
 			if current_wave_batch and not current_wave_batch.is_finished:
@@ -764,7 +865,8 @@ func _on_wave_timeout() -> void:
 					obj_type == Item.SHOES or 
 					obj_type == Item.POLAROID or 
 					obj_type == Item.CAMERA or 
-					obj_type == Item.REGEN
+					obj_type == Item.REGEN or
+					obj_type == Item.GLOVES
 				):
 					continue
 				

@@ -4,7 +4,6 @@ var last_score: int = 0
 var score_tween: Tween = null
 
 func _ready() -> void:
-	self.visible = false
 	# Initialize with the current score from ScoreManager if it exists
 	if "score" in ScoreManager:
 		last_score = ScoreManager.score

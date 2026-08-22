@@ -10,12 +10,13 @@ func setup(amount: int, spawn_position: Vector2) -> void:
 	if amount < 0:
 		modulate = Color.FIREBRICK
 		magnitude = 1.4
-	elif amount >= 15:
-		modulate = Color.GOLD
-		magnitude = 1.8
+	# Swapped the order here so >= 25 triggers before >= 15 intercepts it!
 	elif amount >= 25:
 		modulate = Color.ORANGE_RED
 		magnitude = 1.5
+	elif amount >= 15:
+		modulate = Color.GOLD
+		magnitude = 1.8
 	else:
 		modulate = Color.WHITE
 		magnitude = 1.2
@@ -43,13 +44,21 @@ func setup(amount: int, spawn_position: Vector2) -> void:
 	
 	fade_tween.tween_callback(queue_free)
 
-# Handles text-based popups (e.g., "REGEN", "CAMERA")
+# Handles text-based popups (e.g., "REGEN", "CAMERA", "GLOVE!", "BLOCKED!")
 func setup_text(custom_text: String, custom_color: Color, spawn_position: Vector2) -> void:
 	global_position = spawn_position
 	text = custom_text
 	modulate = custom_color
 
 	var magnitude = 1.5
+	var float_distance = 60.0
+	
+	# --- NEW: Specific juice for Glove powerups and hazard blocks ---
+	if custom_text == "GLOVE!" or custom_text == "BLOCKED!":
+		magnitude = 2.0       # Make it visibly larger than normal text
+		float_distance = 80.0 # Float higher so it doesn't get lost in the chaos
+		z_index = 10          # Push it to the front of the UI
+		
 	scale = Vector2.ZERO
 	pivot_offset = size / 2
 
@@ -59,8 +68,15 @@ func setup_text(custom_text: String, custom_color: Color, spawn_position: Vector
 	tween.tween_property(self, "scale", Vector2.ONE * magnitude, 0.15) \
 		.set_trans(Tween.TRANS_BACK) \
 		.set_ease(Tween.EASE_OUT)
+		
+	# Add a dynamic elastic wobble specifically for the blocking action
+	if custom_text == "BLOCKED!":
+		rotation_degrees = randf_range(-15.0, 15.0)
+		tween.tween_property(self, "rotation_degrees", 0.0, 0.3) \
+			.set_trans(Tween.TRANS_ELASTIC) \
+			.set_ease(Tween.EASE_OUT)
 	
-	tween.tween_property(self, "global_position:y", global_position.y - 60.0, 0.6) \
+	tween.tween_property(self, "global_position:y", global_position.y - float_distance, 0.6) \
 		.set_trans(Tween.TRANS_QUAD) \
 		.set_ease(Tween.EASE_OUT)
 	

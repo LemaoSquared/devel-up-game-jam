@@ -3,6 +3,7 @@ extends CanvasLayer
 var effect_running: bool = false
 @onready var hurt_rect: TextureRect = $HurtRect
 @onready var heal_rect: TextureRect = $HealRect
+@onready var glove_rect: TextureRect = $GloveRect
 
 const SLOW_TIME_SCALE: float = 0.25
 const SLOW_MOTION_DURATION: float = 0.7
@@ -38,6 +39,12 @@ func _ready() -> void:
 		heal_rect.modulate.a = 0.0
 		heal_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		heal_rect.visible = false
+
+	# Initialize GloveRect
+	if glove_rect:
+		glove_rect.modulate.a = 0.0
+		glove_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		glove_rect.visible = false
 	
 	# Position all 5 polaroids off-screen left at startup
 	var polaroids = [polaroid_1, polaroid_2, polaroid_3, polaroid_4, polaroid_5]
@@ -76,7 +83,6 @@ func activate_camera_effect() -> void:
 
 	Engine.time_scale = 1.0
 	effect_running = false
-	# NOTE: Removed "visible = false" here so the layer stays active for hurt/heal effects!
 
 func transform_all_items() -> void:
 	var targets := get_tree().get_nodes_in_group("camera_targets")
@@ -159,17 +165,12 @@ func trigger_hurt_effect() -> void:
 	hurt_rect.modulate.a = 0.0
 	
 	var tween := create_tween()
-	tween.set_ignore_time_scale(true) # Ensures smooth playback even during damage slow-mo!
+	tween.set_ignore_time_scale(true)
 	tween.set_trans(Tween.TRANS_QUAD)
-	tween.set_ease(Tween.EASE_OUT)
+	tween.set_ease(Tween.EASE_OUT if "EASE_OUT" in [Tween.EASE_OUT] else Tween.EASE_OUT)
 	
-	# Phase 1: Quick punch-in of the red tint
 	tween.tween_property(hurt_rect, "modulate:a", 0.5, 0.06)
-	
-	# Phase 2: Smooth fade out back to normal
 	tween.tween_property(hurt_rect, "modulate:a", 0.0, 0.25)
-	
-	# Hide when completely faded out
 	tween.tween_callback(func(): hurt_rect.visible = false)
 
 func trigger_heal_effect() -> void:
@@ -180,15 +181,35 @@ func trigger_heal_effect() -> void:
 	heal_rect.modulate.a = 0.0
 	
 	var tween := create_tween()
-	tween.set_ignore_time_scale(true) # Smooth animation regardless of global time scale
+	tween.set_ignore_time_scale(true)
 	tween.set_trans(Tween.TRANS_QUAD)
 	tween.set_ease(Tween.EASE_OUT)
 	
-	# Phase 1: Soft green flash punch-in
 	tween.tween_property(heal_rect, "modulate:a", 0.45, 0.1)
-	
-	# Phase 2: Gentle fade out back to clear
 	tween.tween_property(heal_rect, "modulate:a", 0.0, 0.35)
-	
-	# Hide when completely transparent
 	tween.tween_callback(func(): heal_rect.visible = false)
+
+# --- NEW: Glove Powerup & Hazard Block Screen Effect ---
+func trigger_glove_effect() -> void:
+	if not glove_rect:
+		return
+		
+	glove_rect.visible = true
+	glove_rect.modulate.a = 0.0
+	
+	var tween := create_tween()
+	tween.set_ignore_time_scale(true) # Smooth playback regardless of time scale
+	tween.set_trans(Tween.TRANS_QUAD)
+	tween.set_ease(Tween.EASE_OUT)
+	
+	# Phase 1: Fade in slightly longer and more prominent than heal/hurt (~0.2s)
+	tween.tween_property(glove_rect, "modulate:a", 0.55, 0.2)
+	
+	# Phase 2: Hold for a tiny moment so it lingers comfortably (~0.2s)
+	tween.tween_interval(0.2)
+	
+	# Phase 3: Smooth, slightly longer fade out back to clear (~0.35s)
+	tween.tween_property(glove_rect, "modulate:a", 0.0, 0.35)
+	
+	# Clean up visibility toggle when finished
+	tween.tween_callback(func(): glove_rect.visible = false)

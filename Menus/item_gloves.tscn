@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://dddlblrvc8fmf"]
+
+[ext_resource type="Script" uid="uid://dns8gq5a55qcq" path="res://Menus/item_gloves.gd" id="1_y1bxd"]
+[ext_resource type="Texture2D" uid="uid://2dqvh483oy6k" path="res://Assets/Object Assets/winged_glove-Sheet.png" id="2_y1bxd"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3owqy"]
+radius = 36.345562
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nwg7d"]
+atlas = ExtResource("2_y1bxd")
+region = Rect2(0, 0, 76, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0fs64"]
+atlas = ExtResource("2_y1bxd")
+region = Rect2(76, 0, 76, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b1xo4"]
+atlas = ExtResource("2_y1bxd")
+region = Rect2(152, 0, 76, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8d40g"]
+atlas = ExtResource("2_y1bxd")
+region = Rect2(228, 0, 76, 47)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4gg5x"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nwg7d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0fs64")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b1xo4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8d40g")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": 1,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
+[node name="item_Glove" type="Node2D" unique_id=2042003166]
+script = ExtResource("1_y1bxd")
+
+[node name="Glove" type="Area2D" parent="." unique_id=1467465299]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Glove" unique_id=1091925879]
+shape = SubResource("CircleShape2D_3owqy")
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="Glove" unique_id=795591976]
+position = Vector2(1, -11)
+scale = Vector2(2.6227524, 2.2089167)
+sprite_frames = SubResource("SpriteFrames_4gg5x")
+autoplay = "default"
+frame_progress = 0.344007

@@ -6,12 +6,12 @@ const GameOverScreen = preload("uid://dh364flg18d2j")
 const CutsceneScene = preload("uid://bqfwjyhkbhn82")
 @onready var progress_bar: ProgressBar = $ProgressBar
 const BACKYARD = preload("uid://c13kxu5fitd1y")
-@onready var lives: HBoxContainer = $Lives
+@onready var endless_mode_ui: CanvasLayer = $EndlessModeUI
 @onready var pause_button: TextureButton = $PauseButton
-@onready var score_label: Label = $ScoreLabel
 
 func _ready() -> void:
 	pause_button.visible = false
+	endless_mode_ui.visible = false
 	
 	progress_bar.countdown_finished.connect(_on_story_mode_completed)
 	
@@ -38,11 +38,11 @@ func _ready() -> void:
 func _on_game_start_enable_pause() -> void:
 	PauseManager.enable_pause()
 	await get_tree().create_timer(0.5).timeout
-	pause_button.visible = true
+
 
 func _on_story_mode_completed() -> void:
 	PauseManager.disable_pause()
-	pause_button.visible = false
+
 	
 	if ItemManager.has_method("stop_spawning"):
 		ItemManager.stop_spawning()
@@ -52,12 +52,12 @@ func _on_lives_depleted() -> void:
 	if !ItemManager.is_endless:
 		return
 	PauseManager.disable_pause()
-	pause_button.visible = false
-	
+
 	ItemManager.stop_endless()
 	await _run_game_over_sequence(false)
 
 func _run_game_over_sequence(show_cutscene: bool = true) -> void:
+	pause_button.visible = false
 	if show_cutscene:
 		await $Transition.transition()
 		$Background.retreat_cinematic_bars()
@@ -70,9 +70,7 @@ func _run_game_over_sequence(show_cutscene: bool = true) -> void:
 			await cutscene.cutscene_finished
 	else:
 		await $Transition.Return()
-	lives.visible = false
-	score_label.visible = false
-	pause_button.visible = false
+	endless_mode_ui.visible = false
 	var game_over := GameOverScreen.instantiate()
 	$Background.retreat_cinematic_bars()
 	add_child(game_over)

@@ -5,6 +5,9 @@ const SACK = preload("uid://844bkgax2wrd")
 const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 const SACK_OPEN = preload("uid://d3nlvoeoqtbyp")
 const SACK_PARTICLE = preload("uid://bncb0rx7oecq0")
+const FLOATING_LABEL = preload("uid://cu8xcr7igstbj")
+
+const TOTAL_SACK_POINTS: int = 50
 
 const POINTS_PER_CLICK: int = 5
 @onready var gift: AnimatedSprite2D = $GiftAnimation
@@ -83,6 +86,15 @@ func hit_sack() -> void:
 	print("Sack clicked: ", click_count)
 	
 	ScoreManager.add_points(POINTS_PER_CLICK)
+	
+	# --- SPAWN +5 FLOATING LABEL ON EVERY HIT ---
+	if FLOATING_LABEL:
+		var label = FLOATING_LABEL.instantiate()
+		get_tree().current_scene.add_child(label)
+		if label.has_method("setup"):
+			label.setup(POINTS_PER_CLICK, global_position)
+	# ---------------------------------------------
+	
 	play_fish_effect()
 	play_hit_animation()
 
@@ -92,14 +104,13 @@ func hit_sack() -> void:
 		AudioManager.play_sound(SACK_OPEN)
 		ParticleManager.spawn_particle(SACK_PARTICLE, global_position)
 		
-		# --- VISUAL FIX: Hide the old sack so only the gift animation shows ---
+		# Hide the old sack so only the gift animation shows
 		sack_sprite.visible = false
 		
 		gift.visible = true
 		gift.play("default")
 		await gift.animation_finished
 		
-		# Call pop_out cleanly (ignoring the is_popping check)
 		_execute_pop_out(true)
 		return
 

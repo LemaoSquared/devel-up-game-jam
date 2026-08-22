@@ -5,6 +5,7 @@ signal popped_out(obj, was_clicked: bool)
 @export var lifetime: float = 12.0
 const GIFT = preload("uid://fojbgtm48t6b")
 const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
+const FLOATING_LABEL = preload("uid://cu8xcr7igstbj")
 
 @export_group("Spread Settings")
 @export var spacing_x: float = 90.0
@@ -130,6 +131,13 @@ func pop_out(was_clicked: bool = false) -> void:
 	
 	if was_clicked:
 		ScoreManager.add_points(5)
+		
+		# Spawn +5 floating label
+		if FLOATING_LABEL:
+			var label = FLOATING_LABEL.instantiate()
+			get_tree().current_scene.add_child(label)
+			if label.has_method("setup"):
+				label.setup(5, global_position)
 
 	var tween := create_tween()
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)

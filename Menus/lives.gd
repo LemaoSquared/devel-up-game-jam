@@ -8,7 +8,6 @@ extends HBoxContainer
 var active_hearts: Array[TextureRect] = []
 
 func _ready() -> void:
-	self.visible = false
 	if not full_heart or not empty_heart:
 		push_error("LIVES UI: You must assign both Full and Empty heart textures in the inspector!")
 		

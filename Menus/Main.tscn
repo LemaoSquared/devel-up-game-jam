@@ -40,7 +40,9 @@
 [ext_resource type="Texture2D" uid="uid://om4hstnd8h0c" path="res://Assets/Aseprite Files/pause_button.png" id="35_r77ri"]
 [ext_resource type="Script" uid="uid://dcnsfgxlkspfm" path="res://Menus/pause_button.gd" id="36_ffqtq"]
 [ext_resource type="Script" uid="uid://cep8lsbgtph8w" path="res://Menus/camera_2d.gd" id="38_axd22"]
+[ext_resource type="Texture2D" uid="uid://dn0vpnx7067l8" path="res://Assets/Object Assets/glove.png" id="41_f7smc"]
 [ext_resource type="Script" uid="uid://yienh80l8smx" path="res://Menus/score_label.gd" id="41_x3k0m"]
+[ext_resource type="Script" uid="uid://cnhyn10rcjukl" path="res://Menus/gloves.gd" id="42_dmeks"]
 
 [sub_resource type="Gradient" id="Gradient_x3k0m"]
 colors = PackedColorArray(0, 0, 0, 0, 1, 0.33938286, 0.47521454, 1)
@@ -55,6 +57,14 @@ colors = PackedColorArray(0, 0, 0, 0, 0.49387908, 0.68276995, 5.7756904e-07, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_kgah6"]
 gradient = SubResource("Gradient_gqtna")
+fill = 1
+fill_from = Vector2(0.48634812, 0.4795222)
+
+[sub_resource type="Gradient" id="Gradient_dmeks"]
+colors = PackedColorArray(0, 0, 0, 0, 1, 0.6509804, 0.3019608, 0.62352943)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_cmqc6"]
+gradient = SubResource("Gradient_dmeks")
 fill = 1
 fill_from = Vector2(0.48634812, 0.4795222)
 
@@ -350,6 +360,14 @@ height = 742
 use_hdr = true
 fill_from = Vector2(0, 0.004347826)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_5c5y6"]
+atlas = ExtResource("35_r77ri")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vdyg7"]
+atlas = ExtResource("35_r77ri")
+region = Rect2(0, 48, 48, 48)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_hf7om"]
 atlas = ExtResource("34_r77ri")
 region = Rect2(0, 0, 32, 32)
@@ -358,13 +376,23 @@ region = Rect2(0, 0, 32, 32)
 atlas = ExtResource("34_r77ri")
 region = Rect2(128, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_5c5y6"]
-atlas = ExtResource("35_r77ri")
-region = Rect2(0, 0, 48, 48)
+[sub_resource type="Curve" id="Curve_f7smc"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_vdyg7"]
-atlas = ExtResource("35_r77ri")
-region = Rect2(0, 48, 48, 48)
+[sub_resource type="CurveTexture" id="CurveTexture_ijthc"]
+curve = SubResource("Curve_f7smc")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_36c8c"]
+particle_flag_disable_z = true
+spread = 180.0
+initial_velocity_min = 24.789999
+initial_velocity_max = 69.68
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_max = 5.2999997
+scale_curve = SubResource("CurveTexture_ijthc")
+color = Color(1, 1, 0.5647059, 0.5019608)
 
 [node name="Main" type="Node2D" unique_id=1521551065]
 script = ExtResource("1_7x3k8")
@@ -376,7 +404,6 @@ anchor_mode = 0
 script = ExtResource("38_axd22")
 
 [node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
-visible = false
 script = ExtResource("15_aai8a")
 
 [node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=1467674545]
@@ -401,6 +428,12 @@ offset_top = 62.0
 offset_right = 1164.0
 offset_bottom = 590.0
 texture = SubResource("GradientTexture2D_kgah6")
+
+[node name="GloveRect" type="TextureRect" parent="CameraEffects" unique_id=1900740237]
+offset_top = 62.0
+offset_right = 1164.0
+offset_bottom = 590.0
+texture = SubResource("GradientTexture2D_cmqc6")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
 visible = false
@@ -1071,7 +1104,20 @@ text = "Version 1.1"
 horizontal_alignment = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="Lives" type="HBoxContainer" parent="." unique_id=687378709]
+[node name="PauseButton" type="TextureButton" parent="." unique_id=1294662200]
+offset_left = 1056.0
+offset_top = 80.0
+offset_right = 1120.0
+offset_bottom = 144.0
+texture_normal = SubResource("AtlasTexture_5c5y6")
+texture_pressed = SubResource("AtlasTexture_vdyg7")
+stretch_mode = 0
+script = ExtResource("36_ffqtq")
+metadata/_edit_use_anchors_ = true
+
+[node name="EndlessModeUI" type="CanvasLayer" parent="." unique_id=918137950]
+
+[node name="Lives" type="HBoxContainer" parent="EndlessModeUI" unique_id=687378709]
 z_index = 9
 offset_left = 24.0
 offset_top = 64.0
@@ -1084,18 +1130,23 @@ empty_heart = SubResource("AtlasTexture_qup64")
 heart_size = Vector2(70, 70)
 metadata/_edit_use_anchors_ = true
 
-[node name="PauseButton" type="TextureButton" parent="." unique_id=1294662200]
-offset_left = 1056.0
-offset_top = 80.0
-offset_right = 1120.0
-offset_bottom = 144.0
-texture_normal = SubResource("AtlasTexture_5c5y6")
-texture_pressed = SubResource("AtlasTexture_vdyg7")
-stretch_mode = 0
-script = ExtResource("36_ffqtq")
-metadata/_edit_use_anchors_ = true
+[node name="Gloves" type="TextureRect" parent="EndlessModeUI" unique_id=1440806333]
+offset_left = 249.0
+offset_top = 66.0
+offset_right = 336.0
+offset_bottom = 141.03125
+texture = ExtResource("41_f7smc")
+expand_mode = 1
+script = ExtResource("42_dmeks")
 
-[node name="ScoreLabel" type="Label" parent="." unique_id=933387944]
+[node name="GPUParticles2D" type="GPUParticles2D" parent="EndlessModeUI/Gloves" unique_id=1447675164]
+z_index = -100
+position = Vector2(40, 39)
+amount = 48
+lifetime = 1.8800000000000001
+process_material = SubResource("ParticleProcessMaterial_36c8c")
+
+[node name="ScoreLabel" type="Label" parent="EndlessModeUI" unique_id=933387944]
 offset_left = 426.0
 offset_top = 65.0
 offset_right = 754.0
