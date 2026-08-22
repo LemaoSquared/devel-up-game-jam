@@ -37,6 +37,7 @@
 [ext_resource type="Texture2D" uid="uid://b2l4ueeug6eo2" path="res://Assets/Object Assets/heart.png" id="34_r77ri"]
 [ext_resource type="Texture2D" uid="uid://om4hstnd8h0c" path="res://Assets/Aseprite Files/pause_button.png" id="35_r77ri"]
 [ext_resource type="Script" uid="uid://dcnsfgxlkspfm" path="res://Menus/pause_button.gd" id="36_ffqtq"]
+[ext_resource type="Script" uid="uid://cep8lsbgtph8w" path="res://Menus/camera_2d.gd" id="38_axd22"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i0d87"]
 shader = ExtResource("2_yng6g")
@@ -341,6 +342,11 @@ region = Rect2(0, 48, 48, 48)
 [node name="Main" type="Node2D" unique_id=1521551065]
 script = ExtResource("1_7x3k8")
 final_cutscene = ExtResource("3_g2jn8")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1677144919]
+offset = Vector2(1000, 1000)
+anchor_mode = 0
+script = ExtResource("38_axd22")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
 visible = false
@@ -730,6 +736,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0.38431373)
 script = ExtResource("1_j1rpa")
+metadata/_edit_use_anchors_ = true
 
 [node name="Gradient" type="TextureRect" parent="Background" unique_id=1385319185]
 visible = false
@@ -753,6 +760,7 @@ offset_top = -64.0
 offset_right = 10.0
 grow_horizontal = 2
 color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
 
 [node name="BlackPanelDown" type="ColorRect" parent="Background" unique_id=1479045947]
 top_level = true
@@ -763,6 +771,7 @@ offset_top = 648.0
 offset_bottom = 704.0
 grow_horizontal = 2
 color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
 
 [node name="Polaroid_1" type="TextureRect" parent="Background" unique_id=1181744193]
 top_level = true
@@ -773,6 +782,7 @@ offset_right = -220.88892
 offset_bottom = 404.0
 texture = ExtResource("19_vwlca")
 expand_mode = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="Polaroid_2" type="TextureRect" parent="Background" unique_id=817282495]
 top_level = true
@@ -783,6 +793,7 @@ offset_right = -591.8889
 offset_bottom = 604.0
 texture = ExtResource("20_y8skh")
 expand_mode = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="Polaroid_3" type="TextureRect" parent="Background" unique_id=2052868313]
 top_level = true
@@ -793,6 +804,7 @@ offset_right = 273.11108
 offset_bottom = 561.0
 texture = ExtResource("21_qn5f4")
 expand_mode = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="Entity" type="AnimatedSprite2D" parent="." unique_id=1100770989]
 position = Vector2(448.00003, 520)
@@ -810,6 +822,7 @@ offset_bottom = 541.0
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 border_width = 5.0
+metadata/_edit_use_anchors_ = true
 
 [node name="StartPanel" type="TextureRect" parent="." unique_id=164502693 node_paths=PackedStringArray("spawn_area")]
 offset_left = 502.0
@@ -819,6 +832,7 @@ offset_bottom = 657.0
 texture = SubResource("GradientTexture1D_oi3uc")
 script = ExtResource("3_xd1g5")
 spawn_area = NodePath("../ReferenceRect")
+metadata/_edit_use_anchors_ = true
 
 [node name="Title" type="Sprite2D" parent="StartPanel" unique_id=1835915251]
 position = Vector2(372.99997, 172.99998)
@@ -834,6 +848,7 @@ offset_right = 291.0
 offset_bottom = 348.0
 scale = Vector2(4, 4)
 texture_normal = ExtResource("5_unj6y")
+metadata/_edit_use_anchors_ = true
 
 [node name="Story" type="Label" parent="StartPanel" unique_id=107870984]
 layout_mode = 0
@@ -844,6 +859,7 @@ offset_bottom = 369.0
 theme_override_fonts/font = ExtResource("29_qn5f4")
 theme_override_font_sizes/font_size = 37
 text = "Story Mode"
+metadata/_edit_use_anchors_ = true
 
 [node name="EndlessStart" type="TextureButton" parent="StartPanel" unique_id=1310882319]
 self_modulate = Color(3.080368e-06, 0.8493475, 0.97114426, 1)
@@ -855,6 +871,7 @@ offset_right = 288.0
 offset_bottom = 543.0
 scale = Vector2(4, 4)
 texture_normal = ExtResource("5_unj6y")
+metadata/_edit_use_anchors_ = true
 
 [node name="Endless" type="Label" parent="StartPanel" unique_id=2127646751]
 layout_mode = 0
@@ -865,6 +882,7 @@ offset_bottom = 549.0
 theme_override_fonts/font = ExtResource("29_qn5f4")
 theme_override_font_sizes/font_size = 37
 text = "Endless Mode"
+metadata/_edit_use_anchors_ = true
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=170122126]
 offset_left = -18.0
@@ -876,6 +894,7 @@ theme_override_styles/background = SubResource("StyleBoxFlat_7x3k8")
 theme_override_styles/fill = SubResource("StyleBoxFlat_l0led")
 show_percentage = false
 script = ExtResource("5_vocn1")
+metadata/_edit_use_anchors_ = true
 
 [node name="Timer" type="Timer" parent="ProgressBar" unique_id=2042900797]
 
@@ -891,6 +910,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_l0led")
 value = 50.0
 show_percentage = false
 script = ExtResource("31_ag636")
+metadata/_edit_use_anchors_ = true
 
 [node name="Timer" type="Timer" parent="WaveTimer" unique_id=1171737267]
 
@@ -943,6 +963,7 @@ offset_bottom = 177.0
 theme_override_fonts/font = ExtResource("29_qn5f4")
 theme_override_font_sizes/font_size = 43
 text = "Click Items to Wrap Them"
+metadata/_edit_use_anchors_ = true
 
 [node name="Label" type="Label" parent="." unique_id=1230464535]
 offset_left = 18.0
@@ -952,6 +973,7 @@ offset_bottom = 641.0
 theme_override_fonts/font = ExtResource("29_qn5f4")
 theme_override_font_sizes/font_size = 30
 text = "F - Full Screen"
+metadata/_edit_use_anchors_ = true
 
 [node name="Version Label" type="Label" parent="." unique_id=1849655685]
 offset_left = 994.0
@@ -962,6 +984,7 @@ theme_override_fonts/font = ExtResource("29_qn5f4")
 theme_override_font_sizes/font_size = 30
 text = "Version 1.1"
 horizontal_alignment = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="Lives" type="HBoxContainer" parent="." unique_id=687378709]
 z_index = 9
@@ -974,6 +997,7 @@ script = ExtResource("34_lugpe")
 full_heart = SubResource("AtlasTexture_hf7om")
 empty_heart = SubResource("AtlasTexture_qup64")
 heart_size = Vector2(70, 70)
+metadata/_edit_use_anchors_ = true
 
 [node name="PauseButton" type="TextureButton" parent="." unique_id=1294662200]
 offset_left = 1056.0
@@ -984,6 +1008,7 @@ texture_normal = SubResource("AtlasTexture_5c5y6")
 texture_pressed = SubResource("AtlasTexture_vdyg7")
 stretch_mode = 0
 script = ExtResource("36_ffqtq")
+metadata/_edit_use_anchors_ = true
 
 [connection signal="pressed" from="StartPanel/Start" to="BackgroundManager" method="_on_start_pressed"]
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]

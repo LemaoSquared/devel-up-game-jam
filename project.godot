@@ -32,6 +32,7 @@ SceneTransition="*uid://dlpmt1xdaclks"
 WindowManager="*uid://lo33st6fr55x"
 LivesManager="*uid://dajsf3pjvrkf8"
 PauseMenu="*uid://cxgnia65dgs3n"
+CameraManager="*uid://cviyqpg1b6tpc"
 
 [display]
 

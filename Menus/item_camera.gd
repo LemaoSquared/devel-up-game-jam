@@ -42,6 +42,10 @@ func _input(event: InputEvent) -> void:
 func activate_camera() -> void:
 	AudioManager.play_sound(CAMERA)
 	ParticleManager.spawn_particle(CAMERA_PARTICLE, global_position)
+	
+	# Trigger a slight screen shake (adjust the value 0.25 to make it stronger or subtler)
+	CameraManager.add_trauma(0.5)
+	
 	if is_popping:
 		return
 
