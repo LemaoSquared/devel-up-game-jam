@@ -3,7 +3,7 @@ extends Node2D
 signal popped_out(obj: Node, was_clicked: bool, item_type: int)
 signal camera_activated
 const CAMERA = preload("uid://ce3v411cq8pkb")
-const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
+const CAMERA_PARTICLE = preload("uid://ckxm50r2jq2qg")
 
 var is_popping: bool = false
 const Duration: float = 6.0
@@ -41,7 +41,7 @@ func _input(event: InputEvent) -> void:
 
 func activate_camera() -> void:
 	AudioManager.play_sound(CAMERA)
-	ParticleManager.spawn_particle(CLICK_PARTICLE, global_position)
+	ParticleManager.spawn_particle(CAMERA_PARTICLE, global_position)
 	if is_popping:
 		return
 

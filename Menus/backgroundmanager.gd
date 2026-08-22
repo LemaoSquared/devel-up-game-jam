@@ -122,8 +122,11 @@ func _change_background(target_index: int):
 	transition_id = current_trans_id
 
 	await SceneTransition.swipe_in()
-	# Abort if reset() was called while swiping in
+	
+	# If reset() was called while swiped in, we must swipe back out 
+	# so the screen doesn't stay black, then abort.
 	if current_trans_id != transition_id:
+		await SceneTransition.swipe_out()
 		return
 
 	current_index = target_index
@@ -132,6 +135,7 @@ func _change_background(target_index: int):
 	background_changed.emit(current_index)
 	
 	await SceneTransition.swipe_out()
+	
 	# Abort if reset() was called while swiping out
 	if current_trans_id != transition_id:
 		return
