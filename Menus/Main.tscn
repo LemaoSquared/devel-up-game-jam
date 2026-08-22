@@ -40,6 +40,7 @@
 [ext_resource type="Texture2D" uid="uid://om4hstnd8h0c" path="res://Assets/Aseprite Files/pause_button.png" id="35_r77ri"]
 [ext_resource type="Script" uid="uid://dcnsfgxlkspfm" path="res://Menus/pause_button.gd" id="36_ffqtq"]
 [ext_resource type="Script" uid="uid://cep8lsbgtph8w" path="res://Menus/camera_2d.gd" id="38_axd22"]
+[ext_resource type="Script" uid="uid://yienh80l8smx" path="res://Menus/score_label.gd" id="41_x3k0m"]
 
 [sub_resource type="Gradient" id="Gradient_x3k0m"]
 colors = PackedColorArray(0, 0, 0, 0, 1, 0.33938286, 0.47521454, 1)
@@ -328,6 +329,14 @@ bg_color = Color(0.8990849, 0.899085, 0.89908487, 0)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l0led"]
 bg_color = Color(1, 0.8167283, 0.5611379, 1)
 
+[sub_resource type="Gradient" id="Gradient_f7smc"]
+colors = PackedColorArray(0, 0, 0, 0, 1, 0.8156863, 0.56078434, 0.7647059)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_dmeks"]
+gradient = SubResource("Gradient_f7smc")
+fill_from = Vector2(0.48634812, 0.4795222)
+fill_to = Vector2(0.47269624, 1)
+
 [sub_resource type="Gradient" id="Gradient_gg5gl"]
 offsets = PackedFloat32Array(0, 0.2, 0.8, 1)
 colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0)
@@ -367,6 +376,7 @@ anchor_mode = 0
 script = ExtResource("38_axd22")
 
 [node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
+visible = false
 script = ExtResource("15_aai8a")
 
 [node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=1467674545]
@@ -994,6 +1004,14 @@ metadata/_edit_use_anchors_ = true
 
 [node name="Timer" type="Timer" parent="WaveTimer" unique_id=1171737267]
 
+[node name="WaveEffect" type="TextureRect" parent="WaveTimer" unique_id=1701429602]
+layout_mode = 0
+offset_left = 6.0
+offset_top = -400.0
+offset_right = 1170.0
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_dmeks")
+
 [node name="Transition" type="ColorRect" parent="." unique_id=1234018471]
 process_mode = 1
 visible = false
@@ -1076,6 +1094,19 @@ texture_pressed = SubResource("AtlasTexture_vdyg7")
 stretch_mode = 0
 script = ExtResource("36_ffqtq")
 metadata/_edit_use_anchors_ = true
+
+[node name="ScoreLabel" type="Label" parent="." unique_id=933387944]
+offset_left = 426.0
+offset_top = 65.0
+offset_right = 754.0
+offset_bottom = 137.0
+theme_override_colors/font_color = Color(0.90588236, 0.83137256, 0.6784314, 1)
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 72
+text = "1209"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("41_x3k0m")
 
 [connection signal="pressed" from="StartPanel/Start" to="BackgroundManager" method="_on_start_pressed"]
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]

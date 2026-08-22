@@ -3,6 +3,7 @@ extends TextureRect
 const STREET = preload("uid://c6xk46jpedco4")
 @onready var tutorial_label: Label = $"../TutorialLabel"
 @onready var lives: HBoxContainer = $"../Lives"
+@onready var score_label: Label = $"../ScoreLabel"
 
 signal game_started
 signal endless_started
@@ -164,6 +165,7 @@ func _on_endless_start_pressed() -> void:
 	ScoreManager.reset_score()
 	LivesManager.reset_lives()
 	lives.visible = true
+	score_label.visible = true
 	
 	# Start endless spawner loop
 	ItemManager.start_endless()

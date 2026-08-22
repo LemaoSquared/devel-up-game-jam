@@ -86,26 +86,9 @@ func pop_out(is_clicked: bool = false) -> void:
 	tween.tween_callback(queue_free)
 
 func transform_to_polaroid() -> void:
-	if is_popping:
-		return
-	is_popping = true
-	$Garbage.input_pickable = false
-
-	if popped_out.is_connected(ItemManager._on_object_popped_out):
-		popped_out.disconnect(ItemManager._on_object_popped_out)
-
-	ItemManager.spawned_objects.erase(self)
-	ItemManager.wave_one_objects.erase(self)
-
-	if polaroid_scene == null:
-		polaroid_scene = load("res://Menus/item_polaroid.tscn")
-
 	var polaroid := polaroid_scene.instantiate() as Node2D
-	if polaroid == null:
-		queue_free()
-		return
-
 	get_parent().add_child(polaroid)
+
 	polaroid.global_position = global_position
 	polaroid.global_rotation = global_rotation
 	polaroid.scale = scale
@@ -114,10 +97,16 @@ func transform_to_polaroid() -> void:
 	if photo_sprite != null and polaroid_texture != null:
 		photo_sprite.texture = polaroid_texture
 
+	# --- FIX: Guarantee Polaroid Data & Connect Signal ---
+	polaroid.set_meta("item_type", 9)
+	polaroid.set("is_polaroid", true)
+
 	if ItemManager.has_method("register_spawned_object"):
-		ItemManager.register_spawned_object(polaroid, ItemManager.Item.POLAROID)
+		ItemManager.register_spawned_object(polaroid, 9) # 9 is Item.POLAROID
+	# -----------------------------------------------------
 
 	if polaroid.has_method("appear"):
 		polaroid.appear()
 
+	popped_out.emit(self, true)
 	queue_free()

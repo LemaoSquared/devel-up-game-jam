@@ -21,7 +21,7 @@ var is_endless_mode: bool = false
 # Index 1 (Store) = 39.0s, Index 2 (Street) = 55.0s
 var endless_durations: Dictionary = {
 	1: 39.0,
-	2: 55.0
+	2: 53.0
 }
 
 # --- CANCELLATION TRACKING ---

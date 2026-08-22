@@ -8,6 +8,7 @@ const CutsceneScene = preload("uid://bqfwjyhkbhn82")
 const BACKYARD = preload("uid://c13kxu5fitd1y")
 @onready var lives: HBoxContainer = $Lives
 @onready var pause_button: TextureButton = $PauseButton
+@onready var score_label: Label = $ScoreLabel
 
 func _ready() -> void:
 	pause_button.visible = false
@@ -70,6 +71,7 @@ func _run_game_over_sequence(show_cutscene: bool = true) -> void:
 	else:
 		await $Transition.Return()
 	lives.visible = false
+	score_label.visible = false
 	pause_button.visible = false
 	var game_over := GameOverScreen.instantiate()
 	$Background.retreat_cinematic_bars()

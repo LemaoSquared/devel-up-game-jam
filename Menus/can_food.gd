@@ -107,16 +107,26 @@ func _pop_opened_can() -> void:
 func transform_to_polaroid() -> void:
 	var polaroid := polaroid_scene.instantiate() as Node2D
 	get_parent().add_child(polaroid)
+
 	polaroid.global_position = global_position
 	polaroid.global_rotation = global_rotation
 	polaroid.scale = scale
+
 	var photo_sprite := polaroid.get_node_or_null("Polaroid/Sprite2D") as Sprite2D
 	if photo_sprite != null and polaroid_texture != null:
 		photo_sprite.texture = polaroid_texture
+
+	# --- FIX: Guarantee Polaroid Data & Connect Signal ---
+	polaroid.set_meta("item_type", 9)
+	polaroid.set("is_polaroid", true)
+
 	if ItemManager.has_method("register_spawned_object"):
-		ItemManager.register_spawned_object(polaroid)
+		ItemManager.register_spawned_object(polaroid, 9) # 9 is Item.POLAROID
+	# -----------------------------------------------------
+
 	if polaroid.has_method("appear"):
 		polaroid.appear()
+
 	popped_out.emit(self, true)
 	queue_free()
 

@@ -178,13 +178,21 @@ func transform_to_polaroid() -> void:
 	if photo_sprite != null and polaroid_texture != null:
 		photo_sprite.texture = polaroid_texture
 
+	# --- FIX: Guarantee Polaroid Data & Connect Signal ---
+	polaroid.set_meta("item_type", 9)
+	polaroid.set("is_polaroid", true)
+
 	if polaroid.has_method("setup"):
-		polaroid.setup(REQUIRED_CLICKS *POINTS_PER_CLICK)  
+		polaroid.setup(REQUIRED_CLICKS * POINTS_PER_CLICK)  
 
 	if ItemManager.has_method("register_spawned_object"):
-		ItemManager.register_spawned_object(polaroid)
+		ItemManager.register_spawned_object(polaroid, 9) # 9 is Item.POLAROID
+	# -----------------------------------------------------
+
 	if polaroid.has_method("appear"):
 		polaroid.appear()
+	
+	popped_out.emit(self, true)
 	queue_free()
 	
 func play_fish_effect() -> void:
