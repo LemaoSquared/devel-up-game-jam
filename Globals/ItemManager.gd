@@ -12,6 +12,7 @@ signal item_collected(item_type: int)
 @export var rat: PackedScene = preload("res://Menus/toy_mouse.tscn")
 @export var regen: PackedScene = preload("res://Menus/item_regen.tscn")
 @export var polaroid: PackedScene = preload("res://Menus/item_polaroid.tscn")
+const NEXT_WAVE = preload("uid://dnvvary85k2lr")
 
 @export var min_spawn_distance: float = 64.0
 @export var max_placement_attempts: int = 30
@@ -281,6 +282,10 @@ func play_story_pattern(number: int):
 	if is_game_over or is_endless:
 		return
 		
+	# --- BUG FIX: Guarantee a strict 6-second timer for Story Mode ---
+	time_duration_perBatch = base_time_duration_perBatch
+	# -----------------------------------------------------------------
+		
 	_isolate_previous_wave()
 	_prepare_wave_state()
 	current_parent = get_tree().current_scene 
@@ -330,7 +335,6 @@ func _isolate_previous_wave() -> void:
 		current_wave_batch.is_finished = true
 		current_wave_batch = null
 	
-	# Animate leftover active items dropping down off the screen before freeing them
 	for obj in wave_one_objects:
 		if is_instance_valid(obj) and obj is Node2D:
 			if obj.has_method("despawn"):
@@ -579,7 +583,6 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 	if was_clicked:
 		item_collected.emit(item_type)
 		
-		# If user clicked a hazard (like garbage or shoes), subtract life or handle penalty
 		var is_hazard: bool = (item_type == Item.GARBAGE or item_type == Item.SHOES)
 		if is_hazard:
 			if LivesManager.has_method("lose_life"):
@@ -611,6 +614,13 @@ func _on_wave_timeout() -> void:
 		
 		for obj in wave_one_objects:
 			if is_instance_valid(obj):
+				# --- BUG FIX: Ignore items that are already clicked and animating ---
+				if "is_popping" in obj and obj.is_popping:
+					continue
+				if "is_finished" in obj and obj.is_finished:
+					continue
+				# --------------------------------------------------------------------
+
 				var obj_type = obj.get_meta("item_type", -1)
 				if (
 					obj_type == Item.GARBAGE or 
@@ -635,6 +645,9 @@ func _on_wave_timeout() -> void:
 func _handle_endless_mode_timeout() -> void:
 	if LivesManager.lives <= 0:
 		return
+		
+	# Play the next wave SFX
+	AudioManager.play_sound(NEXT_WAVE)
 		
 	current_wave_in_batch += 1
 	_spawn_next_endless_wave()
