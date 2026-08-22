@@ -1,6 +1,8 @@
 extends CanvasLayer
 
 var effect_running: bool = false
+@onready var hurt_rect: TextureRect = $HurtRect
+@onready var heal_rect: TextureRect = $HealRect
 
 const SLOW_TIME_SCALE: float = 0.25
 const SLOW_MOTION_DURATION: float = 0.7
@@ -19,8 +21,23 @@ var polaroid_pool: Array[TextureRect] = []
 func _ready() -> void:
 	add_to_group("camera_effects")
 
+	# Ensure the CanvasLayer itself is always active so children can render anytime
+	visible = true 
+
 	flash_rect.modulate.a = 0.0
 	flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	# Initialize HurtRect
+	if hurt_rect:
+		hurt_rect.modulate.a = 0.0
+		hurt_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hurt_rect.visible = false
+
+	# Initialize HealRect
+	if heal_rect:
+		heal_rect.modulate.a = 0.0
+		heal_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		heal_rect.visible = false
 	
 	# Position all 5 polaroids off-screen left at startup
 	var polaroids = [polaroid_1, polaroid_2, polaroid_3, polaroid_4, polaroid_5]
@@ -30,7 +47,6 @@ func _ready() -> void:
 			p.visible = false
 
 func activate_camera_effect() -> void:
-	visible = true
 	if effect_running:
 		return
 	effect_running = true
@@ -60,7 +76,7 @@ func activate_camera_effect() -> void:
 
 	Engine.time_scale = 1.0
 	effect_running = false
-	visible = false
+	# NOTE: Removed "visible = false" here so the layer stays active for hurt/heal effects!
 
 func transform_all_items() -> void:
 	var targets := get_tree().get_nodes_in_group("camera_targets")
@@ -134,3 +150,45 @@ func flash_out() -> void:
 		0.3
 	)
 	await tween.finished
+
+func trigger_hurt_effect() -> void:
+	if not hurt_rect:
+		return
+		
+	hurt_rect.visible = true
+	hurt_rect.modulate.a = 0.0
+	
+	var tween := create_tween()
+	tween.set_ignore_time_scale(true) # Ensures smooth playback even during damage slow-mo!
+	tween.set_trans(Tween.TRANS_QUAD)
+	tween.set_ease(Tween.EASE_OUT)
+	
+	# Phase 1: Quick punch-in of the red tint
+	tween.tween_property(hurt_rect, "modulate:a", 0.5, 0.06)
+	
+	# Phase 2: Smooth fade out back to normal
+	tween.tween_property(hurt_rect, "modulate:a", 0.0, 0.25)
+	
+	# Hide when completely faded out
+	tween.tween_callback(func(): hurt_rect.visible = false)
+
+func trigger_heal_effect() -> void:
+	if not heal_rect:
+		return
+		
+	heal_rect.visible = true
+	heal_rect.modulate.a = 0.0
+	
+	var tween := create_tween()
+	tween.set_ignore_time_scale(true) # Smooth animation regardless of global time scale
+	tween.set_trans(Tween.TRANS_QUAD)
+	tween.set_ease(Tween.EASE_OUT)
+	
+	# Phase 1: Soft green flash punch-in
+	tween.tween_property(heal_rect, "modulate:a", 0.45, 0.1)
+	
+	# Phase 2: Gentle fade out back to clear
+	tween.tween_property(heal_rect, "modulate:a", 0.0, 0.35)
+	
+	# Hide when completely transparent
+	tween.tween_callback(func(): heal_rect.visible = false)

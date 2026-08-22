@@ -1,10 +1,12 @@
 extends Node2D
 
 signal popped_out(obj: Node, was_clicked: bool)
+const REGEN_PARTICLE = preload("uid://b1e6bon8ifbuk")
 
 var is_popping: bool = false
 
 const DURATION: float = 6.0
+const REGEN = preload("uid://dl4pnno0q6i3k")
 
 @onready var regen_area: Area2D = $Regen
 @onready var sprite_2d: AnimatedSprite2D = $Regen/Sprite2D
@@ -45,7 +47,10 @@ func _input(event: InputEvent) -> void:
 func collect_regen() -> void:
 	if is_popping:
 		return
-
+		
+	AudioManager.play_sound(REGEN)
+	ParticleManager.spawn_particle(REGEN_PARTICLE, global_position)
+	
 	is_popping = true
 	regen_area.input_pickable = false
 

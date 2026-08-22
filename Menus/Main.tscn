@@ -41,6 +41,22 @@
 [ext_resource type="Script" uid="uid://dcnsfgxlkspfm" path="res://Menus/pause_button.gd" id="36_ffqtq"]
 [ext_resource type="Script" uid="uid://cep8lsbgtph8w" path="res://Menus/camera_2d.gd" id="38_axd22"]
 
+[sub_resource type="Gradient" id="Gradient_x3k0m"]
+colors = PackedColorArray(0, 0, 0, 0, 1, 0.33938286, 0.47521454, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_gqtna"]
+gradient = SubResource("Gradient_x3k0m")
+fill = 1
+fill_from = Vector2(0.48634812, 0.4795222)
+
+[sub_resource type="Gradient" id="Gradient_gqtna"]
+colors = PackedColorArray(0, 0, 0, 0, 0.49387908, 0.68276995, 5.7756904e-07, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_kgah6"]
+gradient = SubResource("Gradient_gqtna")
+fill = 1
+fill_from = Vector2(0.48634812, 0.4795222)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i0d87"]
 shader = ExtResource("2_yng6g")
 shader_parameter/pixelation = 16.0
@@ -349,6 +365,32 @@ final_cutscene = ExtResource("3_g2jn8")
 offset = Vector2(1000, 1000)
 anchor_mode = 0
 script = ExtResource("38_axd22")
+
+[node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
+script = ExtResource("15_aai8a")
+
+[node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=1467674545]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 66.0
+offset_right = 14.0
+offset_bottom = -62.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HurtRect" type="TextureRect" parent="CameraEffects" unique_id=827679414]
+offset_top = 62.0
+offset_right = 1164.0
+offset_bottom = 590.0
+texture = SubResource("GradientTexture2D_gqtna")
+
+[node name="HealRect" type="TextureRect" parent="CameraEffects" unique_id=225279873]
+offset_top = 62.0
+offset_right = 1164.0
+offset_bottom = 590.0
+texture = SubResource("GradientTexture2D_kgah6")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
 visible = false
@@ -755,9 +797,11 @@ process_material = SubResource("ParticleProcessMaterial_kgah6")
 
 [node name="BlackPanelUP" type="ColorRect" parent="Background" unique_id=1603293193]
 top_level = true
+z_index = 1000
 layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
+anchors_preset = -1
+anchor_left = -0.19878472
+anchor_right = 1.1822916
 offset_top = -64.0
 offset_right = 10.0
 grow_horizontal = 2
@@ -766,9 +810,11 @@ metadata/_edit_use_anchors_ = true
 
 [node name="BlackPanelDown" type="ColorRect" parent="Background" unique_id=1479045947]
 top_level = true
+z_index = 1000
 layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
+anchors_preset = -1
+anchor_left = -0.17100695
+anchor_right = 1.1944444
 offset_top = 648.0
 offset_bottom = 704.0
 grow_horizontal = 2
@@ -955,19 +1001,6 @@ top_level = true
 offset_right = 1167.0
 offset_bottom = 650.0
 script = ExtResource("18_vl1oa")
-
-[node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
-visible = false
-script = ExtResource("15_aai8a")
-
-[node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=1467674545]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = 14.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
 
 [node name="RightSpawner" type="Marker2D" parent="." unique_id=877299189]
 position = Vector2(-63, 571)

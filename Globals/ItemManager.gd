@@ -1,6 +1,7 @@
 extends Node
 
 signal item_collected(item_type: int)
+const DAMAGE = preload("uid://dubitxvxml3b6")
 
 @export var cat_treat: PackedScene = preload("res://Menus/item_cat_treat.tscn")
 @export var yarn: PackedScene = preload("res://Menus/item_yarn.tscn")
@@ -573,6 +574,51 @@ func clear_objects() -> void:
 	missed_items_in_current_wave = 0
 	current_wave_batch = null
 
+# --- DAMAGE, CAMERA TRAUMA & SLOW-MOTION EFFECT ---
+# --- DAMAGE, CAMERA TRAUMA & SLOW-MOTION EFFECT ---
+func _inflict_damage() -> void:
+	# Story mode should ignore all damage and penalties
+	if not is_endless:
+		return
+
+	if LivesManager.has_method("lose_life"):
+		LivesManager.lose_life()
+
+	AudioManager.play_sound(DAMAGE)
+	#Hurt Effect
+
+	var player_entity := get_tree().get_first_node_in_group("player")
+	if player_entity and player_entity.has_method("play_damage_effect"):
+		player_entity.play_damage_effect()
+		
+	var camera_effects := get_tree().get_first_node_in_group("camera_effects")
+	if camera_effects and camera_effects.has_method("trigger_hurt_effect"):
+		camera_effects.trigger_hurt_effect()
+		
+	# Trigger camera shake via CameraManager using add_trauma
+	if CameraManager and CameraManager.has_method("add_trauma"):
+		CameraManager.add_trauma(0.25)
+
+	# Check if this hit drops lives to 0 (Game Over)
+	var is_fatal: bool = false
+	if LivesManager and "lives" in LivesManager:
+		if LivesManager.lives <= 0:
+			is_fatal = true
+
+	if is_fatal:
+		# Keep time scale normal/unaffected so game over procs immediately without lag
+		Engine.time_scale = 1.0
+	else:
+		# Milder slow-motion for regular damage (changed from 0.15 to 0.5)
+		Engine.time_scale = 0.5
+		
+		# Using ignore_time_scale = true (3rd argument) so the timer runs in real-time
+		var damage_timer = get_tree().create_timer(0.3, false, true, true)
+		damage_timer.timeout.connect(func():
+			if not is_game_over:
+				Engine.time_scale = 1.0
+		)
+
 func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void:
 	if is_game_over or obj in scored_objects:
 		return  
@@ -585,8 +631,19 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 		
 		var is_hazard: bool = (item_type == Item.GARBAGE or item_type == Item.SHOES)
 		if is_hazard:
-			if LivesManager.has_method("lose_life"):
-				LivesManager.lose_life()
+			_inflict_damage()
+			
+# --- TRIGGER HEAL EFFECT FOR REGEN ITEMS ---
+		elif item_type == Item.REGEN:
+		# Trigger screen heal flash
+			var camera_effects := get_tree().get_first_node_in_group("camera_effects")
+			if camera_effects and camera_effects.has_method("trigger_heal_effect"):
+				camera_effects.trigger_heal_effect()
+				
+			# Trigger the entity's green highlight and happy hop
+			var player_entity := get_tree().get_first_node_in_group("player")
+			if player_entity and player_entity.has_method("play_heal_effect"):
+				player_entity.play_heal_effect()
 	else:
 		var is_excluded_from_miss: bool = (
 			item_type == Item.GARBAGE or
@@ -635,8 +692,7 @@ func _on_wave_timeout() -> void:
 				break
 		
 		if uncollected_valid_gifts_exist or (current_wave_batch and current_wave_batch.has_missed_item):
-			if LivesManager.has_method("lose_life"):
-				LivesManager.lose_life()
+			_inflict_damage()
 
 		_handle_endless_mode_timeout()
 	else:
@@ -708,3 +764,4 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 			_animate_pop_scale(obj, pos, delay_index)
 		SpawnAnimation.DROP_IN:
 			_animate_drop_in(obj, pos, delay_index)
+	
