@@ -31,6 +31,8 @@
 [ext_resource type="Texture2D" uid="uid://cco8j71lo8gv1" path="res://Assets/Polaroid Pictures/polaroid1.png" id="20_y8skh"]
 [ext_resource type="Texture2D" uid="uid://c0b5fuudbemxp" path="res://Assets/Polaroid Pictures/polaroid2.png" id="21_qn5f4"]
 [ext_resource type="Texture2D" uid="uid://xdl7124u5wa7" path="res://Assets/Character Sprite/Walking_Outside.png" id="21_y8skh"]
+[ext_resource type="Texture2D" uid="uid://b6x6h0psc0h3r" path="res://Assets/Polaroid Pictures/polaroid4.png" id="23_gqtna"]
+[ext_resource type="Texture2D" uid="uid://cd1oko51pofm3" path="res://Assets/Polaroid Pictures/polaroid5.png" id="24_x3k0m"]
 [ext_resource type="FontFile" uid="uid://cqwfub3g65jm6" path="res://Assets/Baby Night.otf" id="29_qn5f4"]
 [ext_resource type="Script" uid="uid://dp4iofwwju5x8" path="res://Menus/wave_timer.gd" id="31_ag636"]
 [ext_resource type="Script" uid="uid://bvjivsqq7qple" path="res://Menus/lives.gd" id="34_lugpe"]
@@ -803,6 +805,38 @@ offset_top = 188.0
 offset_right = 273.11108
 offset_bottom = 561.0
 texture = ExtResource("21_qn5f4")
+expand_mode = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Polaroid_4" type="TextureRect" parent="Background" unique_id=237194222]
+top_level = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.4826389
+anchor_top = 0.11419753
+anchor_right = -0.4826389
+anchor_bottom = 0.11419753
+offset_left = -390.0
+offset_top = 188.0
+offset_right = 273.11108
+offset_bottom = 561.0
+texture = ExtResource("23_gqtna")
+expand_mode = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Polaroid_5" type="TextureRect" parent="Background" unique_id=1137899098]
+top_level = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.33333334
+anchor_top = -0.12808642
+anchor_right = -0.33333334
+anchor_bottom = -0.12808642
+offset_left = -390.0
+offset_top = 188.0
+offset_right = 273.11108
+offset_bottom = 561.0
+texture = ExtResource("24_x3k0m")
 expand_mode = 1
 metadata/_edit_use_anchors_ = true
 

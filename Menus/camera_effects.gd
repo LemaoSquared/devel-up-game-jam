@@ -8,6 +8,8 @@ const SLOW_MOTION_DURATION: float = 0.7
 @onready var polaroid_1: TextureRect = $"../Background/Polaroid_1"
 @onready var polaroid_2: TextureRect = $"../Background/Polaroid_2"
 @onready var polaroid_3: TextureRect = $"../Background/Polaroid_3"
+@onready var polaroid_4: TextureRect = $"../Background/Polaroid_4"
+@onready var polaroid_5: TextureRect = $"../Background/Polaroid_5"
 
 @onready var flash_rect: ColorRect = $FlashRect
 
@@ -20,8 +22,8 @@ func _ready() -> void:
 	flash_rect.modulate.a = 0.0
 	flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
-	# Position polaroids off-screen left at startup
-	var polaroids = [polaroid_1, polaroid_2, polaroid_3]
+	# Position all 5 polaroids off-screen left at startup
+	var polaroids = [polaroid_1, polaroid_2, polaroid_3, polaroid_4, polaroid_5]
 	for p in polaroids:
 		if p:
 			p.global_position.x = -p.size.x
@@ -48,9 +50,6 @@ func activate_camera_effect() -> void:
 		slide_random_polaroid()
 	)
 	
-	# Wait for the screen to finish clearing up visually
-	
-	
 	# 5. Let the remaining slow motion duration play out smoothly
 	await get_tree().create_timer(
 		SLOW_MOTION_DURATION,
@@ -72,9 +71,9 @@ func transform_all_items() -> void:
 			target.transform_to_polaroid()
 
 func slide_random_polaroid() -> void:
-	# Refill and shuffle the pool if it runs dry to prevent repeats
+	# Refill and shuffle the pool with all 5 items if it runs dry to prevent repeats
 	if polaroid_pool.is_empty():
-		polaroid_pool = [polaroid_1, polaroid_2, polaroid_3]
+		polaroid_pool = [polaroid_1, polaroid_2, polaroid_3, polaroid_4, polaroid_5]
 		polaroid_pool.shuffle()
 		
 	# Pop a random, non-repeating polaroid from the pool
