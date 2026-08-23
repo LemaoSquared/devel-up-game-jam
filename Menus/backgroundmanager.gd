@@ -92,13 +92,15 @@ func _start_timer_for_current_bg():
 			wait_time = durations[current_index]
 		
 	var current_trans_id = transition_id
-	active_timer = get_tree().create_timer(wait_time)
+	
+	# Add 'false' as the second argument so the timer respects the paused state
+	active_timer = get_tree().create_timer(wait_time, false) 
+	
 	active_timer.timeout.connect(func():
 		# Only proceed if reset() hasn't been called in the meantime
 		if current_trans_id == transition_id:
 			_on_timer_finished()
 	)
-
 func _on_timer_finished():
 	var next_index: int
 	

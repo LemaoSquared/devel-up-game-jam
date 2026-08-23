@@ -4,6 +4,7 @@ var effect_running: bool = false
 @onready var hurt_rect: TextureRect = $HurtRect
 @onready var heal_rect: TextureRect = $HealRect
 @onready var glove_rect: TextureRect = $GloveRect
+@onready var block_rect: TextureRect = $BlockRect
 
 const SLOW_TIME_SCALE: float = 0.25
 const SLOW_MOTION_DURATION: float = 0.7
@@ -28,6 +29,12 @@ func _ready() -> void:
 	flash_rect.modulate.a = 0.0
 	flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
+	# Initialize BlockRect
+	if block_rect:
+		block_rect.modulate.a = 0.0
+		block_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		block_rect.visible = false
+		
 	# Initialize HurtRect
 	if hurt_rect:
 		hurt_rect.modulate.a = 0.0
@@ -213,3 +220,27 @@ func trigger_glove_effect() -> void:
 	
 	# Clean up visibility toggle when finished
 	tween.tween_callback(func(): glove_rect.visible = false)
+
+func trigger_block_effect() -> void:
+	if not block_rect:
+		return
+		
+	# Snap to fully visible instantly
+	block_rect.visible = true
+	block_rect.modulate.a = 1.0 
+	
+	var tween := create_tween()
+	tween.set_ignore_time_scale(true) # Ensures it works while the game is frozen
+	
+	# Changed from TRANS_EXPO to TRANS_QUAD for a smoother, softer fade
+	tween.set_trans(Tween.TRANS_QUAD) 
+	tween.set_ease(Tween.EASE_OUT)
+	
+	# Hold at full visibility for the duration of the hitstop (0.25 seconds)
+	tween.tween_interval(0.25)
+	
+	# Gradually drop the opacity to 0 over 0.5 seconds (increased from 0.15)
+	tween.tween_property(block_rect, "modulate:a", 0.0, 0.5)
+	
+	# Clean up visibility toggle when finished
+	tween.tween_callback(func(): block_rect.visible = false)

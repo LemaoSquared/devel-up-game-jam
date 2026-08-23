@@ -3,6 +3,9 @@ extends Node
 signal item_collected(item_type: int)
 const DAMAGE = preload("uid://dubitxvxml3b6")
 const FLOATING_LABEL = preload("uid://cu8xcr7igstbj")
+const BLOCKED = preload("uid://b3ux0bnxii8rv")
+const BLOCKED_PARTICLE = preload("uid://big4clrrn2dld")
+const SUCCESSFUL_BLOCK = preload("uid://dhptrcr3hkkdm")
 
 @export var cat_treat: PackedScene = preload("res://Menus/item_cat_treat.tscn")
 @export var yarn: PackedScene = preload("res://Menus/item_yarn.tscn")
@@ -55,7 +58,7 @@ var time_duration_perBatch: float = 6.0
 var spawned_objects: Array[Node] = []
 var wave_one_objects: Array[Node] = []
 var drop_wave_triggered: bool = false
-var batch_start_time: float = 0.0					
+var batch_start_time: float = 0.0                    
 var current_area: Control
 var current_parent: Node
 var scored_objects: Array[Node] = []
@@ -78,6 +81,7 @@ var lives_at_wave_start: int = 3
 var pending_leniency_bonus: float = 0.0
 var is_invincible: bool = false
 var glove_active: bool = false
+var is_blocking_hazards: bool = false
 var active_i_frame_timer: SceneTreeTimer = null
 
 # Camera Conversion Tracking Flag
@@ -187,6 +191,7 @@ func start_endless() -> void:
 	
 	# Reset defensive states
 	glove_active = false
+	is_blocking_hazards = false
 	is_invincible = false
 	active_i_frame_timer = null
 	
@@ -722,51 +727,65 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 		var effective_item_type = Item.POLAROID if is_polaroid_item else item_type
 		var spawn_pos = obj.global_position if is_instance_valid(obj) else Vector2.ZERO
 		
-# --- HAZARD & GLOVE LOGIC ---
+		# --- HAZARD & GLOVE LOGIC ---
 		var is_hazard: bool = (effective_item_type == Item.GARBAGE or effective_item_type == Item.SHOES)
-		
+				
 		if is_hazard:
-			if glove_active:
-				glove_active = false
+			# Accept the block if the glove is on OR if we are currently in the freeze frame
+			if glove_active or is_blocking_hazards:
 				
-				# 1. Trigger the glove camera/screen effect
-				var camera_effects := get_tree().get_first_node_in_group("camera_effects")
-				if camera_effects and camera_effects.has_method("trigger_glove_effect"):
-					camera_effects.trigger_glove_effect()
-				
-				# 2. Stop time temporarily (Hitstop freeze for impact feel)
-				Engine.time_scale = 0.0
-				var hitstop_timer = get_tree().create_timer(0.25, true, true, true)
-				hitstop_timer.timeout.connect(func():
-					if not is_game_over:
-						Engine.time_scale = 1.0
-				)
-				
-				# 3. Stop/mute music temporarily for dramatic impact, then restore
-				var music_bus_idx = AudioServer.get_bus_index("Music")
-				if music_bus_idx == -1:
-					music_bus_idx = AudioServer.get_bus_index("Master")
+				# Only trigger the heavy screen/time effects ONCE per block event
+				if not is_blocking_hazards:
+					glove_active = false
+					is_blocking_hazards = true
 					
-				AudioServer.set_bus_mute(music_bus_idx, true)
-				var music_timer = get_tree().create_timer(0.25, true, true, true)
-				music_timer.timeout.connect(func():
-					AudioServer.set_bus_mute(music_bus_idx, false)
-				)
-
-				# 4. Spawn "BLOCKED!" floating text
+					var player_entity := get_tree().get_first_node_in_group("player")
+					if player_entity and player_entity.has_method("set_gloves_active"):
+						player_entity.set_gloves_active(false)
+					
+					var camera_effects := get_tree().get_first_node_in_group("camera_effects")
+					if camera_effects and camera_effects.has_method("trigger_block_effect"):
+						camera_effects.trigger_block_effect()
+					
+					AudioManager.play_sound(BLOCKED) 
+					Engine.time_scale = 0.0
+					var hitstop_timer = get_tree().create_timer(0.25, true, true, true)
+					hitstop_timer.timeout.connect(func():
+						is_blocking_hazards = false # End the grace period
+						if not is_game_over:
+							Engine.time_scale = 1.0
+					)
+					
+					var was_bgm_muted = AudioManager.is_bgm_muted 
+					AudioManager.set_music_muted(true)
+					
+					var music_timer = get_tree().create_timer(0.25, true, true, true)
+					music_timer.timeout.connect(func():
+						AudioManager.set_music_muted(was_bgm_muted)
+					)
+				
+				# 4. These apply to EVERY hazard blocked during the window
+				ParticleManager.spawn_particle(BLOCKED_PARTICLE, spawn_pos)
+				AudioManager.play_sound(SUCCESSFUL_BLOCK) 
+				
+				if ScoreManager:
+					if ScoreManager.has_method("add_score"):
+						ScoreManager.add_score(100)
+					elif "score" in ScoreManager:
+						ScoreManager.score += 100
+						
 				if FLOATING_LABEL:
 					var block_label = FLOATING_LABEL.instantiate()
 					get_tree().current_scene.add_child(block_label)
+					
 					if block_label.has_method("setup_text"):
-						block_label.setup_text("BLOCKED!", Color.ORANGE, spawn_pos)
-					else:
-						block_label.queue_free()
+						block_label.setup_text("BLOCKED! +100", Color.ORANGE, spawn_pos)
 						
 				# 🛑 EARLY EXIT: No damage, no score reduction
-				return 
+				return
 			else:
 				# Take damage, but continue down the function so the negative score is applied
-				_inflict_damage() 
+				_inflict_damage()
 		
 		# --- SARDINE CONTAINER SKIP ---
 		var is_sardine_can: bool = (effective_item_type == Item.SARDINE and not (obj is SardineItem))
@@ -799,6 +818,10 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 					glove_active = true 
 					label_instance.setup_text("GLOVE!", Color.YELLOW, spawn_pos)
 					
+					var player_entity := get_tree().get_first_node_in_group("player")
+					if player_entity and player_entity.has_method("set_gloves_active"):
+						player_entity.set_gloves_active(true)
+						
 					var camera_effects := get_tree().get_first_node_in_group("camera_effects")
 					if camera_effects and camera_effects.has_method("trigger_glove_effect"):
 						camera_effects.trigger_glove_effect()

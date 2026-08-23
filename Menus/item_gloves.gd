@@ -6,7 +6,7 @@ signal popped_out(obj: Node, was_clicked: bool)
 var is_popping: bool = false
 
 const DURATION: float = 6.0
-#const GLOVE_SOUND = preload("uid://dl4pnno0q6i3k") # Replace with your glove sound UID/path if needed
+const GLOVES = preload("uid://citaxe8665j87")
 
 @onready var glove_area: Area2D = $Glove
 @onready var sprite_2d: AnimatedSprite2D = $Glove/Sprite2D
@@ -49,7 +49,7 @@ func collect_glove() -> void:
 	if is_popping:
 		return
 		
-	#AudioManager.play_sound(GLOVE_SOUND)
+	AudioManager.play_sound(GLOVES)
 	#ParticleManager.spawn_particle(GLOVE_PARTICLE, global_position)
 	
 	is_popping = true

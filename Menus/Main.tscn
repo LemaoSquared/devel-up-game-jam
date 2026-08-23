@@ -33,7 +33,9 @@
 [ext_resource type="Texture2D" uid="uid://xdl7124u5wa7" path="res://Assets/Character Sprite/Walking_Outside.png" id="21_y8skh"]
 [ext_resource type="Texture2D" uid="uid://b6x6h0psc0h3r" path="res://Assets/Polaroid Pictures/polaroid4.png" id="23_gqtna"]
 [ext_resource type="Texture2D" uid="uid://cd1oko51pofm3" path="res://Assets/Polaroid Pictures/polaroid5.png" id="24_x3k0m"]
+[ext_resource type="Texture2D" uid="uid://bct0pa0jduykj" path="res://Assets/Character Sprite/Walking_Final_With_Gloves.png" id="27_vu3rj"]
 [ext_resource type="FontFile" uid="uid://cqwfub3g65jm6" path="res://Assets/Baby Night.otf" id="29_qn5f4"]
+[ext_resource type="Texture2D" uid="uid://c7dmberdhkkyu" path="res://Assets/Character Sprite/Walking_Outside_With_Gloves.png" id="30_id0th"]
 [ext_resource type="Script" uid="uid://dp4iofwwju5x8" path="res://Menus/wave_timer.gd" id="31_ag636"]
 [ext_resource type="Script" uid="uid://bvjivsqq7qple" path="res://Menus/lives.gd" id="34_lugpe"]
 [ext_resource type="Texture2D" uid="uid://b2l4ueeug6eo2" path="res://Assets/Object Assets/heart.png" id="34_r77ri"]
@@ -61,10 +63,20 @@ fill = 1
 fill_from = Vector2(0.48634812, 0.4795222)
 
 [sub_resource type="Gradient" id="Gradient_dmeks"]
-colors = PackedColorArray(0, 0, 0, 0, 1, 0.6509804, 0.3019608, 0.62352943)
+offsets = PackedFloat32Array(0, 0.9982639)
+colors = PackedColorArray(0, 0, 0, 0, 0.92759234, 0.56556904, 1.8867255e-05, 0.74509805)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_cmqc6"]
 gradient = SubResource("Gradient_dmeks")
+fill = 1
+fill_from = Vector2(0.48634812, 0.4795222)
+
+[sub_resource type="Gradient" id="Gradient_vu3rj"]
+offsets = PackedFloat32Array(0, 0.9982639)
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.74509805)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_id0th"]
+gradient = SubResource("Gradient_vu3rj")
 fill = 1
 fill_from = Vector2(0.48634812, 0.4795222)
 
@@ -172,6 +184,38 @@ region = Rect2(576, 0, 96, 128)
 atlas = ExtResource("19_gg5gl")
 region = Rect2(672, 0, 96, 128)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_78vf1"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gy1em"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x3g15"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ce68"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y0ni7"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(384, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2lvfq"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(480, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a0lqx"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(576, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s5asm"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(672, 0, 96, 128)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_x3k0m"]
 atlas = ExtResource("20_vwlca")
 region = Rect2(0, 0, 96, 128)
@@ -236,6 +280,38 @@ region = Rect2(576, 0, 96, 128)
 atlas = ExtResource("21_y8skh")
 region = Rect2(672, 0, 96, 128)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_vkrhp"]
+atlas = ExtResource("30_id0th")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ktwck"]
+atlas = ExtResource("30_id0th")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7isal"]
+atlas = ExtResource("30_id0th")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3gsps"]
+atlas = ExtResource("30_id0th")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3hfbm"]
+atlas = ExtResource("30_id0th")
+region = Rect2(384, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gsnan"]
+atlas = ExtResource("30_id0th")
+region = Rect2(480, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n7jq0"]
+atlas = ExtResource("30_id0th")
+region = Rect2(576, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dqt1q"]
+atlas = ExtResource("30_id0th")
+region = Rect2(672, 0, 96, 128)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_kgah6"]
 animations = [{
 "frames": [{
@@ -266,6 +342,35 @@ animations = [{
 "loop": 1,
 "name": &"Inside_Walk",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_78vf1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gy1em")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x3g15")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ce68")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y0ni7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2lvfq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a0lqx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s5asm")
+}],
+"loop": 1,
+"name": &"Inside_Walk_Gloves",
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -324,6 +429,35 @@ animations = [{
 "loop": 1,
 "name": &"outside_walk",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vkrhp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ktwck")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7isal")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3gsps")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3hfbm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gsnan")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n7jq0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dqt1q")
+}],
+"loop": 1,
+"name": &"outside_walk_Gloves",
+"speed": 5.0
 }]
 
 [sub_resource type="Gradient" id="Gradient_l0led"]
@@ -434,6 +568,12 @@ offset_top = 62.0
 offset_right = 1164.0
 offset_bottom = 590.0
 texture = SubResource("GradientTexture2D_cmqc6")
+
+[node name="BlockRect" type="TextureRect" parent="CameraEffects" unique_id=1756513317]
+offset_top = 62.0
+offset_right = 1164.0
+offset_bottom = 590.0
+texture = SubResource("GradientTexture2D_id0th")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
 visible = false
@@ -1143,7 +1283,7 @@ script = ExtResource("42_dmeks")
 z_index = -100
 position = Vector2(40, 39)
 amount = 48
-lifetime = 1.8800000000000001
+lifetime = 1.88
 process_material = SubResource("ParticleProcessMaterial_36c8c")
 
 [node name="ScoreLabel" type="Label" parent="EndlessModeUI" unique_id=933387944]
