@@ -638,7 +638,6 @@ offset_bottom = 597.0
 texture = SubResource("GradientTexture2D_id0th")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
-visible = false
 
 [node name="FadeRect" type="ColorRect" parent="CanvasLayer" unique_id=1786602749]
 anchors_preset = -1
