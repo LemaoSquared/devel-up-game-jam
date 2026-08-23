@@ -18,6 +18,7 @@ const SUCCESSFUL_BLOCK = preload("uid://dhptrcr3hkkdm")
 @export var regen: PackedScene = preload("res://Menus/item_regen.tscn")
 @export var polaroid: PackedScene = preload("res://Menus/item_polaroid.tscn")
 @export var gloves: PackedScene = preload("res://Menus/item_gloves.tscn")
+@export var paw: PackedScene = preload("uid://dw3cnflry0n2i")
 
 const NEXT_WAVE = preload("uid://dnvvary85k2lr")
 
@@ -39,7 +40,8 @@ enum Item {
 	SACK,      # 7
 	REGEN,     # 8
 	POLAROID,  # 9
-	GLOVES     # 10
+	GLOVES,    # 10
+	PAW        # 11
 }
 
 @export_group("Animation Settings")
@@ -67,11 +69,12 @@ var scored_objects: Array[Node] = []
 var is_game_over: bool = false
 var active_wave_timer: SceneTreeTimer = null
 var missed_items_in_current_wave: int = 0
+var taptap_streak_waves: int = 0
 
 # Pity System for HP Regen
 var regen_pity_counter: int = 0
 
-# Pity System for Camera & Gloves
+# Pity & Equal Chance Pool for Camera, Gloves & Paw (33% each)
 var last_powerup_choice: int = -1
 var powerup_streak: int = 0
 
@@ -106,7 +109,7 @@ class BatchData:
 var is_endless: bool = false
 var base_time_duration_perBatch: float = 6.0  
 @export var batch_speed_step: float = 0.5        
-@export var max_timer_reduction: float = 3.0  
+@export var max_timer_reduction: float = 3.5  # Lowers the wave timer floor to 2.5s (6.0 - 3.5)
 
 var total_batches_played: int = 0
 var current_wave_in_batch: int = 0
@@ -139,32 +142,32 @@ func _initialize_endless_batches() -> void:
 	beginner_batch = BatchData.new()
 	beginner_batch.batch_name = "Beginner Warmup"
 	beginner_batch.waves = [
-		[15, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-		[11, 2, 0, 0, 0, 0, 0, 0, 0, 0], 
-		[9, 3, 3, 0, 0, 0, 0, 0, 0, 0],  
-		[7, 4, 2, 0, 0, 0, 0, 0, 0, 0],  
-		[5, 5, 1, 0, 0, 0, 0, 0, 0, 0]   
+		[15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+		[11, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+		[9, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+		[7, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+		[5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]   
 	]
 
 	var b1 = BatchData.new()
 	b1.batch_name = "Yarn Frenzy"
 	b1.waves = [
-		[10, 5, 0, 0, 0, 0, 0, 0, 0, 0], 
-		[0, 10, 0, 0, 0, 0, 0, 0, 0, 0], 
-		[4, 8, 2, 0, 0, 0, 0, 0, 0, 0],  
-		[2, 9, 0, 0, 3, 0, 0, 0, 0, 0],  
-		[6, 7, 0, 0, 0, 0, 0, 0, 0, 0]   
+		[10, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+		[0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+		[4, 8, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+		[2, 9, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0],  
+		[6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   
 	]
 	batch_pool.append(b1)
 
 	var b2 = BatchData.new()
 	b2.batch_name = "Yarn Blitz"
 	b2.waves = [
-		[8, 6, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[4, 8, 2, 0, 0, 0, 0, 0, 0, 0],  
-		[10, 5, 0, 0, 2, 0, 0, 0, 0, 0], 
-		[2, 9, 3, 0, 0, 0, 0, 0, 0, 0],  
-		[6, 7, 0, 0, 0, 0, 0, 0, 0, 0]   
+		[8, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+		[4, 8, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+		[10, 5, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0], 
+		[2, 9, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+		[6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   
 	]
 	batch_pool.append(b2)
 
@@ -188,6 +191,7 @@ func start_endless() -> void:
 	regen_pity_counter = 0
 	last_powerup_choice = -1
 	powerup_streak = 0
+	taptap_streak_waves = 0
 	leniency_bonus_value = 0.0
 	remaining_leniency_waves = 0
 	last_broken_streak = 0
@@ -221,7 +225,8 @@ func _start_next_endless_batch() -> void:
 
 	total_batches_played += 1
 	var current_reduction: float = min(max_timer_reduction, total_batches_played * batch_speed_step)
-	time_duration_perBatch = base_time_duration_perBatch - current_reduction
+	# Caps minimum wave timer & item lifespan at 2.5 seconds
+	time_duration_perBatch = max(2.5, base_time_duration_perBatch - current_reduction)
 
 	current_batch_data = batch_bag.pop_front()
 	_setup_batch_wave_queue()
@@ -247,6 +252,27 @@ func _spawn_next_endless_wave() -> void:
 	_spawn_encoded_array(wave_encoded_counts)
 	_start_wave_timer()
 
+func _select_endless_powerup() -> int:
+	var pool: Array[int] = [Item.CAMERA, Item.GLOVES, Item.PAW]
+	
+	# If Gloves are already active on the player, exclude Gloves
+	if glove_active:
+		pool.erase(Item.GLOVES)
+
+	# If a power-up has appeared 2 consecutive times, exclude it (forcing 50/50 split among remaining)
+	if powerup_streak >= 2 and last_powerup_choice in pool:
+		pool.erase(last_powerup_choice)
+
+	var chosen: int = pool.pick_random()
+
+	if chosen == last_powerup_choice:
+		powerup_streak += 1
+	else:
+		powerup_streak = 1
+		last_powerup_choice = chosen
+
+	return chosen
+
 func _inject_fifth_wave_powerup(wave_counts: Array) -> void:
 	var current_hp: int = 3
 	var max_hp: int = 3
@@ -257,58 +283,25 @@ func _inject_fifth_wave_powerup(wave_counts: Array) -> void:
 		if "max_lives" in LivesManager:
 			max_hp = LivesManager.max_lives
 
-	var camera_or_glove: int = Item.CAMERA
-	if glove_active:
-		camera_or_glove = Item.CAMERA 
-	else:
-		if powerup_streak >= 2:
-			if last_powerup_choice == Item.CAMERA:
-				camera_or_glove = Item.GLOVES
-			else:
-				camera_or_glove = Item.CAMERA
-			powerup_streak = 1
-			last_powerup_choice = camera_or_glove
-		else:
-			var roll = randf() < 0.5
-			camera_or_glove = Item.CAMERA if roll else Item.GLOVES
-			
-			if camera_or_glove == last_powerup_choice:
-				powerup_streak += 1
-			else:
-				powerup_streak = 1
-				last_powerup_choice = camera_or_glove
+	var selected_powerup: int = _select_endless_powerup()
 
-	var selected_powerup: int = Item.CAMERA
-
-	if current_hp >= max_hp:
-		selected_powerup = camera_or_glove
-		regen_pity_counter = 0 
-	elif current_hp == 2:
-		var base_chance: float = 0.25
+	if current_hp < max_hp:
+		var base_chance: float = 0.25 if current_hp == 2 else 0.50
 		var modified_chance: float = base_chance + (regen_pity_counter * 0.10)
 		if randf() < modified_chance:
 			selected_powerup = Item.REGEN
-			regen_pity_counter = 0 
+			regen_pity_counter = 0
 		else:
-			selected_powerup = camera_or_glove
-			regen_pity_counter += 1 
-	elif current_hp == 1:
-		var base_chance: float = 0.50
-		var modified_chance: float = base_chance + (regen_pity_counter * 0.10)
-		if randf() < modified_chance:
-			selected_powerup = Item.REGEN
-			regen_pity_counter = 0 
-		else:
-			selected_powerup = camera_or_glove
-			regen_pity_counter += 1 
+			regen_pity_counter += 1
 	else:
-		selected_powerup = camera_or_glove
+		regen_pity_counter = 0
 
 	var target_index: int = -1
 	match selected_powerup:
 		Item.CAMERA: target_index = 3
 		Item.REGEN: target_index = 8
 		Item.GLOVES: target_index = 10
+		Item.PAW: target_index = 11
 
 	while wave_counts.size() <= target_index:
 		wave_counts.append(0)
@@ -320,6 +313,11 @@ func _spawn_encoded_array(item_count: Array) -> void:
 	current_parent = get_tree().current_scene
 	for i in range(item_count.size()):
 		var count = item_count[i]
+		
+		# --- MASTER OVERRIDE: Prevent Gloves from spawning if currently active ---
+		if i == Item.GLOVES and glove_active:
+			continue
+			
 		if count > 0:
 			match i:
 				0: spawn_random_pop_in_rect(Item.TREAT, count, current_parent)
@@ -333,7 +331,7 @@ func _spawn_encoded_array(item_count: Array) -> void:
 				8: spawn_random_pop_in_rect(Item.REGEN, count, current_parent)
 				9: spawn_random_pop_in_rect(Item.POLAROID, count, current_parent)
 				10: spawn_random_pop_in_rect(Item.GLOVES, count, current_parent)
-
+				11: spawn_random_pop_in_rect(Item.PAW, count, current_parent)
 # --- STORY MODE SPAWNING ---
 
 func play_story_pattern(number: int):
@@ -350,36 +348,36 @@ func play_story_pattern(number: int):
 
 	var item_count = []
 	match number:
-			1: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			2: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			3: item_count = [15, 0, 4, 0, 0, 0, 0, 0, 0, 0]
-			4: item_count = [15, 0, 4, 0, 0, 0, 0, 0, 0, 0]
-			5: item_count = [0, 15, 0, 0, 0, 0, 0, 0, 0, 0]
-			6: item_count = [10, 5, 0, 0, 0, 0, 0, 0, 0, 0]
-			7: item_count = [12, 12, 3, 0, 0, 0, 0, 0, 0, 0]
-			8: item_count = [0, 24, 3, 0, 0, 0, 0, 0, 0, 0]
-			9: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0]
-			10: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0]
-			11: item_count = [8, 0, 0, 0, 0, 3, 0, 0, 0, 0]
-			12: item_count = [0, 8, 0, 0, 0, 3, 0, 0, 0, 0]
-			13: item_count = [0, 16, 0, 0, 4, 0, 0, 0, 0, 0]
-			14: item_count = [16, 0, 0, 0, 4, 0, 0, 0, 0, 0]
-			15: item_count = [0, 4, 0, 0, 4, 4, 0, 0, 0, 0]
-			16: item_count = [4, 0, 4, 0, 0, 4, 0, 0, 0, 0]
-			17: item_count = [10, 0, 0, 0, 0, 0, 2, 0, 0, 0]
-			18: item_count = [0, 10, 0, 0, 0, 0, 2, 0, 0, 0]
-			19: item_count = [0, 0, 0, 1, 0, 25, 0, 0, 0, 0]
-			20: item_count = [0, 0, 0, 1, 15, 0, 10, 0, 0, 0]
-			21: item_count = [0, 0, 6, 0, 0, 6, 0, 0, 0, 0]
-			22: item_count = [10, 0, 0, 0, 8, 0, 2, 0, 0, 0]
-			23: item_count = [10, 0, 0, 0, 0, 0, 0, 1, 0, 0]
-			24: item_count = [0, 10, 0, 0, 0, 0, 0, 1, 0, 0]
-			25: item_count = [15, 0, 15, 1, 0, 0, 0, 0, 0, 0]
-			26: item_count = [0, 15, 0, 1, 15, 0, 0, 0, 0, 0]
-			27: item_count = [8, 0, 8, 0, 0, 0, 0, 2, 0, 0]
-			28: item_count = [0, 8, 0, 0, 8, 0, 0, 2, 0, 0]
-			29: item_count = [0, 10, 10, 0, 0, 7, 0, 0, 0, 0]
-			30: item_count = [11, 0, 0, 0, 10, 0, 5, 0, 0, 0]
+			1: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			2: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			3: item_count = [15, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			4: item_count = [15, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			5: item_count = [0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			6: item_count = [10, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			7: item_count = [12, 12, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			8: item_count = [0, 24, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			9: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+			10: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+			11: item_count = [8, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0]
+			12: item_count = [0, 8, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0]
+			13: item_count = [0, 16, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
+			14: item_count = [16, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
+			15: item_count = [0, 4, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0]
+			16: item_count = [4, 0, 4, 0, 0, 4, 0, 0, 0, 0, 0, 0]
+			17: item_count = [10, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0]
+			18: item_count = [0, 10, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0]
+			19: item_count = [0, 0, 0, 1, 0, 25, 0, 0, 0, 0, 0, 0]
+			20: item_count = [0, 0, 0, 1, 15, 0, 10, 0, 0, 0, 0, 0]
+			21: item_count = [0, 0, 6, 0, 0, 6, 0, 0, 0, 0, 0, 0]
+			22: item_count = [10, 0, 0, 0, 8, 0, 2, 0, 0, 0, 0, 0]
+			23: item_count = [10, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+			24: item_count = [0, 10, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+			25: item_count = [15, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+			26: item_count = [0, 15, 0, 1, 15, 0, 0, 0, 0, 0, 0, 0]
+			27: item_count = [8, 0, 8, 0, 0, 0, 0, 2, 0, 0, 0, 0]
+			28: item_count = [0, 8, 0, 0, 8, 0, 0, 2, 0, 0, 0, 0]
+			29: item_count = [0, 10, 10, 0, 0, 7, 0, 0, 0, 0, 0, 0]
+			30: item_count = [11, 0, 0, 0, 10, 0, 5, 0, 0, 0, 0, 0]
 
 	_spawn_encoded_array(item_count)
 	_start_wave_timer()
@@ -565,6 +563,7 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 		Item.REGEN: obj = regen.instantiate()
 		Item.POLAROID: obj = polaroid.instantiate()
 		Item.GLOVES: obj = gloves.instantiate()
+		Item.PAW: obj = paw.instantiate()
 	
 	if obj_type != Item.SACK:
 		if "lifetime" in obj:
@@ -638,6 +637,7 @@ func clear_objects() -> void:
 	leniency_bonus_value = 0.0
 	remaining_leniency_waves = 0
 	last_broken_streak = 0
+	taptap_streak_waves = 0
 
 	for obj in spawned_objects:
 		if is_instance_valid(obj):
@@ -657,6 +657,9 @@ func _inflict_damage() -> void:
 	# Check Invincibility Frames (I-Frames)
 	if is_invincible:
 		return
+
+	# Reset taptap wave counter upon taking damage
+	taptap_streak_waves = 0
 
 	# Capture the streak value before resetting it to scale slow-mo and leniency waves
 	last_broken_streak = 0
@@ -719,6 +722,36 @@ func _inflict_damage() -> void:
 func _on_i_frame_timeout() -> void:
 	is_invincible = false
 
+# --- SPATIAL MANIPULATION LOGIC FOR ITEM PAW ---
+func _apply_paw_spatial_effect(paw_pos: Vector2) -> void:
+	for obj in wave_one_objects:
+		if not is_instance_valid(obj) or not obj is Node2D:
+			continue
+		if "is_popping" in obj and obj.is_popping:
+			continue
+			
+		var item_type = obj.get_meta("item_type", -1)
+		var is_hazard = (item_type == Item.GARBAGE or item_type == Item.SHOES)
+		
+		var item_pos = obj.global_position
+		var to_item = item_pos - paw_pos
+		var dist = max(to_item.length(), 1.0)
+		var dir = to_item / dist
+		
+		var tween = obj.create_tween()
+		tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
+		tween.set_trans(Tween.TRANS_QUAD)
+		tween.set_ease(Tween.EASE_OUT)
+		
+		if is_hazard:
+			# Nerfed push force for hazards (was 140.0)
+			var target_pos = item_pos + (dir * 140.0)
+			tween.tween_property(obj, "global_position", target_pos, 0.3)
+		else:
+			# Nerfed pull force for gifts (closer to 1.0 means it moves less toward the paw center; was 0.35)
+			var target_pos = paw_pos + (to_item * 0.4)
+			tween.tween_property(obj, "global_position", target_pos, 0.3)
+
 func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void:
 	if is_game_over or obj in scored_objects:
 		return  
@@ -763,6 +796,7 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 						camera_effects.trigger_block_effect()
 					
 					AudioManager.play_sound(BLOCKED) 
+					CameraManager.add_trauma(0.5)
 					Engine.time_scale = 0.0
 					var hitstop_timer = get_tree().create_timer(0.25, true, true, true)
 					hitstop_timer.timeout.connect(func():
@@ -795,7 +829,6 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 					elif "score" in ScoreManager:
 						ScoreManager.score += blocked_score
 						
-				# Floating label enabled across all modes
 				if FLOATING_LABEL:
 					var block_label = FLOATING_LABEL.instantiate()
 					get_tree().current_scene.add_child(block_label)
@@ -804,6 +837,9 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 						block_label.setup_text("BLOCKED! +" + str(blocked_score), Color.ORANGE, spawn_pos)
 						
 				return
+			elif is_blocking_hazards:
+					# Safely ignore other hazards during the block hitstop
+					return
 			else:
 				_inflict_damage()
 		
@@ -813,7 +849,6 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 			
 		item_collected.emit(effective_item_type)
 		
-		# Floating labels enabled across all modes
 		if FLOATING_LABEL:
 			var label_instance = FLOATING_LABEL.instantiate()
 			get_tree().current_scene.add_child(label_instance)
@@ -847,6 +882,10 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 					var camera_effects := get_tree().get_first_node_in_group("camera_effects")
 					if camera_effects and camera_effects.has_method("trigger_glove_effect"):
 						camera_effects.trigger_glove_effect()
+
+				Item.PAW:
+					label_instance.setup_text("PAW!", Color.MAGENTA, spawn_pos)
+					_apply_paw_spatial_effect(spawn_pos)
 					
 				Item.POLAROID, Item.RAT:
 					if label_instance.has_method("setup"):
@@ -871,7 +910,8 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 			item_type == Item.REGEN or
 			item_type == Item.POLAROID or
 			item_type == Item.SACK or
-			item_type == Item.GLOVES
+			item_type == Item.GLOVES or
+			item_type == Item.PAW
 		)
 		if is_endless and not is_excluded_from_miss:
 			if current_wave_batch and not current_wave_batch.is_finished:
@@ -892,7 +932,6 @@ func _on_wave_timeout() -> void:
 		var lives_lost = lives_at_wave_start - current_lives
 		if lives_lost > 0:
 			leniency_bonus_value = lives_lost * 0.5 
-			# The higher the streak when broken, the more waves the leniency bonus lasts
 			remaining_leniency_waves = max(1, 1 + int(last_broken_streak / 5))
 
 	if is_endless:
@@ -912,7 +951,8 @@ func _on_wave_timeout() -> void:
 					obj_type == Item.POLAROID or 
 					obj_type == Item.CAMERA or 
 					obj_type == Item.REGEN or
-					obj_type == Item.GLOVES
+					obj_type == Item.GLOVES or
+					obj_type == Item.PAW
 				):
 					continue
 				
@@ -930,9 +970,17 @@ func _handle_endless_mode_timeout() -> void:
 	if LivesManager.lives <= 0:
 		return
 		
-	if LivesManager.lives >= lives_at_wave_start:
+	var is_flawless: bool = true
+	if current_wave_batch and current_wave_batch.has_missed_item:
+		is_flawless = false
+
+	if LivesManager.lives >= lives_at_wave_start and is_flawless:
 		if ScoreManager and ScoreManager.has_method("register_flawless_wave"):
 			ScoreManager.register_flawless_wave()
+			
+	else:
+		# Reset streak if they missed items during the wave batch
+		taptap_streak_waves = 0
 		
 	AudioManager.play_sound(NEXT_WAVE)
 		
@@ -986,4 +1034,3 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 		
 	target_parent.add_child(obj)
 	obj.popped_out.connect(_on_object_popped_out.bind(Item.RAT))
-	spawned_objects.append(obj)

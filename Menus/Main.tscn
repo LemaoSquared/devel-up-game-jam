@@ -29,8 +29,10 @@
 [ext_resource type="Texture2D" uid="uid://ctdlkr6ndmejf" path="res://Assets/TitlePage.png" id="20_hdwr6"]
 [ext_resource type="Texture2D" uid="uid://cux2g4psvqi7f" path="res://Assets/Character Sprite/outsideIdle.png" id="20_vwlca"]
 [ext_resource type="Texture2D" uid="uid://cco8j71lo8gv1" path="res://Assets/Polaroid Pictures/polaroid1.png" id="20_y8skh"]
+[ext_resource type="Texture2D" uid="uid://b2n1vd7n4clba" path="res://Assets/Object Assets/Cat Arm.png" id="21_cdqs6"]
 [ext_resource type="Texture2D" uid="uid://c0b5fuudbemxp" path="res://Assets/Polaroid Pictures/polaroid2.png" id="21_qn5f4"]
 [ext_resource type="Texture2D" uid="uid://xdl7124u5wa7" path="res://Assets/Character Sprite/Walking_Outside.png" id="21_y8skh"]
+[ext_resource type="Script" uid="uid://bg1b0uie47kis" path="res://Menus/cat_arm.gd" id="22_phlfg"]
 [ext_resource type="Texture2D" uid="uid://b6x6h0psc0h3r" path="res://Assets/Polaroid Pictures/polaroid4.png" id="23_gqtna"]
 [ext_resource type="Texture2D" uid="uid://cd1oko51pofm3" path="res://Assets/Polaroid Pictures/polaroid5.png" id="24_x3k0m"]
 [ext_resource type="Texture2D" uid="uid://bct0pa0jduykj" path="res://Assets/Character Sprite/Walking_Final_With_Gloves.png" id="27_vu3rj"]
@@ -598,7 +600,6 @@ anchor_mode = 0
 script = ExtResource("38_axd22")
 
 [node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
-visible = false
 script = ExtResource("15_aai8a")
 
 [node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=1467674545]
@@ -607,7 +608,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = 66.0
 offset_right = 14.0
-offset_bottom = -62.0
+offset_bottom = -58.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -615,25 +616,25 @@ mouse_filter = 2
 [node name="HurtRect" type="TextureRect" parent="CameraEffects" unique_id=827679414]
 offset_top = 62.0
 offset_right = 1164.0
-offset_bottom = 590.0
+offset_bottom = 594.0
 texture = SubResource("GradientTexture2D_gqtna")
 
 [node name="HealRect" type="TextureRect" parent="CameraEffects" unique_id=225279873]
 offset_top = 62.0
 offset_right = 1164.0
-offset_bottom = 590.0
+offset_bottom = 596.0
 texture = SubResource("GradientTexture2D_kgah6")
 
 [node name="GloveRect" type="TextureRect" parent="CameraEffects" unique_id=1900740237]
 offset_top = 62.0
 offset_right = 1164.0
-offset_bottom = 590.0
+offset_bottom = 596.0
 texture = SubResource("GradientTexture2D_cmqc6")
 
 [node name="BlockRect" type="TextureRect" parent="CameraEffects" unique_id=1756513317]
 offset_top = 62.0
 offset_right = 1164.0
-offset_bottom = 590.0
+offset_bottom = 597.0
 texture = SubResource("GradientTexture2D_id0th")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
@@ -646,6 +647,30 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="BlackPanelUP" type="ColorRect" parent="CanvasLayer" unique_id=1603293193]
+top_level = true
+z_index = 1000
+anchors_preset = -1
+anchor_left = -0.19878472
+anchor_right = 1.1822916
+offset_top = -64.0
+offset_right = 10.0
+grow_horizontal = 2
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="BlackPanelDown" type="ColorRect" parent="CanvasLayer" unique_id=1479045947]
+top_level = true
+z_index = 1000
+anchors_preset = -1
+anchor_left = -0.17100695
+anchor_right = 1.1944444
+offset_top = 648.0
+offset_bottom = 704.0
+grow_horizontal = 2
 color = Color(0, 0, 0, 1)
 metadata/_edit_use_anchors_ = true
 
@@ -1050,31 +1075,15 @@ position = Vector2(505, 329)
 amount = 64
 process_material = SubResource("ParticleProcessMaterial_kgah6")
 
-[node name="BlackPanelUP" type="ColorRect" parent="Background" unique_id=1603293193]
-top_level = true
-z_index = 1000
-layout_mode = 1
-anchors_preset = -1
-anchor_left = -0.19878472
-anchor_right = 1.1822916
-offset_top = -64.0
-offset_right = 10.0
-grow_horizontal = 2
-color = Color(0, 0, 0, 1)
-metadata/_edit_use_anchors_ = true
-
-[node name="BlackPanelDown" type="ColorRect" parent="Background" unique_id=1479045947]
-top_level = true
-z_index = 1000
-layout_mode = 1
-anchors_preset = -1
-anchor_left = -0.17100695
-anchor_right = 1.1944444
-offset_top = 648.0
-offset_bottom = 704.0
-grow_horizontal = 2
-color = Color(0, 0, 0, 1)
-metadata/_edit_use_anchors_ = true
+[node name="Cat Arm" type="TextureRect" parent="Background" unique_id=723858604 groups=["cat_paw"]]
+layout_mode = 0
+offset_left = 131.0
+offset_top = 279.0
+offset_right = 281.0
+offset_bottom = 830.0
+texture = ExtResource("21_cdqs6")
+expand_mode = 1
+script = ExtResource("22_phlfg")
 
 [node name="Polaroid_1" type="TextureRect" parent="Background" unique_id=1181744193]
 top_level = true
@@ -1307,10 +1316,11 @@ horizontal_alignment = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="PauseButton" type="TextureButton" parent="." unique_id=1294662200]
-offset_left = 1040.0
-offset_top = 64.0
-offset_right = 1136.0
-offset_bottom = 160.0
+offset_left = 1045.0
+offset_top = 55.0
+offset_right = 1141.0
+offset_bottom = 151.0
+scale = Vector2(0.8, 0.8)
 texture_normal = SubResource("AtlasTexture_5c5y6")
 texture_pressed = SubResource("AtlasTexture_vdyg7")
 stretch_mode = 0

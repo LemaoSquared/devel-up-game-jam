@@ -1,10 +1,10 @@
 extends ColorRect
 @onready var streak_ui: TextureRect = $"../EndlessModeUI/StreakUI"
 
-@onready var black_panel_up: ColorRect = $BlackPanelUP
-@onready var black_panel_down: ColorRect = $BlackPanelDown
+@onready var black_panel_up: ColorRect = $"../CanvasLayer/BlackPanelUP"
+@onready var black_panel_down: ColorRect = $"../CanvasLayer/BlackPanelDown"
 
-@onready var double_streak: TextureRect = $TapStreak      # x2 Streak node
+@onready var double_streak: TextureRect = $TapStreak     # x2 Streak node
 @onready var triple_streak: TextureRect = $TaptapStreak  # x3 Streak node
 
 @export var is_endless_mode: bool = true 
@@ -24,7 +24,6 @@ func _ready() -> void:
 		return
 
 	# --- ENDLESS MODE INITIALIZATION ---
-	# Start them completely transparent, but leave their 'visible' property alone
 	if double_streak:
 		double_streak.modulate.a = 0.0
 		
@@ -63,7 +62,7 @@ func _on_multiplier_changed(new_multiplier: int) -> void:
 		
 	previous_multiplier = new_multiplier
 
-	# 1. Your exact original modulate code, completely untouched:
+	# 1. Original modulate code:
 	if new_multiplier == 2:
 		fade_in_streak(double_streak)
 		fade_out_streak(triple_streak)
@@ -75,7 +74,7 @@ func _on_multiplier_changed(new_multiplier: int) -> void:
 		fade_out_streak(double_streak)
 		fade_out_streak(triple_streak)
 		
-	# 2. Safely forward updates to your new sliding/tilting StreakUI script:
+	# 2. Forward updates to StreakUI:
 	if streak_ui:
 		var current_streak = 0
 		if ScoreManager:
@@ -101,12 +100,9 @@ func fade_out_streak(streak_rect: TextureRect) -> void:
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_QUAD)
 	tween.set_ease(Tween.EASE_IN)
-	
-	# Only fade out the alpha channel
 	tween.tween_property(streak_rect, "modulate:a", 0.0, 0.3)
 
 # --- TAP FLASH HELPER FOR YOUR STREAK UI ---
-# Call this function whenever a successful tap happens to flash the StreakUI label color
 func flash_streak_label(custom_color: Color = Color.TRANSPARENT) -> void:
 	if streak_ui and streak_ui.has_method("trigger_tap_flash"):
 		streak_ui.trigger_tap_flash(custom_color)
