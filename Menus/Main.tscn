@@ -39,7 +39,7 @@
 [ext_resource type="Script" uid="uid://dp4iofwwju5x8" path="res://Menus/wave_timer.gd" id="31_ag636"]
 [ext_resource type="Script" uid="uid://bvjivsqq7qple" path="res://Menus/lives.gd" id="34_lugpe"]
 [ext_resource type="Texture2D" uid="uid://b2l4ueeug6eo2" path="res://Assets/Object Assets/heart.png" id="34_r77ri"]
-[ext_resource type="Texture2D" uid="uid://om4hstnd8h0c" path="res://Assets/Aseprite Files/pause_button.png" id="35_r77ri"]
+[ext_resource type="Texture2D" uid="uid://cnr3pypnd7780" path="res://Assets/Object Assets/pauws1.png" id="35_ffqtq"]
 [ext_resource type="Script" uid="uid://dcnsfgxlkspfm" path="res://Menus/pause_button.gd" id="36_ffqtq"]
 [ext_resource type="Script" uid="uid://cep8lsbgtph8w" path="res://Menus/camera_2d.gd" id="38_axd22"]
 [ext_resource type="Texture2D" uid="uid://dn0vpnx7067l8" path="res://Assets/Object Assets/glove.png" id="41_f7smc"]
@@ -529,12 +529,12 @@ use_hdr = true
 fill_from = Vector2(0, 0.004347826)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5c5y6"]
-atlas = ExtResource("35_r77ri")
-region = Rect2(0, 0, 48, 48)
+atlas = ExtResource("35_ffqtq")
+region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vdyg7"]
-atlas = ExtResource("35_r77ri")
-region = Rect2(0, 48, 48, 48)
+atlas = ExtResource("35_ffqtq")
+region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hf7om"]
 atlas = ExtResource("34_r77ri")
@@ -1307,10 +1307,10 @@ horizontal_alignment = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="PauseButton" type="TextureButton" parent="." unique_id=1294662200]
-offset_left = 1056.0
-offset_top = 80.0
-offset_right = 1120.0
-offset_bottom = 144.0
+offset_left = 1040.0
+offset_top = 64.0
+offset_right = 1136.0
+offset_bottom = 160.0
 texture_normal = SubResource("AtlasTexture_5c5y6")
 texture_pressed = SubResource("AtlasTexture_vdyg7")
 stretch_mode = 0
