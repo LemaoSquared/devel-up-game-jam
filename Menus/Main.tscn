@@ -34,7 +34,7 @@
 [ext_resource type="FontFile" uid="uid://cqwfub3g65jm6" path="res://Assets/Baby Night.otf" id="29_qn5f4"]
 [ext_resource type="Script" uid="uid://bvjivsqq7qple" path="res://Menus/lives.gd" id="34_lugpe"]
 [ext_resource type="Texture2D" uid="uid://b2l4ueeug6eo2" path="res://Assets/Object Assets/heart.png" id="34_r77ri"]
-[ext_resource type="Texture2D" uid="uid://om4hstnd8h0c" path="res://Assets/Aseprite Files/pause_button.png" id="35_r77ri"]
+[ext_resource type="Texture2D" uid="uid://cnr3pypnd7780" path="res://Assets/Object Assets/pauws1.png" id="35_ffqtq"]
 [ext_resource type="Script" uid="uid://dcnsfgxlkspfm" path="res://Menus/pause_button.gd" id="36_ffqtq"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i0d87"]
@@ -330,12 +330,12 @@ atlas = ExtResource("34_r77ri")
 region = Rect2(128, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5c5y6"]
-atlas = ExtResource("35_r77ri")
-region = Rect2(0, 0, 48, 48)
+atlas = ExtResource("35_ffqtq")
+region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vdyg7"]
-atlas = ExtResource("35_r77ri")
-region = Rect2(0, 48, 48, 48)
+atlas = ExtResource("35_ffqtq")
+region = Rect2(96, 0, 32, 32)
 
 [node name="Main" type="Node2D" unique_id=1521551065]
 script = ExtResource("1_7x3k8")
@@ -960,10 +960,10 @@ empty_heart = SubResource("AtlasTexture_qup64")
 heart_size = Vector2(70, 70)
 
 [node name="PauseButton" type="TextureButton" parent="." unique_id=1294662200]
-offset_left = 1056.0
-offset_top = 80.0
-offset_right = 1120.0
-offset_bottom = 144.0
+offset_left = 1040.0
+offset_top = 64.0
+offset_right = 1136.0
+offset_bottom = 160.0
 texture_normal = SubResource("AtlasTexture_5c5y6")
 texture_pressed = SubResource("AtlasTexture_vdyg7")
 stretch_mode = 0
