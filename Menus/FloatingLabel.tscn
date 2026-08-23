@@ -6,6 +6,6 @@
 [node name="FloatingLabel" type="Label" unique_id=1348410696]
 z_index = 1000
 theme_override_fonts/font = ExtResource("1_a2igb")
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 24
 text = "0"
 script = ExtResource("2_3w5dp")

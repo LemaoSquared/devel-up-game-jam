@@ -58,11 +58,10 @@ var time_duration_perBatch: float = 6.0
 var spawned_objects: Array[Node] = []
 var wave_one_objects: Array[Node] = []
 var drop_wave_triggered: bool = false
-var batch_start_time: float = 0.0                    
-var current_area: Control
+var batch_start_time: float = 0.0                     
+@export var area: Control
 var current_parent: Node
 var scored_objects: Array[Node] = []
-var area
 
 # Game State & Wave Tracking
 var is_game_over: bool = false
@@ -78,7 +77,10 @@ var powerup_streak: int = 0
 
 # Damage Leniency & Defense System
 var lives_at_wave_start: int = 3
-var pending_leniency_bonus: float = 0.0
+var leniency_bonus_value: float = 0.0
+var remaining_leniency_waves: int = 0
+var last_broken_streak: int = 0
+
 var is_invincible: bool = false
 var glove_active: bool = false
 var is_blocking_hazards: bool = false
@@ -186,10 +188,11 @@ func start_endless() -> void:
 	regen_pity_counter = 0
 	last_powerup_choice = -1
 	powerup_streak = 0
-	pending_leniency_bonus = 0.0
+	leniency_bonus_value = 0.0
+	remaining_leniency_waves = 0
+	last_broken_streak = 0
 	time_duration_perBatch = base_time_duration_perBatch
 	
-	# Reset defensive states
 	glove_active = false
 	is_blocking_hazards = false
 	is_invincible = false
@@ -254,12 +257,10 @@ func _inject_fifth_wave_powerup(wave_counts: Array) -> void:
 		if "max_lives" in LivesManager:
 			max_hp = LivesManager.max_lives
 
-	# Glove and Camera Selection with Pity System
 	var camera_or_glove: int = Item.CAMERA
 	if glove_active:
-		camera_or_glove = Item.CAMERA # Guaranteed camera if glove is already active
+		camera_or_glove = Item.CAMERA 
 	else:
-		# Pity check: If either power-up wins twice consecutively, force the other
 		if powerup_streak >= 2:
 			if last_powerup_choice == Item.CAMERA:
 				camera_or_glove = Item.GLOVES
@@ -314,7 +315,6 @@ func _inject_fifth_wave_powerup(wave_counts: Array) -> void:
 
 	if target_index >= 0 and target_index < wave_counts.size():
 		wave_counts[target_index] += 1
-
 
 func _spawn_encoded_array(item_count: Array) -> void:
 	current_parent = get_tree().current_scene
@@ -427,8 +427,12 @@ func _start_wave_timer() -> void:
 	if active_wave_timer and active_wave_timer.timeout.is_connected(_on_wave_timeout):
 		active_wave_timer.timeout.disconnect(_on_wave_timeout)
 
-	var effective_duration = time_duration_perBatch + pending_leniency_bonus
-	pending_leniency_bonus = 0.0
+	var effective_duration = time_duration_perBatch
+	if remaining_leniency_waves > 0:
+		effective_duration += leniency_bonus_value
+		remaining_leniency_waves -= 1
+		if remaining_leniency_waves <= 0:
+			leniency_bonus_value = 0.0
 
 	active_wave_timer = get_tree().create_timer(effective_duration, false)
 	active_wave_timer.timeout.connect(_on_wave_timeout)
@@ -456,11 +460,10 @@ func spawn_random_pop_in_rect(obj_type, count: int = -1, parent: Node = null) ->
 	var target_parent = parent if parent else get_tree().current_scene
 	var final_count = count if count >= 0 else spawn_count
 
-	current_area = area
 	current_parent = target_parent
 	match spawn_type:
 		SpawnType.RANDOM:
-			pass
+			_spawn_grid(area, final_count, target_parent, obj_type)
 		SpawnType.GRID:
 			_spawn_grid(area, final_count, target_parent, obj_type)
 
@@ -611,7 +614,7 @@ func _animate_pop_scale(obj: Node, pos: Vector2, delay_index: int) -> void:
 	tween.tween_property(obj, "scale", Vector2.ONE, 0.4).set_delay(delay_index * 0.05)
 
 func _animate_drop_in(obj: Node, pos: Vector2, delay_index: int) -> void:
-	var anchor_y = current_area.global_position.y - drop_start_height if current_area else pos.y - drop_start_height
+	var anchor_y = area.global_position.y - drop_start_height if area else pos.y - drop_start_height
 	var anchor_pos = Vector2(pos.x, anchor_y)
 
 	if obj.has_method("spawn_drop_and_hang"):
@@ -632,6 +635,9 @@ func clear_objects() -> void:
 
 	is_invincible = false
 	active_i_frame_timer = null
+	leniency_bonus_value = 0.0
+	remaining_leniency_waves = 0
+	last_broken_streak = 0
 
 	for obj in spawned_objects:
 		if is_instance_valid(obj):
@@ -643,7 +649,7 @@ func clear_objects() -> void:
 	missed_items_in_current_wave = 0
 	current_wave_batch = null
 
-# --- DAMAGE, CAMERA TRAUMA & SLOW-MOTION EFFECT ---
+# --- DAMAGE, CAMERA TRAUMA & STREAK-BASED SLOW-MOTION ---
 func _inflict_damage() -> void:
 	if not is_endless:
 		return
@@ -652,6 +658,15 @@ func _inflict_damage() -> void:
 	if is_invincible:
 		return
 
+	# Capture the streak value before resetting it to scale slow-mo and leniency waves
+	last_broken_streak = 0
+	if ScoreManager:
+		if "current_streak" in ScoreManager:
+			last_broken_streak = ScoreManager.current_streak
+		elif "streak" in ScoreManager:
+			last_broken_streak = ScoreManager.streak
+		ScoreManager.reset_streak()
+		
 	# LOCK IMMEDIATELY so simultaneous hits in the same frame can't bypass it
 	is_invincible = true
 
@@ -676,22 +691,28 @@ func _inflict_damage() -> void:
 		if LivesManager.lives <= 0:
 			is_fatal = true
 
+	# --- STREAK-BREAK SLOW-MOTION & MUSIC CUT-OFF ---
 	if is_fatal:
 		Engine.time_scale = 1.0
 	else:
-		Engine.time_scale = 0.5
-		var damage_timer = get_tree().create_timer(0.3, true, false, true)
+		Engine.time_scale = 0.5  
+		
+		# Cut off/mute music when tap/item streak is broken
+		AudioManager.set_music_muted(true)
+		
+		# Scale slow-mo duration longer based on the streak size (base 0.3s + scaling factor)
+		var slow_mo_duration = 0.3 + (last_broken_streak * 0.02)
+		
+		var damage_timer = get_tree().create_timer(slow_mo_duration, true, false, true)
 		damage_timer.timeout.connect(func():
 			if not is_game_over:
 				Engine.time_scale = 1.0
+				AudioManager.set_music_muted(false) # Restore music after slow-motion finishes
 		)
 		
-	# Disconnect any lingering previous timer connection safely
 	if active_i_frame_timer and active_i_frame_timer.timeout.is_connected(_on_i_frame_timeout):
 		active_i_frame_timer.timeout.disconnect(_on_i_frame_timeout)
 
-	# Trigger the 4.2 Second I-Frame countdown timer 
-	# (process_always=true, process_in_physics=false, ignore_time_scale=true)
 	active_i_frame_timer = get_tree().create_timer(4.2, true, false, true)
 	active_i_frame_timer.timeout.connect(_on_i_frame_timeout)
 
@@ -705,12 +726,10 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 	spawned_objects.erase(obj)
 	wave_one_objects.erase(obj)
 
-	# 1. During the camera flash, any item being converted (popping out) nets 0 points.
 	if is_converting_to_polaroid and item_type != Item.CAMERA:
 		return
 
 	if was_clicked:
-		# 2. Check if the object has been converted to a Polaroid
 		var is_polaroid_item: bool = (item_type == Item.POLAROID)
 		if is_instance_valid(obj):
 			if obj.get_meta("item_type", -1) == Item.POLAROID:
@@ -727,14 +746,10 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 		var effective_item_type = Item.POLAROID if is_polaroid_item else item_type
 		var spawn_pos = obj.global_position if is_instance_valid(obj) else Vector2.ZERO
 		
-		# --- HAZARD & GLOVE LOGIC ---
 		var is_hazard: bool = (effective_item_type == Item.GARBAGE or effective_item_type == Item.SHOES)
 				
 		if is_hazard:
-			# Accept the block if the glove is on OR if we are currently in the freeze frame
 			if glove_active or is_blocking_hazards:
-				
-				# Only trigger the heavy screen/time effects ONCE per block event
 				if not is_blocking_hazards:
 					glove_active = false
 					is_blocking_hazards = true
@@ -751,7 +766,7 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 					Engine.time_scale = 0.0
 					var hitstop_timer = get_tree().create_timer(0.25, true, true, true)
 					hitstop_timer.timeout.connect(func():
-						is_blocking_hazards = false # End the grace period
+						is_blocking_hazards = false
 						if not is_game_over:
 							Engine.time_scale = 1.0
 					)
@@ -764,41 +779,48 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 						AudioManager.set_music_muted(was_bgm_muted)
 					)
 				
-				# 4. These apply to EVERY hazard blocked during the window
 				ParticleManager.spawn_particle(BLOCKED_PARTICLE, spawn_pos)
 				AudioManager.play_sound(SUCCESSFUL_BLOCK) 
 				
+				# --- MULTIPLIED GLOVE BLOCK SCORE ---
+				var mult = 1
+				if ScoreManager and "current_multiplier" in ScoreManager:
+					mult = ScoreManager.current_multiplier
+				
+				var blocked_score = 100 * mult
+				
 				if ScoreManager:
 					if ScoreManager.has_method("add_score"):
-						ScoreManager.add_score(100)
+						ScoreManager.add_score(blocked_score)
 					elif "score" in ScoreManager:
-						ScoreManager.score += 100
+						ScoreManager.score += blocked_score
 						
+				# Floating label enabled across all modes
 				if FLOATING_LABEL:
 					var block_label = FLOATING_LABEL.instantiate()
 					get_tree().current_scene.add_child(block_label)
 					
 					if block_label.has_method("setup_text"):
-						block_label.setup_text("BLOCKED! +100", Color.ORANGE, spawn_pos)
+						block_label.setup_text("BLOCKED! +" + str(blocked_score), Color.ORANGE, spawn_pos)
 						
-				# 🛑 EARLY EXIT: No damage, no score reduction
 				return
 			else:
-				# Take damage, but continue down the function so the negative score is applied
 				_inflict_damage()
 		
-		# --- SARDINE CONTAINER SKIP ---
 		var is_sardine_can: bool = (effective_item_type == Item.SARDINE and not (obj is SardineItem))
 		if is_sardine_can:
 			return 
 			
-		# --- EMIT SCORE / COLLECTION ---
 		item_collected.emit(effective_item_type)
 		
-		# --- FLOATING LABELS FOR ALL ITEMS ---
+		# Floating labels enabled across all modes
 		if FLOATING_LABEL:
 			var label_instance = FLOATING_LABEL.instantiate()
 			get_tree().current_scene.add_child(label_instance)
+			
+			var mult = 1
+			if ScoreManager and "current_multiplier" in ScoreManager:
+				mult = ScoreManager.current_multiplier
 			
 			match effective_item_type:
 				Item.REGEN:
@@ -828,19 +850,19 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 					
 				Item.POLAROID, Item.RAT:
 					if label_instance.has_method("setup"):
-						label_instance.setup(20, spawn_pos)
+						label_instance.setup(20 * mult, spawn_pos, mult)
 					
 				Item.TREAT, Item.YARN, Item.SARDINE:
 					if label_instance.has_method("setup"):
-						label_instance.setup(5, spawn_pos)
+						label_instance.setup(5 * mult, spawn_pos, mult)
 					
 				Item.GARBAGE, Item.SHOES:
 					if label_instance.has_method("setup"):
-						label_instance.setup(-30, spawn_pos)
+						label_instance.setup(-30, spawn_pos, 1)
 					
 				_: 
 					if label_instance.has_method("setup"):
-						label_instance.setup(5, spawn_pos)
+						label_instance.setup(5 * mult, spawn_pos, mult)
 	else:
 		var is_excluded_from_miss: bool = (
 			item_type == Item.GARBAGE or
@@ -865,12 +887,13 @@ func _on_wave_timeout() -> void:
 	if current_wave_batch:
 		current_wave_batch.is_finished = true
 
-	# Calculate damage taken during this wave to compute next wave's leniency bonus
 	if is_endless and LivesManager and "lives" in LivesManager:
 		var current_lives = LivesManager.lives
 		var lives_lost = lives_at_wave_start - current_lives
 		if lives_lost > 0:
-			pending_leniency_bonus = lives_lost * 0.5  # +0.5s per heart lost
+			leniency_bonus_value = lives_lost * 0.5 
+			# The higher the streak when broken, the more waves the leniency bonus lasts
+			remaining_leniency_waves = max(1, 1 + int(last_broken_streak / 5))
 
 	if is_endless:
 		var uncollected_valid_gifts_exist: bool = false
@@ -906,6 +929,10 @@ func _on_wave_timeout() -> void:
 func _handle_endless_mode_timeout() -> void:
 	if LivesManager.lives <= 0:
 		return
+		
+	if LivesManager.lives >= lives_at_wave_start:
+		if ScoreManager and ScoreManager.has_method("register_flawless_wave"):
+			ScoreManager.register_flawless_wave()
 		
 	AudioManager.play_sound(NEXT_WAVE)
 		
@@ -960,11 +987,3 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 	target_parent.add_child(obj)
 	obj.popped_out.connect(_on_object_popped_out.bind(Item.RAT))
 	spawned_objects.append(obj)
-	wave_one_objects.append(obj)
-	obj.set_direction(dir, target_end_x)
-
-	match spawn_animation:
-		SpawnAnimation.POP_SCALE:
-			_animate_pop_scale(obj, pos, delay_index)
-		SpawnAnimation.DROP_IN:
-			_animate_drop_in(obj, pos, delay_index)

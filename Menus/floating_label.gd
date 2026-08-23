@@ -1,16 +1,28 @@
 extends Label
 
 # Handles numerical score popups with dynamic scaling and color coding
-func setup(amount: int, spawn_position: Vector2) -> void:
+func setup(amount: int, spawn_position: Vector2, multiplier: int = 1) -> void:
 	global_position = spawn_position
-	text = "+" + str(amount) if amount > 0 else str(amount)
 	
-	# Color and magnitude based on score value
+	var base_text = "+" + str(amount) if amount > 0 else str(amount)
+	
+	# Add the multiplier text if active (e.g. "+40 (x2)")
+	if multiplier > 1 and amount > 0:
+		text = base_text + " (x" + str(multiplier) + ")"
+	else:
+		text = base_text
+	
+	# Color and magnitude based on score value & multiplier
 	var magnitude = 1.2
 	if amount < 0:
 		modulate = Color.FIREBRICK
 		magnitude = 1.4
-	# Swapped the order here so >= 25 triggers before >= 15 intercepts it!
+	elif multiplier == 3 and amount > 0:
+		modulate = Color.ALICE_BLUE # Unique color for Taptap Streak
+		magnitude = 1.9
+	elif multiplier == 2 and amount > 0:
+		modulate = Color.PALE_GOLDENROD # Unique color for Tap Streak
+		magnitude = 1.7
 	elif amount >= 25:
 		modulate = Color.ORANGE_RED
 		magnitude = 1.5

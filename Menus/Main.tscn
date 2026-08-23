@@ -45,6 +45,8 @@
 [ext_resource type="Texture2D" uid="uid://dn0vpnx7067l8" path="res://Assets/Object Assets/glove.png" id="41_f7smc"]
 [ext_resource type="Script" uid="uid://yienh80l8smx" path="res://Menus/score_label.gd" id="41_x3k0m"]
 [ext_resource type="Script" uid="uid://cnhyn10rcjukl" path="res://Menus/gloves.gd" id="42_dmeks"]
+[ext_resource type="Texture2D" uid="uid://r6n3pi1yhebi" path="res://Assets/Aseprite Files/plain_polaroid_element.png" id="46_id0th"]
+[ext_resource type="Script" uid="uid://drbqy0kbq2xiq" path="res://Menus/streak_ui.gd" id="47_qli7j"]
 
 [sub_resource type="Gradient" id="Gradient_x3k0m"]
 colors = PackedColorArray(0, 0, 0, 0, 1, 0.33938286, 0.47521454, 1)
@@ -124,6 +126,45 @@ shader = ExtResource("2_yng6g")
 shader_parameter/pixelation = 3.000000095
 shader_parameter/controlEdges = false
 
+[sub_resource type="Gradient" id="Gradient_id0th"]
+colors = PackedColorArray(0, 0.8366803, 0.9707425, 0.46666667, 1, 0.6448574, 0.86406994, 0.69411767)
+metadata/_snap_count = 15
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_qli7j"]
+gradient = SubResource("Gradient_id0th")
+fill_from = Vector2(0.5853242, 0.7866894)
+fill_to = Vector2(0.52730376, 0.14846416)
+
+[sub_resource type="Curve" id="Curve_vu3rj"]
+_limits = [-200.0, 200.0, 0.0, 1.0]
+_data = [Vector2(0, 200), 0.0, 0.0, 0, 0, Vector2(1, -200), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_vu3rj"]
+curve = SubResource("Curve_vu3rj")
+
+[sub_resource type="Curve" id="Curve_gg5gl"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2518797, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_qn5f4"]
+curve = SubResource("Curve_gg5gl")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_id0th"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(41.945, 20, 1)
+emission_shape = 1
+emission_sphere_radius = 17.54
+direction = Vector3(0, -1, 0)
+initial_velocity_max = 32.78
+gravity = Vector3(0, 0, 0)
+linear_accel_min = 0.8199977
+linear_accel_max = 4.1299977
+linear_accel_curve = SubResource("CurveTexture_vu3rj")
+scale_min = 0.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_qn5f4")
+
 [sub_resource type="Gradient" id="Gradient_y8skh"]
 colors = PackedColorArray(1, 0.56078434, 0.972549, 0.46666667, 1, 0.70980394, 0.3529412, 0.69411767)
 metadata/_snap_count = 15
@@ -131,13 +172,6 @@ metadata/_snap_count = 15
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_36c8c"]
 gradient = SubResource("Gradient_y8skh")
 fill_from = Vector2(0.10750853, 0.90273035)
-
-[sub_resource type="Curve" id="Curve_gg5gl"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_qn5f4"]
-curve = SubResource("Curve_gg5gl")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kgah6"]
 particle_flag_disable_z = true
@@ -528,6 +562,32 @@ scale_max = 5.2999997
 scale_curve = SubResource("CurveTexture_ijthc")
 color = Color(1, 1, 0.5647059, 0.5019608)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_kgah6"]
+atlas = ExtResource("46_id0th")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qli7j"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 68.94
+spread = 180.0
+initial_velocity_min = 95.04
+initial_velocity_max = 145.4
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_max = 17.59
+scale_curve = SubResource("CurveTexture_ijthc")
+color = Color(1, 1, 1, 0.5019608)
+
+[sub_resource type="Gradient" id="Gradient_qli7j"]
+colors = PackedColorArray(1, 0.5137255, 0.8117647, 0.3019608, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ijthc"]
+gradient = SubResource("Gradient_qli7j")
+fill = 1
+fill_from = Vector2(0.4453925, 0.4795222)
+fill_to = Vector2(0.80375427, 0.27474403)
+
 [node name="Main" type="Node2D" unique_id=1521551065]
 script = ExtResource("1_7x3k8")
 final_cutscene = ExtResource("3_g2jn8")
@@ -538,6 +598,7 @@ anchor_mode = 0
 script = ExtResource("38_axd22")
 
 [node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
+visible = false
 script = ExtResource("15_aai8a")
 
 [node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=1467674545]
@@ -965,15 +1026,26 @@ color = Color(0, 0, 0, 0.38431373)
 script = ExtResource("1_j1rpa")
 metadata/_edit_use_anchors_ = true
 
-[node name="Gradient" type="TextureRect" parent="Background" unique_id=1385319185]
-visible = false
-self_modulate = Color(1, 1, 0.99607843, 0)
+[node name="TaptapStreak" type="TextureRect" parent="Background" unique_id=1795743103]
+self_modulate = Color(1, 1, 0.99607843, 1)
+layout_mode = 0
+offset_right = 1168.0
+offset_bottom = 651.0
+texture = SubResource("GradientTexture2D_qli7j")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Background/TaptapStreak" unique_id=572690720]
+position = Vector2(505, 329)
+amount = 64
+process_material = SubResource("ParticleProcessMaterial_id0th")
+
+[node name="TapStreak" type="TextureRect" parent="Background" unique_id=1385319185]
+self_modulate = Color(1, 1, 0.99607843, 1)
 layout_mode = 0
 offset_right = 1168.0
 offset_bottom = 651.0
 texture = SubResource("GradientTexture2D_36c8c")
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="Background/Gradient" unique_id=947434616]
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Background/TapStreak" unique_id=947434616]
 position = Vector2(505, 329)
 amount = 64
 process_material = SubResource("ParticleProcessMaterial_kgah6")
@@ -1215,9 +1287,9 @@ texture = SubResource("GradientTexture2D_5c5y6")
 
 [node name="TutorialLabel" type="Label" parent="." unique_id=2130771760]
 offset_left = 49.0
-offset_top = 137.0
+offset_top = 181.0
 offset_right = 408.0
-offset_bottom = 177.0
+offset_bottom = 221.0
 theme_override_fonts/font = ExtResource("29_qn5f4")
 theme_override_font_sizes/font_size = 43
 text = "Click Items to Wrap Them"
@@ -1298,6 +1370,52 @@ text = "1209"
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("41_x3k0m")
+
+[node name="StreakUI" type="TextureRect" parent="EndlessModeUI" unique_id=350607623]
+offset_left = 52.0
+offset_top = 413.0
+offset_right = 177.0
+offset_bottom = 538.0
+texture = SubResource("AtlasTexture_kgah6")
+script = ExtResource("47_qli7j")
+
+[node name="StreakLabel" type="Label" parent="EndlessModeUI/StreakUI" unique_id=827939687]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 19.0
+offset_right = 93.0
+offset_bottom = 85.0
+theme_override_colors/font_color = Color(0.9999996, 0.8773078, 0.61749005, 1)
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 72
+text = "x2"
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="EndlessModeUI/StreakUI" unique_id=550681432]
+z_index = -100
+position = Vector2(61, 65)
+amount = 32
+lifetime = 1.26
+process_material = SubResource("ParticleProcessMaterial_qli7j")
+
+[node name="StreakNotif" type="Label" parent="EndlessModeUI" unique_id=7917756]
+offset_left = 326.0
+offset_top = 275.0
+offset_right = 850.0
+offset_bottom = 355.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 72
+text = "TAP STREAK!"
+horizontal_alignment = 1
+
+[node name="Fade" type="TextureRect" parent="EndlessModeUI/StreakNotif" unique_id=1463043058]
+show_behind_parent = true
+layout_mode = 0
+offset_left = -185.0
+offset_top = -31.0
+offset_right = 821.0
+offset_bottom = 116.0
+texture = SubResource("GradientTexture2D_ijthc")
 
 [connection signal="pressed" from="StartPanel/Start" to="BackgroundManager" method="_on_start_pressed"]
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]

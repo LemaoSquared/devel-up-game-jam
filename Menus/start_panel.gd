@@ -5,6 +5,9 @@ const STREET = preload("uid://c6xk46jpedco4")
 @onready var endless_mode_ui: CanvasLayer = $"../EndlessModeUI"
 @onready var pause_button: TextureButton = $"../PauseButton"
 
+# --- NEW: Node references to control Story/Endless modes dynamically ---
+@onready var progress_bar: ProgressBar = $"../ProgressBar"     # Adjust path if your ProgressBar is named differently
+@onready var background_node: ColorRect = $"../Background"     # Adjust path if your Background is named differently
 
 signal game_started
 signal endless_started
@@ -83,10 +86,19 @@ func _on_start_pressed() -> void:
 	$EndlessStart.disabled = true
 	game_started.emit()
 	
+	# --- CONFIGURE MODES FOR STORY MODE ---
+	if progress_bar:
+		progress_bar.is_story_mode = true
+		progress_bar.start_countdown()
+	if background_node:
+		background_node.is_endless_mode = false
+	# ---------------------------------------
+	
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.stop_music()
 	AudioManager.play_music(TAPTAP)
 	pause_button.visible = true
+	
 	# Configure ItemManager for Story Mode
 	ItemManager.area = spawn_area
 	ItemManager.is_endless = false
@@ -157,10 +169,18 @@ func _on_endless_start_pressed() -> void:
 	$EndlessStart.disabled = true
 	endless_started.emit()
 
+	# --- CONFIGURE MODES FOR ENDLESS MODE ---
+	if progress_bar:
+		progress_bar.is_story_mode = false
+	if background_node:
+		background_node.is_endless_mode = true
+	# -----------------------------------------
+
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.stop_music()
 	AudioManager.play_music(KATKAT)
 	pause_button.visible = true
+	
 	# Configure ItemManager and State for Endless Mode
 	ItemManager.area = spawn_area
 	ScoreManager.reset_score()
