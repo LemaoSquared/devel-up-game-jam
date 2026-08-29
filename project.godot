@@ -31,6 +31,8 @@ ScoreManager="*uid://bj1sl56gfowe6"
 SceneTransition="*uid://dlpmt1xdaclks"
 WindowManager="*uid://lo33st6fr55x"
 LivesManager="*uid://dajsf3pjvrkf8"
+PauseMenu="*uid://cxgnia65dgs3n"
+CameraManager="*uid://cviyqpg1b6tpc"
 
 [display]
 
@@ -38,6 +40,7 @@ window/size/resizable=false
 window/size/maximize_disabled=true
 window/subwindows/embed_subwindows=false
 window/stretch/mode="canvas_items"
+window/handheld/orientation=4
 
 [editor]
 

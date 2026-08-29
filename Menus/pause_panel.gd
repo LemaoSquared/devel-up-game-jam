@@ -1,4 +1,4 @@
-extends Panel 
+extends Panel  
 
 @onready var resume_button: Button = $VBoxContainer/Resume
 @onready var quit_button: Button = $VBoxContainer/Quit
@@ -17,6 +17,11 @@ func _ready() -> void:
 	resume_button.pressed.connect(_on_resume_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 
+# Intercept and consume all inputs (including ESC) while the countdown runs
+func _unhandled_input(event: InputEvent) -> void:
+	if is_counting_down:
+		get_viewport().set_input_as_handled()
+
 func _on_game_paused() -> void:
 	if not PauseManager.pause_enabled:
 		return
@@ -30,12 +35,13 @@ func _on_resume_pressed() -> void:
 		return
 	is_counting_down = true
 	
-	# Hide the pause menu immediately so the countdown is clean
+	# Hide the pause UI menu while keeping the game tree PAUSED
 	visible = false
 	
-	# Run the 3, 2, 1, GO! countdown
+	# Run the 3, 2, 1, GO! countdown (game stays paused here)
 	await _run_countdown()
 	
+	# NOW unpause the engine after countdown completes
 	is_counting_down = false
 	PauseManager.unpause_game()
 	print("UNPAUSED")
@@ -84,22 +90,19 @@ func _run_countdown() -> void:
 	var active_tween: Tween = null
 
 	for step in sequence:
-		# Kill any running tween from the previous step so it stops forcing alpha to 0
 		if active_tween and active_tween.is_running():
 			active_tween.kill()
 
-		# Reset visual parameters
 		label.text = step
 		label.modulate.a = 1.0
 		label.scale = Vector2(1.5, 1.5)
 
-		# Create new tween
 		active_tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 		active_tween.set_parallel(true)
 		active_tween.tween_property(label, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		active_tween.tween_property(label, "modulate:a", 0.0, 0.2).set_delay(0.25)
 
-		# Wait for full step duration before moving to the next number
+		# Keep timer running while engine is frozen (get_tree().paused == true)
 		await tree.create_timer(0.5, true, false, true).timeout
 
 	if active_tween and active_tween.is_running():

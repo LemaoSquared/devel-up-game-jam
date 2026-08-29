@@ -9,6 +9,17 @@ func _ready() -> void:
 		var image = custom_logo.get_image()
 		DisplayServer.window_set_icon(image)
 
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_WINDOW_FOCUS_OUT:
+			_auto_pause()
+		NOTIFICATION_APPLICATION_PAUSED:
+			_auto_pause()
+
+func _auto_pause() -> void:
+	if PauseManager.pause_enabled and not PauseManager.is_paused:
+		PauseManager.pause_game()
+		
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.is_echo():
 		if event.keycode == KEY_F:

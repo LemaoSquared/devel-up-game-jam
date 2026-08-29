@@ -29,10 +29,60 @@
 [ext_resource type="Texture2D" uid="uid://ctdlkr6ndmejf" path="res://Assets/TitlePage.png" id="20_hdwr6"]
 [ext_resource type="Texture2D" uid="uid://cux2g4psvqi7f" path="res://Assets/Character Sprite/outsideIdle.png" id="20_vwlca"]
 [ext_resource type="Texture2D" uid="uid://cco8j71lo8gv1" path="res://Assets/Polaroid Pictures/polaroid1.png" id="20_y8skh"]
+[ext_resource type="Texture2D" uid="uid://b2n1vd7n4clba" path="res://Assets/Object Assets/Cat Arm.png" id="21_cdqs6"]
 [ext_resource type="Texture2D" uid="uid://c0b5fuudbemxp" path="res://Assets/Polaroid Pictures/polaroid2.png" id="21_qn5f4"]
 [ext_resource type="Texture2D" uid="uid://xdl7124u5wa7" path="res://Assets/Character Sprite/Walking_Outside.png" id="21_y8skh"]
+[ext_resource type="Script" uid="uid://bg1b0uie47kis" path="res://Menus/cat_arm.gd" id="22_phlfg"]
+[ext_resource type="Texture2D" uid="uid://b6x6h0psc0h3r" path="res://Assets/Polaroid Pictures/polaroid4.png" id="23_gqtna"]
+[ext_resource type="Texture2D" uid="uid://cd1oko51pofm3" path="res://Assets/Polaroid Pictures/polaroid5.png" id="24_x3k0m"]
+[ext_resource type="Texture2D" uid="uid://bct0pa0jduykj" path="res://Assets/Character Sprite/Walking_Final_With_Gloves.png" id="27_vu3rj"]
 [ext_resource type="FontFile" uid="uid://cqwfub3g65jm6" path="res://Assets/Baby Night.otf" id="29_qn5f4"]
-[ext_resource type="Script" uid="uid://dvph0r1e7kdci" path="res://Menus/pause_panel.gd" id="33_ydmdm"]
+[ext_resource type="Texture2D" uid="uid://c7dmberdhkkyu" path="res://Assets/Character Sprite/Walking_Outside_With_Gloves.png" id="30_id0th"]
+[ext_resource type="Script" uid="uid://dp4iofwwju5x8" path="res://Menus/wave_timer.gd" id="31_ag636"]
+[ext_resource type="Script" uid="uid://bvjivsqq7qple" path="res://Menus/lives.gd" id="34_lugpe"]
+[ext_resource type="Texture2D" uid="uid://b2l4ueeug6eo2" path="res://Assets/Object Assets/heart.png" id="34_r77ri"]
+[ext_resource type="Texture2D" uid="uid://cnr3pypnd7780" path="res://Assets/Object Assets/pauws1.png" id="35_ffqtq"]
+[ext_resource type="Script" uid="uid://dcnsfgxlkspfm" path="res://Menus/pause_button.gd" id="36_ffqtq"]
+[ext_resource type="Script" uid="uid://cep8lsbgtph8w" path="res://Menus/camera_2d.gd" id="38_axd22"]
+[ext_resource type="Texture2D" uid="uid://dn0vpnx7067l8" path="res://Assets/Object Assets/glove.png" id="41_f7smc"]
+[ext_resource type="Script" uid="uid://yienh80l8smx" path="res://Menus/score_label.gd" id="41_x3k0m"]
+[ext_resource type="Script" uid="uid://cnhyn10rcjukl" path="res://Menus/gloves.gd" id="42_dmeks"]
+[ext_resource type="Texture2D" uid="uid://r6n3pi1yhebi" path="res://Assets/Aseprite Files/plain_polaroid_element.png" id="46_id0th"]
+[ext_resource type="Script" uid="uid://drbqy0kbq2xiq" path="res://Menus/streak_ui.gd" id="47_qli7j"]
+
+[sub_resource type="Gradient" id="Gradient_x3k0m"]
+colors = PackedColorArray(0, 0, 0, 0, 1, 0.33938286, 0.47521454, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_gqtna"]
+gradient = SubResource("Gradient_x3k0m")
+fill = 1
+fill_from = Vector2(0.48634812, 0.4795222)
+
+[sub_resource type="Gradient" id="Gradient_gqtna"]
+colors = PackedColorArray(0, 0, 0, 0, 0.49387908, 0.68276995, 5.7756904e-07, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_kgah6"]
+gradient = SubResource("Gradient_gqtna")
+fill = 1
+fill_from = Vector2(0.48634812, 0.4795222)
+
+[sub_resource type="Gradient" id="Gradient_dmeks"]
+offsets = PackedFloat32Array(0, 0.9982639)
+colors = PackedColorArray(0, 0, 0, 0, 0.92759234, 0.56556904, 1.8867255e-05, 0.74509805)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_cmqc6"]
+gradient = SubResource("Gradient_dmeks")
+fill = 1
+fill_from = Vector2(0.48634812, 0.4795222)
+
+[sub_resource type="Gradient" id="Gradient_vu3rj"]
+offsets = PackedFloat32Array(0, 0.9982639)
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.74509805)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_id0th"]
+gradient = SubResource("Gradient_vu3rj")
+fill = 1
+fill_from = Vector2(0.48634812, 0.4795222)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i0d87"]
 shader = ExtResource("2_yng6g")
@@ -78,6 +128,45 @@ shader = ExtResource("2_yng6g")
 shader_parameter/pixelation = 3.000000095
 shader_parameter/controlEdges = false
 
+[sub_resource type="Gradient" id="Gradient_id0th"]
+colors = PackedColorArray(0, 0.8366803, 0.9707425, 0.46666667, 1, 0.6448574, 0.86406994, 0.69411767)
+metadata/_snap_count = 15
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_qli7j"]
+gradient = SubResource("Gradient_id0th")
+fill_from = Vector2(0.5853242, 0.7866894)
+fill_to = Vector2(0.52730376, 0.14846416)
+
+[sub_resource type="Curve" id="Curve_vu3rj"]
+_limits = [-200.0, 200.0, 0.0, 1.0]
+_data = [Vector2(0, 200), 0.0, 0.0, 0, 0, Vector2(1, -200), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_vu3rj"]
+curve = SubResource("Curve_vu3rj")
+
+[sub_resource type="Curve" id="Curve_gg5gl"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2518797, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_qn5f4"]
+curve = SubResource("Curve_gg5gl")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_id0th"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(41.945, 20, 1)
+emission_shape = 1
+emission_sphere_radius = 17.54
+direction = Vector3(0, -1, 0)
+initial_velocity_max = 32.78
+gravity = Vector3(0, 0, 0)
+linear_accel_min = 0.8199977
+linear_accel_max = 4.1299977
+linear_accel_curve = SubResource("CurveTexture_vu3rj")
+scale_min = 0.0
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_qn5f4")
+
 [sub_resource type="Gradient" id="Gradient_y8skh"]
 colors = PackedColorArray(1, 0.56078434, 0.972549, 0.46666667, 1, 0.70980394, 0.3529412, 0.69411767)
 metadata/_snap_count = 15
@@ -85,13 +174,6 @@ metadata/_snap_count = 15
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_36c8c"]
 gradient = SubResource("Gradient_y8skh")
 fill_from = Vector2(0.10750853, 0.90273035)
-
-[sub_resource type="Curve" id="Curve_gg5gl"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_qn5f4"]
-curve = SubResource("Curve_gg5gl")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kgah6"]
 particle_flag_disable_z = true
@@ -136,6 +218,38 @@ region = Rect2(576, 0, 96, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gqtna"]
 atlas = ExtResource("19_gg5gl")
+region = Rect2(672, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_78vf1"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gy1em"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x3g15"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ce68"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y0ni7"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(384, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2lvfq"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(480, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a0lqx"]
+atlas = ExtResource("27_vu3rj")
+region = Rect2(576, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s5asm"]
+atlas = ExtResource("27_vu3rj")
 region = Rect2(672, 0, 96, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_x3k0m"]
@@ -202,6 +316,38 @@ region = Rect2(576, 0, 96, 128)
 atlas = ExtResource("21_y8skh")
 region = Rect2(672, 0, 96, 128)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_vkrhp"]
+atlas = ExtResource("30_id0th")
+region = Rect2(0, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ktwck"]
+atlas = ExtResource("30_id0th")
+region = Rect2(96, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7isal"]
+atlas = ExtResource("30_id0th")
+region = Rect2(192, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3gsps"]
+atlas = ExtResource("30_id0th")
+region = Rect2(288, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3hfbm"]
+atlas = ExtResource("30_id0th")
+region = Rect2(384, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gsnan"]
+atlas = ExtResource("30_id0th")
+region = Rect2(480, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n7jq0"]
+atlas = ExtResource("30_id0th")
+region = Rect2(576, 0, 96, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dqt1q"]
+atlas = ExtResource("30_id0th")
+region = Rect2(672, 0, 96, 128)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_kgah6"]
 animations = [{
 "frames": [{
@@ -232,6 +378,35 @@ animations = [{
 "loop": 1,
 "name": &"Inside_Walk",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_78vf1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gy1em")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x3g15")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ce68")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y0ni7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2lvfq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a0lqx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s5asm")
+}],
+"loop": 1,
+"name": &"Inside_Walk_Gloves",
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -290,6 +465,35 @@ animations = [{
 "loop": 1,
 "name": &"outside_walk",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vkrhp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ktwck")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7isal")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3gsps")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3hfbm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gsnan")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n7jq0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dqt1q")
+}],
+"loop": 1,
+"name": &"outside_walk_Gloves",
+"speed": 5.0
 }]
 
 [sub_resource type="Gradient" id="Gradient_l0led"]
@@ -303,7 +507,15 @@ gradient = SubResource("Gradient_l0led")
 bg_color = Color(0.8990849, 0.899085, 0.89908487, 0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l0led"]
-bg_color = Color(1, 1, 1, 1)
+bg_color = Color(1, 0.8167283, 0.5611379, 1)
+
+[sub_resource type="Gradient" id="Gradient_f7smc"]
+colors = PackedColorArray(0, 0, 0, 0, 1, 0.8156863, 0.56078434, 0.7647059)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_dmeks"]
+gradient = SubResource("Gradient_f7smc")
+fill_from = Vector2(0.48634812, 0.4795222)
+fill_to = Vector2(0.47269624, 1)
 
 [sub_resource type="Gradient" id="Gradient_gg5gl"]
 offsets = PackedFloat32Array(0, 0.2, 0.8, 1)
@@ -318,12 +530,112 @@ height = 742
 use_hdr = true
 fill_from = Vector2(0, 0.004347826)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frjpc"]
-bg_color = Color(0.79658896, 0.52589, 0.38620448, 1)
+[sub_resource type="AtlasTexture" id="AtlasTexture_5c5y6"]
+atlas = ExtResource("35_ffqtq")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vdyg7"]
+atlas = ExtResource("35_ffqtq")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hf7om"]
+atlas = ExtResource("34_r77ri")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qup64"]
+atlas = ExtResource("34_r77ri")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="Curve" id="Curve_f7smc"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ijthc"]
+curve = SubResource("Curve_f7smc")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_36c8c"]
+particle_flag_disable_z = true
+spread = 180.0
+initial_velocity_min = 24.789999
+initial_velocity_max = 69.68
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_max = 5.2999997
+scale_curve = SubResource("CurveTexture_ijthc")
+color = Color(1, 1, 0.5647059, 0.5019608)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kgah6"]
+atlas = ExtResource("46_id0th")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qli7j"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 68.94
+spread = 180.0
+initial_velocity_min = 95.04
+initial_velocity_max = 145.4
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_max = 17.59
+scale_curve = SubResource("CurveTexture_ijthc")
+color = Color(1, 1, 1, 0.5019608)
+
+[sub_resource type="Gradient" id="Gradient_qli7j"]
+colors = PackedColorArray(1, 0.5137255, 0.8117647, 0.3019608, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ijthc"]
+gradient = SubResource("Gradient_qli7j")
+fill = 1
+fill_from = Vector2(0.4453925, 0.4795222)
+fill_to = Vector2(0.80375427, 0.27474403)
 
 [node name="Main" type="Node2D" unique_id=1521551065]
 script = ExtResource("1_7x3k8")
 final_cutscene = ExtResource("3_g2jn8")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1677144919]
+offset = Vector2(1000, 1000)
+anchor_mode = 0
+script = ExtResource("38_axd22")
+
+[node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
+script = ExtResource("15_aai8a")
+
+[node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=1467674545]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 66.0
+offset_right = 14.0
+offset_bottom = -58.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HurtRect" type="TextureRect" parent="CameraEffects" unique_id=827679414]
+offset_top = 62.0
+offset_right = 1164.0
+offset_bottom = 594.0
+texture = SubResource("GradientTexture2D_gqtna")
+
+[node name="HealRect" type="TextureRect" parent="CameraEffects" unique_id=225279873]
+offset_top = 62.0
+offset_right = 1164.0
+offset_bottom = 596.0
+texture = SubResource("GradientTexture2D_kgah6")
+
+[node name="GloveRect" type="TextureRect" parent="CameraEffects" unique_id=1900740237]
+offset_top = 62.0
+offset_right = 1164.0
+offset_bottom = 596.0
+texture = SubResource("GradientTexture2D_cmqc6")
+
+[node name="BlockRect" type="TextureRect" parent="CameraEffects" unique_id=1756513317]
+offset_top = 62.0
+offset_right = 1164.0
+offset_bottom = 597.0
+texture = SubResource("GradientTexture2D_id0th")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
 
@@ -334,6 +646,30 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="BlackPanelUP" type="ColorRect" parent="CanvasLayer" unique_id=1603293193]
+top_level = true
+z_index = 1000
+anchors_preset = -1
+anchor_left = -0.19878472
+anchor_right = 1.1822916
+offset_top = -64.0
+offset_right = 10.0
+grow_horizontal = 2
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="BlackPanelDown" type="ColorRect" parent="CanvasLayer" unique_id=1479045947]
+top_level = true
+z_index = 1000
+anchors_preset = -1
+anchor_left = -0.17100695
+anchor_right = 1.1944444
+offset_top = 648.0
+offset_bottom = 704.0
+grow_horizontal = 2
 color = Color(0, 0, 0, 1)
 metadata/_edit_use_anchors_ = true
 
@@ -429,7 +765,6 @@ texture = SubResource("AtlasTexture_lugpe")
 centered = false
 
 [node name="StoreBackground" type="Node2D" parent="BackgroundManager" unique_id=1692822279]
-visible = false
 
 [node name="Background" type="Node2D" parent="BackgroundManager/StoreBackground" unique_id=2000936904]
 material = SubResource("ShaderMaterial_k87b8")
@@ -491,7 +826,6 @@ texture = ExtResource("4_u4s41")
 centered = false
 
 [node name="OutsideBackground" type="Node2D" parent="BackgroundManager" unique_id=10526258]
-visible = false
 
 [node name="L1_Background" type="Node2D" parent="BackgroundManager/OutsideBackground" unique_id=1073209159]
 script = ExtResource("2_u4s41")
@@ -714,39 +1048,41 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0.38431373)
 script = ExtResource("1_j1rpa")
+metadata/_edit_use_anchors_ = true
 
-[node name="Gradient" type="TextureRect" parent="Background" unique_id=1385319185]
-visible = false
-self_modulate = Color(1, 1, 0.99607843, 0)
+[node name="TaptapStreak" type="TextureRect" parent="Background" unique_id=1795743103]
+self_modulate = Color(1, 1, 0.99607843, 1)
+layout_mode = 0
+offset_right = 1168.0
+offset_bottom = 651.0
+texture = SubResource("GradientTexture2D_qli7j")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Background/TaptapStreak" unique_id=572690720]
+position = Vector2(505, 329)
+amount = 64
+process_material = SubResource("ParticleProcessMaterial_id0th")
+
+[node name="TapStreak" type="TextureRect" parent="Background" unique_id=1385319185]
+self_modulate = Color(1, 1, 0.99607843, 1)
 layout_mode = 0
 offset_right = 1168.0
 offset_bottom = 651.0
 texture = SubResource("GradientTexture2D_36c8c")
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="Background/Gradient" unique_id=947434616]
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Background/TapStreak" unique_id=947434616]
 position = Vector2(505, 329)
 amount = 64
 process_material = SubResource("ParticleProcessMaterial_kgah6")
 
-[node name="BlackPanelUP" type="ColorRect" parent="Background" unique_id=1603293193]
-top_level = true
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = -64.0
-offset_right = 10.0
-grow_horizontal = 2
-color = Color(0, 0, 0, 1)
-
-[node name="BlackPanelDown" type="ColorRect" parent="Background" unique_id=1479045947]
-top_level = true
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 648.0
-offset_bottom = 704.0
-grow_horizontal = 2
-color = Color(0, 0, 0, 1)
+[node name="Cat Arm" type="TextureRect" parent="Background" unique_id=723858604 groups=["cat_paw"]]
+layout_mode = 0
+offset_left = 131.0
+offset_top = 279.0
+offset_right = 281.0
+offset_bottom = 830.0
+texture = ExtResource("21_cdqs6")
+expand_mode = 1
+script = ExtResource("22_phlfg")
 
 [node name="Polaroid_1" type="TextureRect" parent="Background" unique_id=1181744193]
 top_level = true
@@ -757,6 +1093,7 @@ offset_right = -220.88892
 offset_bottom = 404.0
 texture = ExtResource("19_vwlca")
 expand_mode = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="Polaroid_2" type="TextureRect" parent="Background" unique_id=817282495]
 top_level = true
@@ -767,6 +1104,7 @@ offset_right = -591.8889
 offset_bottom = 604.0
 texture = ExtResource("20_y8skh")
 expand_mode = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="Polaroid_3" type="TextureRect" parent="Background" unique_id=2052868313]
 top_level = true
@@ -777,6 +1115,39 @@ offset_right = 273.11108
 offset_bottom = 561.0
 texture = ExtResource("21_qn5f4")
 expand_mode = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Polaroid_4" type="TextureRect" parent="Background" unique_id=237194222]
+top_level = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.4826389
+anchor_top = 0.11419753
+anchor_right = -0.4826389
+anchor_bottom = 0.11419753
+offset_left = -390.0
+offset_top = 188.0
+offset_right = 273.11108
+offset_bottom = 561.0
+texture = ExtResource("23_gqtna")
+expand_mode = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Polaroid_5" type="TextureRect" parent="Background" unique_id=1137899098]
+top_level = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.33333334
+anchor_top = -0.12808642
+anchor_right = -0.33333334
+anchor_bottom = -0.12808642
+offset_left = -390.0
+offset_top = 188.0
+offset_right = 273.11108
+offset_bottom = 561.0
+texture = ExtResource("24_x3k0m")
+expand_mode = 1
+metadata/_edit_use_anchors_ = true
 
 [node name="Entity" type="AnimatedSprite2D" parent="." unique_id=1100770989]
 position = Vector2(448.00003, 520)
@@ -787,14 +1158,14 @@ autoplay = "outside_idle"
 script = ExtResource("19_i0d87")
 
 [node name="ReferenceRect" type="ReferenceRect" parent="." unique_id=690342108]
-visible = false
-offset_left = 256.0
+offset_left = 277.0
 offset_top = 149.0
 offset_right = 1074.0
 offset_bottom = 541.0
 mouse_filter = 1
 mouse_force_pass_scroll_events = false
 border_width = 5.0
+metadata/_edit_use_anchors_ = true
 
 [node name="StartPanel" type="TextureRect" parent="." unique_id=164502693 node_paths=PackedStringArray("spawn_area")]
 offset_left = 502.0
@@ -804,6 +1175,7 @@ offset_bottom = 657.0
 texture = SubResource("GradientTexture1D_oi3uc")
 script = ExtResource("3_xd1g5")
 spawn_area = NodePath("../ReferenceRect")
+metadata/_edit_use_anchors_ = true
 
 [node name="Title" type="Sprite2D" parent="StartPanel" unique_id=1835915251]
 position = Vector2(372.99997, 172.99998)
@@ -819,6 +1191,7 @@ offset_right = 291.0
 offset_bottom = 348.0
 scale = Vector2(4, 4)
 texture_normal = ExtResource("5_unj6y")
+metadata/_edit_use_anchors_ = true
 
 [node name="Story" type="Label" parent="StartPanel" unique_id=107870984]
 layout_mode = 0
@@ -829,6 +1202,7 @@ offset_bottom = 369.0
 theme_override_fonts/font = ExtResource("29_qn5f4")
 theme_override_font_sizes/font_size = 37
 text = "Story Mode"
+metadata/_edit_use_anchors_ = true
 
 [node name="EndlessStart" type="TextureButton" parent="StartPanel" unique_id=1310882319]
 self_modulate = Color(3.080368e-06, 0.8493475, 0.97114426, 1)
@@ -840,6 +1214,7 @@ offset_right = 288.0
 offset_bottom = 543.0
 scale = Vector2(4, 4)
 texture_normal = ExtResource("5_unj6y")
+metadata/_edit_use_anchors_ = true
 
 [node name="Endless" type="Label" parent="StartPanel" unique_id=2127646751]
 layout_mode = 0
@@ -850,6 +1225,7 @@ offset_bottom = 549.0
 theme_override_fonts/font = ExtResource("29_qn5f4")
 theme_override_font_sizes/font_size = 37
 text = "Endless Mode"
+metadata/_edit_use_anchors_ = true
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=170122126]
 offset_left = -18.0
@@ -861,8 +1237,33 @@ theme_override_styles/background = SubResource("StyleBoxFlat_7x3k8")
 theme_override_styles/fill = SubResource("StyleBoxFlat_l0led")
 show_percentage = false
 script = ExtResource("5_vocn1")
+metadata/_edit_use_anchors_ = true
 
 [node name="Timer" type="Timer" parent="ProgressBar" unique_id=2042900797]
+
+[node name="WaveTimer" type="ProgressBar" parent="." unique_id=61972265]
+offset_left = -6.0
+offset_top = 586.0
+offset_right = 1174.0
+offset_bottom = 604.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_styles/background = SubResource("StyleBoxFlat_7x3k8")
+theme_override_styles/fill = SubResource("StyleBoxFlat_l0led")
+value = 50.0
+show_percentage = false
+script = ExtResource("31_ag636")
+metadata/_edit_use_anchors_ = true
+
+[node name="Timer" type="Timer" parent="WaveTimer" unique_id=1171737267]
+
+[node name="WaveEffect" type="TextureRect" parent="WaveTimer" unique_id=1701429602]
+layout_mode = 0
+offset_left = 6.0
+offset_top = -400.0
+offset_right = 1170.0
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_dmeks")
 
 [node name="Transition" type="ColorRect" parent="." unique_id=1234018471]
 process_mode = 1
@@ -871,19 +1272,6 @@ top_level = true
 offset_right = 1167.0
 offset_bottom = 650.0
 script = ExtResource("18_vl1oa")
-
-[node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
-visible = false
-script = ExtResource("15_aai8a")
-
-[node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=1467674545]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = 14.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
 
 [node name="RightSpawner" type="Marker2D" parent="." unique_id=877299189]
 position = Vector2(-63, 571)
@@ -907,21 +1295,13 @@ texture = SubResource("GradientTexture2D_5c5y6")
 
 [node name="TutorialLabel" type="Label" parent="." unique_id=2130771760]
 offset_left = 49.0
-offset_top = 137.0
+offset_top = 181.0
 offset_right = 408.0
-offset_bottom = 177.0
+offset_bottom = 221.0
 theme_override_fonts/font = ExtResource("29_qn5f4")
 theme_override_font_sizes/font_size = 43
 text = "Click Items to Wrap Them"
-
-[node name="Label" type="Label" parent="." unique_id=1230464535]
-offset_left = 18.0
-offset_top = 603.0
-offset_right = 168.0
-offset_bottom = 641.0
-theme_override_fonts/font = ExtResource("29_qn5f4")
-theme_override_font_sizes/font_size = 30
-text = "F - Full Screen"
+metadata/_edit_use_anchors_ = true
 
 [node name="Version Label" type="Label" parent="." unique_id=1849655685]
 offset_left = 994.0
@@ -932,50 +1312,114 @@ theme_override_fonts/font = ExtResource("29_qn5f4")
 theme_override_font_sizes/font_size = 30
 text = "Version 1.1"
 horizontal_alignment = 2
+metadata/_edit_use_anchors_ = true
 
-[node name="CanvasLayer2" type="CanvasLayer" parent="." unique_id=191738156]
+[node name="PauseButton" type="TextureButton" parent="." unique_id=1294662200]
+offset_left = 1045.0
+offset_top = 55.0
+offset_right = 1141.0
+offset_bottom = 151.0
+scale = Vector2(0.8, 0.8)
+texture_normal = SubResource("AtlasTexture_5c5y6")
+texture_pressed = SubResource("AtlasTexture_vdyg7")
+stretch_mode = 0
+script = ExtResource("36_ffqtq")
+metadata/_edit_use_anchors_ = true
 
-[node name="Pause" type="Panel" parent="CanvasLayer2" unique_id=1883136500]
-visible = false
-offset_left = 237.0
-offset_top = 172.0
-offset_right = 837.0
-offset_bottom = 522.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_frjpc")
-script = ExtResource("33_ydmdm")
+[node name="EndlessModeUI" type="CanvasLayer" parent="." unique_id=918137950]
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/Pause" unique_id=1996106132]
-layout_mode = 0
-offset_top = 103.0
-offset_right = 600.0
-offset_bottom = 206.0
-theme_override_constants/separation = 60
+[node name="Lives" type="HBoxContainer" parent="EndlessModeUI" unique_id=687378709]
+z_index = 9
+offset_left = 24.0
+offset_top = 64.0
+offset_right = 278.0
+offset_bottom = 113.0
+theme_override_constants/separation = 1
+script = ExtResource("34_lugpe")
+full_heart = SubResource("AtlasTexture_hf7om")
+empty_heart = SubResource("AtlasTexture_qup64")
+heart_size = Vector2(70, 70)
+metadata/_edit_use_anchors_ = true
 
-[node name="Resume" type="Button" parent="CanvasLayer2/Pause/VBoxContainer" unique_id=1902629026]
-layout_mode = 2
-theme_override_font_sizes/font_size = 60
-text = "Resume"
+[node name="Gloves" type="TextureRect" parent="EndlessModeUI" unique_id=1440806333]
+offset_left = 249.0
+offset_top = 66.0
+offset_right = 336.0
+offset_bottom = 141.03125
+texture = ExtResource("41_f7smc")
+expand_mode = 1
+script = ExtResource("42_dmeks")
 
-[node name="Quit" type="Button" parent="CanvasLayer2/Pause/VBoxContainer" unique_id=1204244886]
-layout_mode = 2
-theme_override_font_sizes/font_size = 60
-text = "Quit"
+[node name="GPUParticles2D" type="GPUParticles2D" parent="EndlessModeUI/Gloves" unique_id=1447675164]
+z_index = -100
+position = Vector2(40, 39)
+amount = 48
+lifetime = 1.88
+process_material = SubResource("ParticleProcessMaterial_36c8c")
 
-[node name="Label" type="Label" parent="CanvasLayer2/Pause" unique_id=1002909359]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 83.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 50
-text = "Pause"
+[node name="ScoreLabel" type="Label" parent="EndlessModeUI" unique_id=933387944]
+offset_left = 426.0
+offset_top = 65.0
+offset_right = 754.0
+offset_bottom = 137.0
+theme_override_colors/font_color = Color(0.90588236, 0.83137256, 0.6784314, 1)
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 72
+text = "1209"
 horizontal_alignment = 1
 vertical_alignment = 1
+script = ExtResource("41_x3k0m")
+
+[node name="StreakUI" type="TextureRect" parent="EndlessModeUI" unique_id=350607623]
+offset_left = 52.0
+offset_top = 413.0
+offset_right = 177.0
+offset_bottom = 538.0
+texture = SubResource("AtlasTexture_kgah6")
+script = ExtResource("47_qli7j")
+
+[node name="StreakLabel" type="Label" parent="EndlessModeUI/StreakUI" unique_id=827939687]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 19.0
+offset_right = 93.0
+offset_bottom = 85.0
+theme_override_colors/font_color = Color(0.9999996, 0.8773078, 0.61749005, 1)
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 72
+text = "x2"
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="EndlessModeUI/StreakUI" unique_id=550681432]
+z_index = -100
+position = Vector2(61, 65)
+amount = 32
+lifetime = 1.26
+process_material = SubResource("ParticleProcessMaterial_qli7j")
+
+[node name="StreakNotif" type="Label" parent="EndlessModeUI" unique_id=7917756]
+offset_left = 326.0
+offset_top = 275.0
+offset_right = 850.0
+offset_bottom = 355.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 72
+text = "TAP STREAK!"
+horizontal_alignment = 1
+
+[node name="Fade" type="TextureRect" parent="EndlessModeUI/StreakNotif" unique_id=1463043058]
+show_behind_parent = true
+layout_mode = 0
+offset_left = -185.0
+offset_top = -31.0
+offset_right = 821.0
+offset_bottom = 116.0
+texture = SubResource("GradientTexture2D_ijthc")
 
 [connection signal="pressed" from="StartPanel/Start" to="BackgroundManager" method="_on_start_pressed"]
 [connection signal="pressed" from="StartPanel/Start" to="StartPanel" method="_on_start_pressed"]
 [connection signal="pressed" from="StartPanel/EndlessStart" to="BackgroundManager" method="_on_endless_start_pressed"]
 [connection signal="pressed" from="StartPanel/EndlessStart" to="StartPanel" method="_on_endless_start_pressed"]
 [connection signal="timeout" from="ProgressBar/Timer" to="ProgressBar" method="_on_timer_timeout"]
-[connection signal="pressed" from="CanvasLayer2/Pause/VBoxContainer/Resume" to="CanvasLayer2/Pause" method="_on_resume_pressed"]
-[connection signal="pressed" from="CanvasLayer2/Pause/VBoxContainer/Quit" to="CanvasLayer2/Pause" method="_on_quit_pressed"]
+[connection signal="timeout" from="WaveTimer/Timer" to="WaveTimer" method="_on_timer_timeout"]
+[connection signal="pressed" from="PauseButton" to="." method="_on_pause_button_pressed"]

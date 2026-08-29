@@ -1,15 +1,23 @@
 extends TextureRect
+
 const STREET = preload("uid://c6xk46jpedco4")
 @onready var tutorial_label: Label = $"../TutorialLabel"
+@onready var endless_mode_ui: CanvasLayer = $"../EndlessModeUI"
+@onready var pause_button: TextureButton = $"../PauseButton"
+
+# --- NEW: Node references to control Story/Endless modes dynamically ---
+@onready var progress_bar: ProgressBar = $"../ProgressBar"     # Adjust path if your ProgressBar is named differently
+@onready var background_node: ColorRect = $"../Background"     # Adjust path if your Background is named differently
 
 signal game_started
 signal endless_started
+
 const SHOP_BELL = preload("uid://fswaj7rxfula")
 const OBJECT_SCENE = preload("res://Menus/item_cat_treat.tscn")
 const TAPTAP = preload("uid://bnvtg6wxrfprs")
+const KATKAT = preload("uid://dy575c21gytdn")
 
 @onready var label: Label = $Label
-
 @onready var entity: AnimatedSprite2D = $"../Entity"
 @onready var background_manager: Node2D = $"../BackgroundManager"
 
@@ -33,7 +41,7 @@ func _ready() -> void:
 		tutorial_label.modulate.a = 0.0
 		tutorial_label.visible = false
 
-# --- START BUTTON LOGIC ---
+# --- START BUTTON LOGIC (STORY MODE) ---
 func _on_start_hovered() -> void:
 	if is_transitioning: 
 		return 
@@ -78,16 +86,26 @@ func _on_start_pressed() -> void:
 	$EndlessStart.disabled = true
 	game_started.emit()
 	
+	# --- CONFIGURE MODES FOR STORY MODE ---
+	if progress_bar:
+		progress_bar.is_story_mode = true
+		progress_bar.start_countdown()
+	if background_node:
+		background_node.is_endless_mode = false
+	# ---------------------------------------
+	
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.stop_music()
 	AudioManager.play_music(TAPTAP)
+	pause_button.visible = true
 	
+	# Configure ItemManager for Story Mode
 	ItemManager.area = spawn_area
-	ScoreManager.reset_score()
+	ItemManager.is_endless = false
 	ItemManager.is_game_over = false
 	ItemManager.current_pattern = 1
-	ItemManager.play_pattern(1)
-	
+	ScoreManager.reset_score()
+	ItemManager.play_story_pattern(1)
 	
 	var obj = OBJECT_SCENE.instantiate()
 	get_tree().current_scene.add_child(obj)
@@ -136,13 +154,12 @@ func _on_endless_start_pressed() -> void:
 	if is_transitioning:
 		return
 	is_transitioning = true
-
 	if hover_tween:
 		hover_tween.kill()
 	if hover_tween2:
 		hover_tween2.kill()
 		
-	# Added: Missing button press feedback bounce animation
+	# Button press feedback bounce animation
 	var bounce_tween = create_tween()
 	bounce_tween.tween_property($EndlessStart, "position:y", $EndlessStart.position.y - 20.0, 0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	bounce_tween.tween_property($EndlessStart, "position:y", $EndlessStart.position.y, 0.3).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
@@ -152,15 +169,26 @@ func _on_endless_start_pressed() -> void:
 	$EndlessStart.disabled = true
 	endless_started.emit()
 
+	# --- CONFIGURE MODES FOR ENDLESS MODE ---
+	if progress_bar:
+		progress_bar.is_story_mode = false
+	if background_node:
+		background_node.is_endless_mode = true
+	# -----------------------------------------
+
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.stop_music()
-	AudioManager.play_music(TAPTAP)
-
+	AudioManager.play_music(KATKAT)
+	pause_button.visible = true
+	
+	# Configure ItemManager and State for Endless Mode
 	ItemManager.area = spawn_area
 	ScoreManager.reset_score()
 	LivesManager.reset_lives()
+	endless_mode_ui.visible = true
+	
+	# Start endless spawner loop
 	ItemManager.start_endless()
-	ItemManager.is_game_over = false
 	
 	# Spawn treat effect at Endless button position
 	var obj = OBJECT_SCENE.instantiate()

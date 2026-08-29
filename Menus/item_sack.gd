@@ -1,12 +1,15 @@
 extends Node2D
 
-signal popped_out(obj: Node)
+signal popped_out(obj: Node, was_clicked: bool)
 const SACK = preload("uid://844bkgax2wrd")
 const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 const SACK_OPEN = preload("uid://d3nlvoeoqtbyp")
 const SACK_PARTICLE = preload("uid://bncb0rx7oecq0")
+const FLOATING_LABEL = preload("uid://cu8xcr7igstbj")
 
-const POINTS_PER_CLICK: int = 10
+const TOTAL_SACK_POINTS: int = 50
+
+const POINTS_PER_CLICK: int = 5
 @onready var gift: AnimatedSprite2D = $GiftAnimation
 
 #POLAROID
@@ -20,7 +23,7 @@ var is_transforming: bool = false
 var is_gravity: bool = false
 var is_popping: bool = false
 var is_finishing: bool = false 
-const Duration: float = 15.0
+const Duration: float = 12.0
 const REQUIRED_CLICKS: int = 10
 
 var click_count: int = 0
@@ -41,8 +44,8 @@ var hit_tween: Tween
 func _ready() -> void:
 	add_to_group("camera_targets")
 
-	sack.input_event.connect(_on_area_input_event)
-	sack.input_pickable = true
+	# Disabled standard area input pickable in favor of global _input handling
+	sack.input_pickable = false
 
 	sack_sprite.region_enabled = true
 	sack_sprite.region_filter_clip_enabled = true
@@ -53,20 +56,24 @@ func _ready() -> void:
 
 	start_tilting_loop(self)
 
-func _on_area_input_event(
-	_viewport: Node,
-	event: InputEvent,
-	_shape_idx: int
-) -> void:
+# --- Multi-touch & Mouse Input Handling ---
+func _input(event: InputEvent) -> void:
 	if is_popping:
 		return
-
-	if (
-		event is InputEventMouseButton
-		and event.pressed
-		and event.button_index == MOUSE_BUTTON_LEFT
-	):
-		hit_sack()
+		
+	var click_pos = Vector2.ZERO
+	var is_triggered: bool = false
+	
+	if event is InputEventScreenTouch and event.pressed:
+		click_pos = event.position
+		is_triggered = true
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		click_pos = event.position
+		is_triggered = true
+		
+	if is_triggered:
+		if global_position.distance_to(click_pos) < 64.0: # Adjust radius if needed
+			hit_sack()
 
 
 func hit_sack() -> void:
@@ -79,6 +86,15 @@ func hit_sack() -> void:
 	print("Sack clicked: ", click_count)
 	
 	ScoreManager.add_points(POINTS_PER_CLICK)
+	
+	# --- SPAWN +5 FLOATING LABEL ON EVERY HIT ---
+	if FLOATING_LABEL:
+		var label = FLOATING_LABEL.instantiate()
+		get_tree().current_scene.add_child(label)
+		if label.has_method("setup"):
+			label.setup(POINTS_PER_CLICK, global_position)
+	# ---------------------------------------------
+	
 	play_fish_effect()
 	play_hit_animation()
 
@@ -88,14 +104,13 @@ func hit_sack() -> void:
 		AudioManager.play_sound(SACK_OPEN)
 		ParticleManager.spawn_particle(SACK_PARTICLE, global_position)
 		
-		# --- VISUAL FIX: Hide the old sack so only the gift animation shows ---
+		# Hide the old sack so only the gift animation shows
 		sack_sprite.visible = false
 		
 		gift.visible = true
 		gift.play("default")
 		await gift.animation_finished
 		
-		# Call pop_out cleanly (ignoring the is_popping check)
 		_execute_pop_out(true)
 		return
 
@@ -174,13 +189,21 @@ func transform_to_polaroid() -> void:
 	if photo_sprite != null and polaroid_texture != null:
 		photo_sprite.texture = polaroid_texture
 
+	# --- FIX: Guarantee Polaroid Data & Connect Signal ---
+	polaroid.set_meta("item_type", 9)
+	polaroid.set("is_polaroid", true)
+
 	if polaroid.has_method("setup"):
 		polaroid.setup(REQUIRED_CLICKS * POINTS_PER_CLICK)  
 
 	if ItemManager.has_method("register_spawned_object"):
-		ItemManager.register_spawned_object(polaroid)
+		ItemManager.register_spawned_object(polaroid, 9) # 9 is Item.POLAROID
+	# -----------------------------------------------------
+
 	if polaroid.has_method("appear"):
 		polaroid.appear()
+	
+	popped_out.emit(self, true)
 	queue_free()
 	
 func play_fish_effect() -> void:
@@ -209,8 +232,6 @@ func play_hit_animation() -> void:
 		Vector2.ONE,
 		0.08
 	)
-
-
 
 
 func pop_out(was_clicked: bool = false) -> void:

@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://dw3cnflry0n2i"]
+
+[ext_resource type="Script" uid="uid://cijixtxc8md7g" path="res://Menus/item_paw.gd" id="1_ftrq3"]
+[ext_resource type="Texture2D" uid="uid://bltj5ecvflurk" path="res://Assets/Object Assets/winged_paw.png" id="2_ftrq3"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3owqy"]
+radius = 36.345562
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qlgrh"]
+atlas = ExtResource("2_ftrq3")
+region = Rect2(0, 0, 76, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mx2al"]
+atlas = ExtResource("2_ftrq3")
+region = Rect2(76, 0, 76, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kb1gb"]
+atlas = ExtResource("2_ftrq3")
+region = Rect2(152, 0, 76, 47)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fxgx0"]
+atlas = ExtResource("2_ftrq3")
+region = Rect2(228, 0, 76, 47)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4gg5x"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qlgrh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mx2al")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kb1gb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fxgx0")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": 1,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
+[node name="item_Paw" type="Node2D" unique_id=2042003166]
+script = ExtResource("1_ftrq3")
+
+[node name="Paw" type="Area2D" parent="." unique_id=1467465299]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paw" unique_id=1091925879]
+shape = SubResource("CircleShape2D_3owqy")
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="Paw" unique_id=795591976]
+position = Vector2(-1.0000005, 2)
+scale = Vector2(1.9523768, 1.952377)
+sprite_frames = SubResource("SpriteFrames_4gg5x")
+autoplay = "default"
+frame_progress = 0.07480143

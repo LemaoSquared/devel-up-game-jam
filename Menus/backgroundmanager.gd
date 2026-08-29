@@ -3,22 +3,39 @@ extends Node2D
 const STREET = preload("uid://c6xk46jpedco4")
 
 @export var backgrounds: Array[Node2D] 
-@export var durations: Array[float]    
+@export var durations: Array[float] 
 @export var loop_sequence: bool = true 
 @export var starting_index: int = 0 
 @export var start_moving: bool = false 
 
-# --- NEW: It just announces when it's done! ---
+# --- SIGNALS ---
 signal background_changed(new_index:int)
 signal sequence_finished 
-# ----------------------------------------------
 
 var is_visible: bool = true
 var is_moving: bool = false
 var current_index: int = 0 
+
+# --- ENDLESS MODE SETTINGS ---
+var is_endless_mode: bool = false
+# Index 1 (Store) = 39.0s, Index 2 (Street) = 55.0s
+var endless_durations: Dictionary = {
+	1: 39.0,
+	2: 53.0
+}
+
+# --- CANCELLATION TRACKING ---
+var active_timer: SceneTreeTimer = null
+var transition_id: int = 0
+
 func reset():
+	is_endless_mode = false
 	is_moving = start_moving
 	current_index = starting_index 
+	
+	# Invalidate any in-flight transitions or pending timers
+	transition_id += 1
+	active_timer = null
 	
 	if backgrounds.is_empty():
 		push_error("ERROR: Your Backgrounds array is completely empty!")
@@ -50,8 +67,13 @@ func _ready():
 	_apply_state()
 
 func _on_start_pressed() -> void:
+	is_endless_mode = false
 	start_sequence()
 
+func _on_endless_start_pressed() -> void:
+	is_endless_mode = true
+	# Start gameplay on Index 1 (Store)
+	_change_background(1)
 
 func start_sequence():
 	var next_index = current_index + 1
@@ -62,36 +84,64 @@ func start_sequence():
 
 func _start_timer_for_current_bg():
 	var wait_time = 5.0
-	if current_index < durations.size():
-		wait_time = durations[current_index]
-		
-	var timer = get_tree().create_timer(wait_time)
-	timer.timeout.connect(_on_timer_finished)
-
-func _on_timer_finished():
-	var next_index = current_index + 1
 	
-	if next_index >= backgrounds.size():
-		if loop_sequence:
-			next_index = 0
-		else:
-			print("Background sequence complete!")
-			# --- NEW: Tell the rest of the game we are done ---
-			sequence_finished.emit()
-			return 
+	if is_endless_mode:
+		wait_time = endless_durations.get(current_index, 39.0)
+	else:
+		if current_index < durations.size():
+			wait_time = durations[current_index]
+		
+	var current_trans_id = transition_id
+	
+	# Add 'false' as the second argument so the timer respects the paused state
+	active_timer = get_tree().create_timer(wait_time, false) 
+	
+	active_timer.timeout.connect(func():
+		# Only proceed if reset() hasn't been called in the meantime
+		if current_trans_id == transition_id:
+			_on_timer_finished()
+	)
+func _on_timer_finished():
+	var next_index: int
+	
+	if is_endless_mode:
+		# Toggle strictly between 1 (Store) and 2 (Street)
+		next_index = 2 if current_index == 1 else 1
+	else:
+		next_index = current_index + 1
+		if next_index >= backgrounds.size():
+			if loop_sequence:
+				next_index = 0
+			else:
+				print("Background sequence complete!")
+				sequence_finished.emit()
+				return 
 			
 	_change_background(next_index)
 
-
 func _change_background(target_index: int):
+	var current_trans_id = transition_id + 1
+	transition_id = current_trans_id
+
 	await SceneTransition.swipe_in()
 	
+	# If reset() was called while swiped in, we must swipe back out 
+	# so the screen doesn't stay black, then abort.
+	if current_trans_id != transition_id:
+		await SceneTransition.swipe_out()
+		return
+
 	current_index = target_index
 	is_moving = true 
 	_apply_state()
 	background_changed.emit(current_index)
 	
 	await SceneTransition.swipe_out()
+	
+	# Abort if reset() was called while swiping out
+	if current_trans_id != transition_id:
+		return
+
 	_start_timer_for_current_bg()
 
 func _apply_state():
@@ -106,7 +156,3 @@ func _apply_state():
 			bg.process_mode = Node.PROCESS_MODE_INHERIT
 		else:
 			bg.process_mode = Node.PROCESS_MODE_DISABLED
-
-
-func _on_endless_start_pressed() -> void:
-	start_sequence()
