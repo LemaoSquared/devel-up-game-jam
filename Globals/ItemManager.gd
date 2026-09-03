@@ -170,6 +170,17 @@ func _initialize_endless_batches() -> void:
 		[6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   
 	]
 	batch_pool.append(b2)
+	
+	var b3 = BatchData.new()
+	b3.batch_name = "Wildcard Wave"
+	b3.waves = [
+		[6, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0],
+		[0, 6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
+		[6, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+		[4, 4, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0],
+		[5, 5, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+	]
+	batch_pool.append(b3)
 
 func _refill_batch_bag() -> void:
 	if batch_pool.is_empty():
@@ -574,9 +585,11 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 			obj.pop_duration_seconds = time_duration_perBatch
 	
 	obj.set_meta("item_type", obj_type)
-
 	target_parent.add_child(obj)
-	if obj.has_method("launch"):
+	obj.global_position = pos
+	
+	var has_own_launch: bool = obj.has_method("launch")
+	if has_own_launch:
 		obj.launch()
 		
 	if obj.has_signal("camera_activated"):
@@ -596,11 +609,12 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 	if obj_type != Item.SACK:
 		wave_one_objects.append(obj)
 
-	match spawn_animation:
-		SpawnAnimation.POP_SCALE:
-			_animate_pop_scale(obj, pos, delay_index)
-		SpawnAnimation.DROP_IN:
-			_animate_drop_in(obj, pos, delay_index)
+	if not has_own_launch:
+		match spawn_animation:
+			SpawnAnimation.POP_SCALE:
+				_animate_pop_scale(obj, pos, delay_index)
+			SpawnAnimation.DROP_IN:
+				_animate_drop_in(obj, pos, delay_index)
 
 func _animate_pop_scale(obj: Node, pos: Vector2, delay_index: int) -> void:
 	obj.global_position = pos
@@ -700,7 +714,9 @@ func _inflict_damage() -> void:
 	else:
 		Engine.time_scale = 0.5  
 		
-		# Cut off/mute music when tap/item streak is broken
+		# Cut off/mute music when tap/item streak is broken — remember the prior
+		# state so a manual mute isn't overwritten when slow-mo ends
+		var was_bgm_muted_before_hit: bool = AudioManager.is_bgm_muted
 		AudioManager.set_music_muted(true)
 		
 		# Scale slow-mo duration longer based on the streak size (base 0.3s + scaling factor)
@@ -710,7 +726,7 @@ func _inflict_damage() -> void:
 		damage_timer.timeout.connect(func():
 			if not is_game_over:
 				Engine.time_scale = 1.0
-				AudioManager.set_music_muted(false) # Restore music after slow-motion finishes
+				AudioManager.set_music_muted(was_bgm_muted_before_hit) # Restore to whatever it was set to, not force-unmute
 		)
 		
 	if active_i_frame_timer and active_i_frame_timer.timeout.is_connected(_on_i_frame_timeout):
@@ -1029,8 +1045,14 @@ func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col
 		obj.lifetime = time_duration_perBatch
 	elif "pop_duration_seconds" in obj:
 		obj.pop_duration_seconds = time_duration_perBatch
-		
+
 	obj.set_meta("item_type", Item.RAT)
-		
+
 	target_parent.add_child(obj)
+	obj.global_position = pos
+	if obj.has_method("set_direction"):
+		obj.set_direction(dir, target_end_x)
+
 	obj.popped_out.connect(_on_object_popped_out.bind(Item.RAT))
+	spawned_objects.append(obj)
+	wave_one_objects.append(obj)

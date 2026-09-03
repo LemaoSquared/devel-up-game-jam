@@ -42,8 +42,7 @@ func _on_game_start_enable_pause() -> void:
 
 func _on_story_mode_completed() -> void:
 	PauseManager.disable_pause()
-
-	
+	ScoreManager.try_update_high_score()
 	if ItemManager.has_method("stop_spawning"):
 		ItemManager.stop_spawning()
 	await _run_game_over_sequence(true)
@@ -52,7 +51,7 @@ func _on_lives_depleted() -> void:
 	if !ItemManager.is_endless:
 		return
 	PauseManager.disable_pause()
-
+	ScoreManager.try_update_high_score()
 	ItemManager.stop_endless()
 	await _run_game_over_sequence(false)
 

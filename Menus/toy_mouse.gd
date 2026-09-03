@@ -121,6 +121,12 @@ func _reach_end() -> void:
 	animated_sprite.stop()
 	popped_out.emit(self, false)
 
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "modulate:a", 0.0, 0.25)
+	tween.finished.connect(queue_free)
+	
 func _on_lifetime_expired() -> void:
 	if is_finished:
 		return   # already popped or reached end — nothing to do

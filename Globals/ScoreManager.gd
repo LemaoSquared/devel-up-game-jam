@@ -2,10 +2,14 @@ extends Node
 
 signal score_changed(new_score: int)
 signal multiplier_changed(new_multiplier: int) # <--- Crucial for the background script!
+signal high_score_changed(new_high_score: int)
 
 var score: int = 0
 var current_multiplier: int = 1 
 var flawless_waves: int = 0 
+
+const SAVE_PATH := "user://savedata.save"
+var high_score: int = 0
 
 var point_values := {
 	ItemManager.Item.TREAT: 5,
@@ -22,6 +26,7 @@ var point_values := {
 
 func _ready():
 	ItemManager.item_collected.connect(_on_item_collected)
+	load_high_score()
 
 func _on_item_collected(item_type: int) -> void:
 	if not point_values.has(item_type):
@@ -67,3 +72,42 @@ func reset_score() -> void:
 	flawless_waves = 0
 	score_changed.emit(score)
 	multiplier_changed.emit(current_multiplier)
+	
+func load_high_score() -> void:
+	if not FileAccess.file_exists(SAVE_PATH):
+		high_score = 0
+		return
+
+	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	if file == null:
+		push_error("ScoreManager: failed to open save file for reading.")
+		return
+
+	var content := file.get_as_text()
+	file.close()
+
+	var parsed = JSON.parse_string(content)
+	if typeof(parsed) == TYPE_DICTIONARY and parsed.has("high_score"):
+		high_score = int(parsed["high_score"])
+	else:
+		high_score = 0
+		
+func save_high_score() -> void:
+	var data := {
+		"high_score": high_score
+	}
+
+	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	if file == null:
+		push_error("ScoreManager: failed to open the save file to load.")
+		return
+	file.store_string(JSON.stringify(data))
+	file.close()
+
+func try_update_high_score() -> bool:
+	if score > high_score:
+		high_score = score
+		high_score_changed.emit(high_score)
+		save_high_score()
+		return true
+	return false
