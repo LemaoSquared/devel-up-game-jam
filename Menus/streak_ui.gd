@@ -1,5 +1,5 @@
 extends TextureRect
-
+@onready var streak_shadow: TextureRect = $StreakShadow
 @onready var streak_label: Label = $StreakLabel
 @onready var gpu_particles_2d: GPUParticles2D = $GPUParticles2D
 @onready var streak_notif: Label = $"../StreakNotif"
@@ -13,7 +13,7 @@ extends TextureRect
 @export_group("Color Settings")
 @export var tap_color: Color = Color.PALE_GOLDENROD     # Color for x2 (Tap) streak
 @export var taptap_color: Color = Color.ALICE_BLUE      # Color for x3 (Taptap) streak
-@export var triple_tap_color: Color = Color.CORAL       # Color for x4 (Triple Tap) streak
+@export var triple_tap_color: Color = Color.LIGHT_CORAL # Color for x4 (Triple Tap) streak
 @export var tap_flash_color: Color = Color.WHITE        # Flash color on tap
 
 var target_position: Vector2
@@ -28,6 +28,10 @@ var last_notified_val: int = 1
 func _ready() -> void:
 	# Set the pivot offset to the center so it rotates in place
 	pivot_offset = size / 2.0
+	
+	# Set streak shadow pivot offset to center as well
+	if streak_shadow:
+		streak_shadow.pivot_offset = streak_shadow.size / 2.0
 	
 	# Capture the position set in the editor as the target destination
 	target_position = position
@@ -76,6 +80,14 @@ func update_streak_ui(streak_count: int, multiplier: int) -> void:
 		if streak_label:
 			streak_label.text = "x" + str(active_val)
 			streak_label.add_theme_color_override("font_color", current_text_color)
+
+		# Sync shadow text if StreakShadow has a child Label
+		if streak_shadow:
+			var shadow_label = streak_shadow.get_node_or_null("StreakLabel") as Label
+			if not shadow_label:
+				shadow_label = streak_shadow.get_node_or_null("Label") as Label
+			if shadow_label:
+				shadow_label.text = "x" + str(active_val)
 		
 		if not is_visible_streak:
 			is_visible_streak = true
@@ -170,9 +182,12 @@ func _stop_tilting() -> void:
 	if tilt_tween and tilt_tween.is_valid():
 		tilt_tween.kill()
 		
-	# Smoothly return rotation to zero when hidden
+	# Smoothly return rotation to zero when hidden for both main element and shadow
 	var tween = create_tween()
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
+	tween.set_parallel(true)
 	tween.set_trans(Tween.TRANS_SINE)
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "rotation", 0.0, 0.25)
+	if streak_shadow and streak_shadow.top_level:
+		tween.tween_property(streak_shadow, "rotation", 0.0, 0.25)

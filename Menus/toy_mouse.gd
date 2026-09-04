@@ -36,10 +36,10 @@ func _ready() -> void:
 			anim_shadow.sprite_frames.set_animation_loop("rat_toy", true)
 		anim_shadow.play("rat_toy")
 
-	# Disabled standard area input pickable in favor of global _input handling
 	area.input_pickable = false
 	
-	var life_timer = get_tree().create_timer(lifetime, true)
+	# Changed 2nd argument from true to false so it pauses with the game
+	var life_timer = get_tree().create_timer(lifetime, false)
 	life_timer.timeout.connect(_on_lifetime_expired)
 
 func set_direction(dir: int, target_end_x: float) -> void:

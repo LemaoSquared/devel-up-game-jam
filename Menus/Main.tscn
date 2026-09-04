@@ -213,6 +213,10 @@ scale_min = 0.0
 scale_max = 5.0
 scale_curve = SubResource("CurveTexture_qn5f4")
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_p6cnu"]
+atlas = ExtResource("24_x3k0m")
+region = Rect2(0, 0, 1920, 1080)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_qn5f4"]
 atlas = ExtResource("19_gg5gl")
 region = Rect2(0, 0, 96, 128)
@@ -1183,7 +1187,7 @@ offset_left = -390.0
 offset_top = 188.0
 offset_right = 273.11108
 offset_bottom = 561.0
-texture = ExtResource("24_x3k0m")
+texture = SubResource("AtlasTexture_p6cnu")
 expand_mode = 1
 metadata/_edit_use_anchors_ = true
 
@@ -1353,6 +1357,7 @@ horizontal_alignment = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="PauseButton" type="TextureButton" parent="." unique_id=1294662200]
+top_level = true
 offset_left = 1045.0
 offset_top = 55.0
 offset_right = 1141.0
@@ -1365,6 +1370,20 @@ script = ExtResource("36_ffqtq")
 metadata/_edit_use_anchors_ = true
 
 [node name="EndlessModeUI" type="CanvasLayer" parent="." unique_id=918137950]
+
+[node name="LivesShadow" type="HBoxContainer" parent="EndlessModeUI" unique_id=2138968671]
+modulate = Color(0, 0, 0, 0.42352942)
+z_index = 9
+offset_left = 29.0
+offset_top = 70.0
+offset_right = 283.0
+offset_bottom = 119.0
+theme_override_constants/separation = 1
+script = ExtResource("34_lugpe")
+full_heart = SubResource("AtlasTexture_hf7om")
+empty_heart = SubResource("AtlasTexture_qup64")
+heart_size = Vector2(70, 70)
+metadata/_edit_use_anchors_ = true
 
 [node name="Lives" type="HBoxContainer" parent="EndlessModeUI" unique_id=687378709]
 z_index = 9
@@ -1394,6 +1413,17 @@ position = Vector2(40, 39)
 amount = 48
 lifetime = 1.88
 process_material = SubResource("ParticleProcessMaterial_36c8c")
+
+[node name="GlovesShadow" type="TextureRect" parent="EndlessModeUI/Gloves" unique_id=1252090911]
+modulate = Color(0, 0, 0, 0.5176471)
+show_behind_parent = true
+layout_mode = 0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 92.0
+offset_bottom = 80.03125
+texture = ExtResource("41_f7smc")
+expand_mode = 1
 
 [node name="ScoreLabel" type="Label" parent="EndlessModeUI" unique_id=933387944]
 offset_left = 426.0
@@ -1433,6 +1463,16 @@ position = Vector2(61, 65)
 amount = 32
 lifetime = 1.26
 process_material = SubResource("ParticleProcessMaterial_qli7j")
+
+[node name="StreakShadow" type="TextureRect" parent="EndlessModeUI/StreakUI" unique_id=1092532458]
+modulate = Color(0, 0, 0, 0.5137255)
+show_behind_parent = true
+layout_mode = 0
+offset_left = 8.0
+offset_top = 7.0
+offset_right = 133.0
+offset_bottom = 132.0
+texture = SubResource("AtlasTexture_kgah6")
 
 [node name="StreakNotif" type="Label" parent="EndlessModeUI" unique_id=7917756]
 offset_left = 326.0

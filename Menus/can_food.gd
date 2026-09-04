@@ -24,7 +24,6 @@ const CAN = preload("uid://hufov8jcs0i2")
 func _ready() -> void:
 	gift.visible = false
 	add_to_group("camera_targets")
-	# Disabled standard area input pickable in favor of global _input handling
 	click_area.input_pickable = false
 	
 	anim_sprite.animation = "Can_Foood"
@@ -36,7 +35,8 @@ func _ready() -> void:
 		anim_shadow.frame = 0
 		anim_shadow.stop()
 
-	var life_timer = get_tree().create_timer(lifetime, true)
+	# Changed 2nd argument from true to false so it pauses with the game
+	var life_timer = get_tree().create_timer(lifetime, false)
 	life_timer.timeout.connect(_on_lifetime_expired)
 
 # --- Multi-touch & Mouse Input Handling ---
