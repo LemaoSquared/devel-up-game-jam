@@ -55,6 +55,14 @@ script = ExtResource("1_y1bxd")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Glove" unique_id=1091925879]
 shape = SubResource("CircleShape2D_3owqy")
 
+[node name="Sprite2D2" type="AnimatedSprite2D" parent="Glove" unique_id=233424846]
+self_modulate = Color(0, 0, 0, 0.36862746)
+position = Vector2(4, -6.9999986)
+scale = Vector2(2.6227524, 2.2089167)
+sprite_frames = SubResource("SpriteFrames_4gg5x")
+autoplay = "default"
+frame_progress = 0.344007
+
 [node name="Sprite2D" type="AnimatedSprite2D" parent="Glove" unique_id=795591976]
 position = Vector2(1, -11)
 scale = Vector2(2.6227524, 2.2089167)

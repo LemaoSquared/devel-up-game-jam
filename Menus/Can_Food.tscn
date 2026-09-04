@@ -94,14 +94,23 @@ scale = Vector2(2, 2)
 shape = SubResource("CircleShape2D_frjpc")
 debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
 
+[node name="Sprite2D2" type="AnimatedSprite2D" parent="Can_Food" unique_id=1979294284]
+self_modulate = Color(0, 0, 0, 0.4509804)
+position = Vector2(1, -4)
+scale = Vector2(3.3000002, 3.3000002)
+sprite_frames = SubResource("SpriteFrames_oi3uc")
+animation = &"Can_Foood"
+frame_progress = 0.35269538
+
 [node name="Sprite2D" type="AnimatedSprite2D" parent="Can_Food" unique_id=532998280]
-position = Vector2(-4, -10)
+position = Vector2(-3, -10)
 scale = Vector2(3.3000002, 3.3000002)
 sprite_frames = SubResource("SpriteFrames_oi3uc")
 animation = &"Can_Foood"
 frame_progress = 0.35269538
 
 [node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=1463621911]
+visible = false
 position = Vector2(1, -57)
 scale = Vector2(4.8923616, 4.8923616)
 sprite_frames = SubResource("SpriteFrames_mjxx2")

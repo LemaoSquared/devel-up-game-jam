@@ -25,7 +25,6 @@ buses/default_bus_layout="uid://d3nsdi1ubvi48"
 
 PauseManager="*uid://pl8i67h01j3q"
 AudioManager="*uid://cbupjjnoycbp0"
-ItemManager="*uid://cpxh8oj6crlks"
 ParticleManager="*uid://cj4m3gvncgfyn"
 ScoreManager="*uid://bj1sl56gfowe6"
 SceneTransition="*uid://dlpmt1xdaclks"
@@ -33,6 +32,7 @@ WindowManager="*uid://lo33st6fr55x"
 LivesManager="*uid://dajsf3pjvrkf8"
 PauseMenu="*uid://cxgnia65dgs3n"
 CameraManager="*uid://cviyqpg1b6tpc"
+ItemManager="*uid://20qy71q3r2mw"
 
 [display]
 

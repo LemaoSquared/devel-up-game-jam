@@ -236,7 +236,6 @@ func _start_next_endless_batch() -> void:
 
 	total_batches_played += 1
 	var current_reduction: float = min(max_timer_reduction, total_batches_played * batch_speed_step)
-	# Caps minimum wave timer & item lifespan at 2.5 seconds
 	time_duration_perBatch = max(2.5, base_time_duration_perBatch - current_reduction)
 
 	current_batch_data = batch_bag.pop_front()
@@ -266,11 +265,9 @@ func _spawn_next_endless_wave() -> void:
 func _select_endless_powerup() -> int:
 	var pool: Array[int] = [Item.CAMERA, Item.GLOVES, Item.PAW]
 	
-	# If Gloves are already active on the player, exclude Gloves
 	if glove_active:
 		pool.erase(Item.GLOVES)
 
-	# If a power-up has appeared 2 consecutive times, exclude it (forcing 50/50 split among remaining)
 	if powerup_streak >= 2 and last_powerup_choice in pool:
 		pool.erase(last_powerup_choice)
 
@@ -325,7 +322,6 @@ func _spawn_encoded_array(item_count: Array) -> void:
 	for i in range(item_count.size()):
 		var count = item_count[i]
 		
-		# --- MASTER OVERRIDE: Prevent Gloves from spawning if currently active ---
 		if i == Item.GLOVES and glove_active:
 			continue
 			
@@ -343,6 +339,7 @@ func _spawn_encoded_array(item_count: Array) -> void:
 				9: spawn_random_pop_in_rect(Item.POLAROID, count, current_parent)
 				10: spawn_random_pop_in_rect(Item.GLOVES, count, current_parent)
 				11: spawn_random_pop_in_rect(Item.PAW, count, current_parent)
+
 # --- STORY MODE SPAWNING ---
 
 func play_story_pattern(number: int):
@@ -668,14 +665,12 @@ func _inflict_damage() -> void:
 	if not is_endless:
 		return
 		
-	# Check Invincibility Frames (I-Frames)
 	if is_invincible:
 		return
 
 	# Reset taptap wave counter upon taking damage
 	taptap_streak_waves = 0
 
-	# Capture the streak value before resetting it to scale slow-mo and leniency waves
 	last_broken_streak = 0
 	if ScoreManager:
 		if "current_streak" in ScoreManager:
@@ -684,7 +679,6 @@ func _inflict_damage() -> void:
 			last_broken_streak = ScoreManager.streak
 		ScoreManager.reset_streak()
 		
-	# LOCK IMMEDIATELY so simultaneous hits in the same frame can't bypass it
 	is_invincible = true
 
 	if LivesManager.has_method("lose_life"):
@@ -708,25 +702,21 @@ func _inflict_damage() -> void:
 		if LivesManager.lives <= 0:
 			is_fatal = true
 
-	# --- STREAK-BREAK SLOW-MOTION & MUSIC CUT-OFF ---
 	if is_fatal:
 		Engine.time_scale = 1.0
 	else:
 		Engine.time_scale = 0.5  
 		
-		# Cut off/mute music when tap/item streak is broken — remember the prior
-		# state so a manual mute isn't overwritten when slow-mo ends
 		var was_bgm_muted_before_hit: bool = AudioManager.is_bgm_muted
 		AudioManager.set_music_muted(true)
 		
-		# Scale slow-mo duration longer based on the streak size (base 0.3s + scaling factor)
 		var slow_mo_duration = 0.3 + (last_broken_streak * 0.02)
 		
 		var damage_timer = get_tree().create_timer(slow_mo_duration, true, false, true)
 		damage_timer.timeout.connect(func():
 			if not is_game_over:
 				Engine.time_scale = 1.0
-				AudioManager.set_music_muted(was_bgm_muted_before_hit) # Restore to whatever it was set to, not force-unmute
+				AudioManager.set_music_muted(was_bgm_muted_before_hit)
 		)
 		
 	if active_i_frame_timer and active_i_frame_timer.timeout.is_connected(_on_i_frame_timeout):
@@ -760,11 +750,9 @@ func _apply_paw_spatial_effect(paw_pos: Vector2) -> void:
 		tween.set_ease(Tween.EASE_OUT)
 		
 		if is_hazard:
-			# Nerfed push force for hazards (was 140.0)
 			var target_pos = item_pos + (dir * 140.0)
 			tween.tween_property(obj, "global_position", target_pos, 0.3)
 		else:
-			# Nerfed pull force for gifts (closer to 1.0 means it moves less toward the paw center; was 0.35)
 			var target_pos = paw_pos + (to_item * 0.4)
 			tween.tween_property(obj, "global_position", target_pos, 0.3)
 
@@ -832,7 +820,6 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 				ParticleManager.spawn_particle(BLOCKED_PARTICLE, spawn_pos)
 				AudioManager.play_sound(SUCCESSFUL_BLOCK) 
 				
-				# --- MULTIPLIED GLOVE BLOCK SCORE ---
 				var mult = 1
 				if ScoreManager and "current_multiplier" in ScoreManager:
 					mult = ScoreManager.current_multiplier
@@ -854,7 +841,6 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 						
 				return
 			elif is_blocking_hazards:
-					# Safely ignore other hazards during the block hitstop
 					return
 			else:
 				_inflict_damage()
@@ -991,17 +977,51 @@ func _handle_endless_mode_timeout() -> void:
 		is_flawless = false
 
 	if LivesManager.lives >= lives_at_wave_start and is_flawless:
+		# 1. Capture current multiplier BEFORE registering the new flawless wave
+		var current_mult: int = 1
+		if ScoreManager:
+			if "current_multiplier" in ScoreManager:
+				current_mult = ScoreManager.current_multiplier
+			elif "multiplier" in ScoreManager:
+				current_mult = ScoreManager.multiplier
+
+		# 2. Register the wave progress with ScoreManager
 		if ScoreManager and ScoreManager.has_method("register_flawless_wave"):
 			ScoreManager.register_flawless_wave()
-			
+
+		# 3. Increment streak counter ONLY if the wave was completed while already at x3
+		if current_mult == 3:
+			taptap_streak_waves += 1
+			if taptap_streak_waves >= 3:
+				_activate_triple_tap_streak()
+		else:
+			taptap_streak_waves = 0
 	else:
-		# Reset streak if they missed items during the wave batch
+		# Reset flawless counter if damage was taken or an item was missed
 		taptap_streak_waves = 0
 		
 	AudioManager.play_sound(NEXT_WAVE)
 		
 	current_wave_in_batch += 1
 	_spawn_next_endless_wave()
+
+func _activate_triple_tap_streak() -> void:
+	taptap_streak_waves = 0
+	if not ScoreManager:
+		return
+		
+	if ScoreManager.has_method("trigger_triple_tap_streak"):
+		ScoreManager.trigger_triple_tap_streak()
+	elif ScoreManager.has_method("set_multiplier"):
+		ScoreManager.set_multiplier(4)
+	elif "current_multiplier" in ScoreManager:
+		ScoreManager.current_multiplier = 4
+		if ScoreManager.has_signal("multiplier_changed"):
+			ScoreManager.multiplier_changed.emit(4)
+	elif "multiplier" in ScoreManager:
+		ScoreManager.multiplier = 4
+		if ScoreManager.has_signal("multiplier_changed"):
+			ScoreManager.multiplier_changed.emit(4)
 
 func _handle_story_mode_timeout() -> void:
 	current_pattern += 1

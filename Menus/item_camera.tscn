@@ -57,6 +57,14 @@ script = ExtResource("1_2lmid")
 scale = Vector2(2, 2)
 shape = SubResource("CircleShape2D_b676p")
 
+[node name="Sprite2D2" type="AnimatedSprite2D" parent="Camera" unique_id=686891323]
+modulate = Color(0, 0, 0, 0.4745098)
+position = Vector2(4, 6)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_kgah6")
+autoplay = "default"
+
 [node name="Sprite2D" type="AnimatedSprite2D" parent="Camera" unique_id=1063795664]
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_kgah6")
+autoplay = "default"

@@ -62,6 +62,12 @@ scale = Vector2(2, 2)
 shape = SubResource("CircleShape2D_frjpc")
 debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
 
+[node name="Sprite2D2" type="AnimatedSprite2D" parent="Garbage" unique_id=1210296102]
+self_modulate = Color(0, 0, 0, 0.42352942)
+position = Vector2(9.999999, -1)
+scale = Vector2(1.7086781, 1.7086781)
+sprite_frames = SubResource("SpriteFrames_7bpuo")
+
 [node name="Sprite2D" type="AnimatedSprite2D" parent="Garbage" unique_id=582040625]
 self_modulate = Color(0.5443015, 0.68924344, 0.5232084, 1)
 position = Vector2(4.9999995, -6)

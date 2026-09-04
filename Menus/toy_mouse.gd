@@ -1,17 +1,15 @@
 extends Node2D
 signal popped_out(obj: Node, was_clicked: bool)
 
-#POLAROID
-@export var polaroid_scene: PackedScene = preload(
-	"res://Menus/item_polaroid.tscn"
-)
+# POLAROID
+@export var polaroid_scene: PackedScene = preload("res://Menus/item_polaroid.tscn")
 @export var polaroid_texture: Texture2D
-@export var speed: float = 60.0         
+@export var speed: float = 60.0          
 @export var speed_increase: float = 40.0 
 @export var jump_distance: float = 40.0  
 @export var jump_duration: float = 0.3   
-@export var jump_height: float = 20.0   
-@export var max_clicks: int = 3         
+@export var jump_height: float = 20.0    
+@export var max_clicks: int = 3          
 @export var end_x: float = 1250.0
 @export var lifetime: float = 6.0
 var is_jumping: bool = false
@@ -20,6 +18,8 @@ var click_count: int = 0
 var direction: int = 1   
 @onready var area: Area2D = $toy_mouse
 @onready var animated_sprite: AnimatedSprite2D = $toy_mouse/Sprite2D
+@onready var anim_shadow: AnimatedSprite2D = $toy_mouse/Sprite2D2
+
 const MOUSE = preload("uid://dhpdocurfpk5e")
 const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 const GIFT = preload("uid://fojbgtm48t6b")
@@ -27,8 +27,15 @@ const GIFT = preload("uid://fojbgtm48t6b")
 
 func _ready() -> void:
 	add_to_group("camera_targets")
+	
 	animated_sprite.sprite_frames.set_animation_loop("rat_toy", true)
 	animated_sprite.play("rat_toy")
+	
+	if anim_shadow:
+		if anim_shadow.sprite_frames and anim_shadow.sprite_frames.has_animation("rat_toy"):
+			anim_shadow.sprite_frames.set_animation_loop("rat_toy", true)
+		anim_shadow.play("rat_toy")
+
 	# Disabled standard area input pickable in favor of global _input handling
 	area.input_pickable = false
 	
@@ -38,7 +45,11 @@ func _ready() -> void:
 func set_direction(dir: int, target_end_x: float) -> void:
 	direction = dir
 	end_x = target_end_x
-	animated_sprite.flip_h = direction < 0
+	
+	var is_flipped = direction < 0
+	animated_sprite.flip_h = is_flipped
+	if anim_shadow:
+		anim_shadow.flip_h = is_flipped
 
 func _process(delta: float) -> void:
 	if is_finished:
@@ -78,7 +89,7 @@ func _on_clicked() -> void:
 	speed += speed_increase
 	if click_count >= max_clicks:
 		is_finished = true         
-		area.input_pickable = false # Fixed missing assignment value here
+		area.input_pickable = false
 		AudioManager.play_sound(GIFT)
 		gift.visible = true
 		gift.play("default")
@@ -104,7 +115,11 @@ func _pop_and_disappear() -> void:
 	is_finished = true
 	is_jumping = true
 	area.input_pickable = false
+	
 	animated_sprite.stop()
+	if anim_shadow:
+		anim_shadow.stop()
+		
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_IN)
@@ -118,7 +133,11 @@ func _pop_and_disappear() -> void:
 func _reach_end() -> void:
 	is_finished = true
 	area.input_pickable = false
+	
 	animated_sprite.stop()
+	if anim_shadow:
+		anim_shadow.stop()
+		
 	popped_out.emit(self, false)
 
 	var tween = create_tween()
@@ -133,7 +152,11 @@ func _on_lifetime_expired() -> void:
 	is_finished = true
 	is_jumping = true
 	area.input_pickable = false
+	
 	animated_sprite.stop()
+	if anim_shadow:
+		anim_shadow.stop()
+		
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_SINE)
 	tween.set_ease(Tween.EASE_IN)
@@ -154,13 +177,12 @@ func transform_to_polaroid() -> void:
 	if photo_sprite != null and polaroid_texture != null:
 		photo_sprite.texture = polaroid_texture
 
-	# --- FIX: Guarantee Polaroid Data & Connect Signal ---
+	# Guarantee Polaroid Data & Connect Signal
 	polaroid.set_meta("item_type", 9)
 	polaroid.set("is_polaroid", true)
 
 	if ItemManager.has_method("register_spawned_object"):
 		ItemManager.register_spawned_object(polaroid, 9) # 9 is Item.POLAROID
-	# -----------------------------------------------------
 
 	if polaroid.has_method("appear"):
 		polaroid.appear()

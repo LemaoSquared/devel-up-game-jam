@@ -55,6 +55,13 @@ script = ExtResource("1_xwksl")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Regen" unique_id=1091925879]
 shape = SubResource("CircleShape2D_3owqy")
 
+[node name="Sprite2D2" type="AnimatedSprite2D" parent="Regen" unique_id=1961875022]
+modulate = Color(0, 0, 0, 0.3882353)
+position = Vector2(2.9999986, -5)
+scale = Vector2(2.7031248, 2.703125)
+sprite_frames = SubResource("SpriteFrames_4gg5x")
+autoplay = "default"
+
 [node name="Sprite2D" type="AnimatedSprite2D" parent="Regen" unique_id=795591976]
 modulate = Color(0.99999994, 0.122068815, 0.10821051, 1)
 position = Vector2(-9.536743e-07, -9)

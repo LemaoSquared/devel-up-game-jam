@@ -6,25 +6,28 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_3owqy"]
 radius = 36.345562
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ftrq3"]
+atlas = ExtResource("2_ftrq3")
+region = Rect2(0, 0, 70, 48)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_qlgrh"]
 atlas = ExtResource("2_ftrq3")
-region = Rect2(0, 0, 76, 47)
+region = Rect2(70, 0, 70, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mx2al"]
 atlas = ExtResource("2_ftrq3")
-region = Rect2(76, 0, 76, 47)
+region = Rect2(140, 0, 70, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kb1gb"]
 atlas = ExtResource("2_ftrq3")
-region = Rect2(152, 0, 76, 47)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fxgx0"]
-atlas = ExtResource("2_ftrq3")
-region = Rect2(228, 0, 76, 47)
+region = Rect2(210, 0, 70, 48)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_4gg5x"]
 animations = [{
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ftrq3")
+}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_qlgrh")
 }, {
@@ -33,9 +36,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_kb1gb")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_fxgx0")
 }],
 "loop": 1,
 "name": &"default",
@@ -55,9 +55,19 @@ script = ExtResource("1_ftrq3")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Paw" unique_id=1091925879]
 shape = SubResource("CircleShape2D_3owqy")
 
-[node name="Sprite2D" type="AnimatedSprite2D" parent="Paw" unique_id=795591976]
-position = Vector2(-1.0000005, 2)
+[node name="Sprite2D2" type="AnimatedSprite2D" parent="Paw" unique_id=917768345]
+self_modulate = Color(0, 0, 0, 0.39215687)
+position = Vector2(3.9999998, -2)
 scale = Vector2(1.9523768, 1.952377)
 sprite_frames = SubResource("SpriteFrames_4gg5x")
 autoplay = "default"
-frame_progress = 0.07480143
+frame = 2
+frame_progress = 0.90973896
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="Paw" unique_id=795591976]
+position = Vector2(-2.3841858e-07, -6)
+scale = Vector2(1.9523768, 1.952377)
+sprite_frames = SubResource("SpriteFrames_4gg5x")
+autoplay = "default"
+frame = 2
+frame_progress = 0.90973896

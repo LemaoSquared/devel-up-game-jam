@@ -54,6 +54,15 @@ position = Vector2(-2, 6)
 scale = Vector2(1.6, 1.6)
 shape = SubResource("RectangleShape2D_3j63b")
 
+[node name="Sprite2D2" type="Sprite2D" parent="Polaroid" unique_id=2117805514]
+modulate = Color(0.76383513, 0.75604, 0.91804814, 1)
+self_modulate = Color(0, 0, 0, 0.38431373)
+position = Vector2(5.096779, 11.000001)
+scale = Vector2(1.6, 1.6)
+texture = ExtResource("2_6isxe")
+region_enabled = true
+region_rect = Rect2(328, 168, 65, 62)
+
 [node name="Sprite2D" type="Sprite2D" parent="Polaroid" unique_id=1675675808]
 modulate = Color(0.76383513, 0.75604, 0.91804814, 1)
 position = Vector2(-0.9032209, 4)

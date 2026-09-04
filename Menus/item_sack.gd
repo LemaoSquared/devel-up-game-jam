@@ -39,6 +39,7 @@ var hit_tween: Tween
 @onready var sack: Area2D = $Sack
 @onready var sack_sprite: Sprite2D = $Sack/Sprite2D
 @onready var fish_particles: GPUParticles2D = $FishParticles
+@onready var sack_shadow: Sprite2D = $Sack/Sprite2D2
 
 
 func _ready() -> void:
@@ -49,6 +50,11 @@ func _ready() -> void:
 
 	sack_sprite.region_enabled = true
 	sack_sprite.region_filter_clip_enabled = true
+	
+	if sack_shadow:
+		sack_shadow.region_enabled = true
+		sack_shadow.region_filter_clip_enabled = true
+
 	update_sack_sprite()
 
 	var timer = get_tree().create_timer(Duration, false)
@@ -104,8 +110,10 @@ func hit_sack() -> void:
 		AudioManager.play_sound(SACK_OPEN)
 		ParticleManager.spawn_particle(SACK_PARTICLE, global_position)
 		
-		# Hide the old sack so only the gift animation shows
+		# Hide the old sack and shadow so only the gift animation shows
 		sack_sprite.visible = false
+		if sack_shadow:
+			sack_shadow.visible = false
 		
 		gift.visible = true
 		gift.play("default")
@@ -168,6 +176,9 @@ func update_sack_sprite() -> void:
 
 	region_index = clamp(region_index, 0, sack_regions.size() - 1)
 	sack_sprite.region_rect = sack_regions[region_index]
+	
+	if sack_shadow:
+		sack_shadow.region_rect = sack_regions[region_index]
 
 
 func transform_to_polaroid() -> void:

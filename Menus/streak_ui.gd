@@ -13,6 +13,7 @@ extends TextureRect
 @export_group("Color Settings")
 @export var tap_color: Color = Color.PALE_GOLDENROD     # Color for x2 (Tap) streak
 @export var taptap_color: Color = Color.ALICE_BLUE      # Color for x3 (Taptap) streak
+@export var triple_tap_color: Color = Color.CORAL       # Color for x4 (Triple Tap) streak
 @export var tap_flash_color: Color = Color.WHITE        # Flash color on tap
 
 var target_position: Vector2
@@ -25,10 +26,10 @@ var current_text_color: Color = Color.WHITE
 var last_notified_val: int = 1
 
 func _ready() -> void:
-	# CRITICAL FIX: Set the pivot offset to the center so it rotates in place
+	# Set the pivot offset to the center so it rotates in place
 	pivot_offset = size / 2.0
 	
-	# Capture the position you set in the editor as the target destination
+	# Capture the position set in the editor as the target destination
 	target_position = position
 	hidden_position = Vector2(target_position.x + hidden_offset_x, target_position.y)
 	
@@ -53,17 +54,24 @@ func update_streak_ui(streak_count: int, multiplier: int) -> void:
 	var active_val = multiplier if multiplier > 1 else streak_count
 	
 	if active_val >= 2:
-		# Assign colors & trigger notifications based on Tap (x2) vs Taptap (x3+)
-		if active_val == 2:
-			current_text_color = tap_color
-			if last_notified_val != 2:
-				_trigger_streak_notification("Tap Streak!")
-				last_notified_val = 2
-		else:
-			current_text_color = taptap_color
-			if last_notified_val != 3:
-				_trigger_streak_notification("Taptap Streak!")
-				last_notified_val = 3
+		# Assign colors & trigger notifications based on x2, x3, and x4+
+		match active_val:
+			2:
+				current_text_color = tap_color
+				if last_notified_val != 2:
+					_trigger_streak_notification("Tap Streak!")
+					last_notified_val = 2
+			3:
+				current_text_color = taptap_color
+				if last_notified_val != 3:
+					_trigger_streak_notification("Taptap Streak!")
+					last_notified_val = 3
+			_:
+				# x4 and above
+				current_text_color = triple_tap_color
+				if last_notified_val != 4:
+					_trigger_streak_notification("Triple Tap Streak!")
+					last_notified_val = 4
 			
 		if streak_label:
 			streak_label.text = "x" + str(active_val)
