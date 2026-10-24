@@ -24,7 +24,7 @@ func on_gradient_in(target_alpha: float = 0.7) -> void:
 	if not is_story_mode or not gradient: return
 	
 	gradient.visible = true
-	gradient.modulate.a = 1.0  # <--- CRITICAL FIX: Ensure background modulate isn't blocking it from Endless Mode
+	gradient.modulate.a = 1.0  # Ensure background modulate isn't blocking it
 	
 	var fade_in_tween = create_tween()
 	fade_in_tween.set_trans(Tween.TRANS_SINE)
@@ -52,7 +52,7 @@ func start_countdown() -> void:
 	second_gradient_triggered = false
 	if gradient:
 		gradient.visible = false
-		gradient.modulate.a = 1.0      # <--- CRITICAL FIX: Reset base modulate here too
+		gradient.modulate.a = 1.0      # Reset base modulate
 		gradient.self_modulate.a = 0.0
 
 	timer.wait_time = COUNTDOWN_TIME
@@ -80,6 +80,9 @@ func _process(_delta: float) -> void:
 func _on_timer_timeout() -> void:
 	if not is_story_mode: return
 	
+	# Clear all floating score and text popups immediately
+	get_tree().call_group("score_popups", "queue_free")
+
 	value = 100.0
 	set_process(false)
 	countdown_finished.emit()

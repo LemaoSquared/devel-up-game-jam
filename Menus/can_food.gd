@@ -9,6 +9,7 @@ signal popped_out(obj, was_clicked: bool)
 
 @onready var click_area: Area2D = $Can_Food
 @onready var anim_sprite: AnimatedSprite2D = $Can_Food/Sprite2D
+@onready var anim_shadow: AnimatedSprite2D = $Can_Food/Sprite2D2
 @onready var gift: AnimatedSprite2D = $GiftAnimation
 
 var click_count: int = 0
@@ -23,13 +24,19 @@ const CAN = preload("uid://hufov8jcs0i2")
 func _ready() -> void:
 	gift.visible = false
 	add_to_group("camera_targets")
-	# Disabled standard area input pickable in favor of global _input handling
 	click_area.input_pickable = false
 	
 	anim_sprite.animation = "Can_Foood"
 	anim_sprite.frame = 0
 	anim_sprite.stop()
-	var life_timer = get_tree().create_timer(lifetime, true)
+	
+	if anim_shadow:
+		anim_shadow.animation = anim_sprite.animation
+		anim_shadow.frame = 0
+		anim_shadow.stop()
+
+	# Changed 2nd argument from true to false so it pauses with the game
+	var life_timer = get_tree().create_timer(lifetime, false)
 	life_timer.timeout.connect(_on_lifetime_expired)
 
 # --- Multi-touch & Mouse Input Handling ---
@@ -56,7 +63,11 @@ func _advance_frame() -> void:
 		return
 	click_count += 1
 	AudioManager.play_sound(CAN)
+	
 	anim_sprite.frame = click_count
+	if anim_shadow:
+		anim_shadow.frame = click_count
+		
 	_click_feedback()
 	if click_count >= MAX_CLICKS:
 		AudioManager.play_sound(CAN_OPEN)
@@ -116,13 +127,12 @@ func transform_to_polaroid() -> void:
 	if photo_sprite != null and polaroid_texture != null:
 		photo_sprite.texture = polaroid_texture
 
-	# --- FIX: Guarantee Polaroid Data & Connect Signal ---
+	# Guarantee Polaroid Data & Connect Signal
 	polaroid.set_meta("item_type", 9)
 	polaroid.set("is_polaroid", true)
 
 	if ItemManager.has_method("register_spawned_object"):
 		ItemManager.register_spawned_object(polaroid, 9) # 9 is Item.POLAROID
-	# -----------------------------------------------------
 
 	if polaroid.has_method("appear"):
 		polaroid.appear()

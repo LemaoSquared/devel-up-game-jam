@@ -1,5 +1,9 @@
 extends Label
 
+func _ready() -> void:
+	# Add label to a group so it can be cleared in bulk
+	add_to_group("score_popups")
+
 # Handles numerical score popups with dynamic scaling and color coding
 func setup(amount: int, spawn_position: Vector2, multiplier: int = 1) -> void:
 	global_position = spawn_position
@@ -17,6 +21,9 @@ func setup(amount: int, spawn_position: Vector2, multiplier: int = 1) -> void:
 	if amount < 0:
 		modulate = Color.FIREBRICK
 		magnitude = 1.4
+	elif multiplier == 4 and amount > 0:
+		modulate = Color.LIGHT_CORAL # Unique color for Taptap Streak
+		magnitude = 2.1
 	elif multiplier == 3 and amount > 0:
 		modulate = Color.ALICE_BLUE # Unique color for Taptap Streak
 		magnitude = 1.9

@@ -20,6 +20,7 @@ enum SettleStyle { BOUNCE, SPRING, SWAY }
 @export var idle_sway_enabled: bool = true
 @export var idle_sway_amplitude_deg: float = 6.0
 @export var idle_sway_speed: float = 1.2
+@export var spawn_offset_y: float = -150.0 # Offset to raise the initial spawn position higher off-screen
 
 @export_group("Timeout Fall Settings")
 @export var fall_away_duration: float = 1.0
@@ -52,7 +53,9 @@ func _process(delta: float) -> void:
 func spawn_drop_and_hang(target_global_pos: Vector2, anchor_global_pos: Vector2, delay: float = 0.0) -> void:
 	anchor_position = anchor_global_pos
 	hang_length = (target_global_pos - anchor_global_pos).length()
-	global_position = anchor_global_pos
+	
+	# Start higher off-screen using spawn_offset_y to prevent initial bleeding onto screen
+	global_position = anchor_global_pos + Vector2(0, spawn_offset_y)
 	scale = Vector2.ONE
 
 	active_drop_tween = create_tween()

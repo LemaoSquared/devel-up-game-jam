@@ -1,24 +1,31 @@
 extends ColorRect
+
 @onready var streak_ui: TextureRect = $"../EndlessModeUI/StreakUI"
 
 @onready var black_panel_up: ColorRect = $"../CanvasLayer/BlackPanelUP"
 @onready var black_panel_down: ColorRect = $"../CanvasLayer/BlackPanelDown"
 
-@onready var double_streak: TextureRect = $TapStreak     # x2 Streak node
-@onready var triple_streak: TextureRect = $TaptapStreak  # x3 Streak node
+@onready var double_streak: TextureRect = $TapStreak      # x2 Streak node
+@onready var triple_streak: TextureRect = $TaptapStreak   # x3 Streak node
+@onready var triple_tap_streak: TextureRect = $TripleTapStreak # x4 Streak node
 
 @export var is_endless_mode: bool = true 
 
 const TAP_STREAK = preload("uid://dmrvpbeqkmj7s")
 const TAPTAP_STREAK = preload("uid://b6xww83qxy6tq")
+const TRIPLE_TAP_STREAK = preload("uid://b6xww83qxy6tq") # Replace UID with your x4 audio clip if distinct
 const STREAK_BROKEN = preload("uid://b6dg6xw7531sc")
 
 var previous_multiplier: int = 1
 
 func _ready() -> void:
 	if not is_endless_mode:
+		if double_streak:
+			double_streak.modulate.a = 0.0
 		if triple_streak:
 			triple_streak.modulate.a = 0.0
+		if triple_tap_streak:
+			triple_tap_streak.modulate.a = 0.0
 		if streak_ui:
 			streak_ui.visible = false
 		return
@@ -29,6 +36,9 @@ func _ready() -> void:
 		
 	if triple_streak:
 		triple_streak.modulate.a = 0.0
+
+	if triple_tap_streak:
+		triple_tap_streak.modulate.a = 0.0
 		
 	# Connect to the multiplier signal from ScoreManager
 	if ScoreManager and ScoreManager.has_signal("multiplier_changed"):
@@ -46,7 +56,7 @@ func retreat_cinematic_bars() -> void:
 	black_panel_up.visible = false
 	black_panel_down.visible = false
 
-# --- TAPTAP STREAK VISUAL & AUDIO HANDLERS ---
+# --- TAPTAP / TRIPLE TAP STREAK VISUAL & AUDIO HANDLERS ---
 
 func _on_multiplier_changed(new_multiplier: int) -> void:
 	if not is_endless_mode:
@@ -57,24 +67,33 @@ func _on_multiplier_changed(new_multiplier: int) -> void:
 		AudioManager.play_sound(TAP_STREAK)
 	elif new_multiplier == 3 and previous_multiplier != 3:
 		AudioManager.play_sound(TAPTAP_STREAK)
+	elif new_multiplier == 4 and previous_multiplier != 4:
+		AudioManager.play_sound(TRIPLE_TAP_STREAK)
 	elif new_multiplier < 2 and previous_multiplier >= 2:
 		AudioManager.play_sound(STREAK_BROKEN)
 		
 	previous_multiplier = new_multiplier
 
-	# 1. Original modulate code:
+	# --- VISUAL STREAK FADING ---
 	if new_multiplier == 2:
 		fade_in_streak(double_streak)
 		fade_out_streak(triple_streak)
+		fade_out_streak(triple_tap_streak)
 	elif new_multiplier == 3:
 		fade_out_streak(double_streak)
 		fade_in_streak(triple_streak)
+		fade_out_streak(triple_tap_streak)
+	elif new_multiplier == 4:
+		fade_out_streak(double_streak)
+		fade_out_streak(triple_streak)
+		fade_in_streak(triple_tap_streak)
 	else:
 		# Multiplier dropped back to 1 (streak reset)
 		fade_out_streak(double_streak)
 		fade_out_streak(triple_streak)
+		fade_out_streak(triple_tap_streak)
 		
-	# 2. Forward updates to StreakUI:
+	# --- FORWARD UPDATES TO STREAK UI ---
 	if streak_ui:
 		var current_streak = 0
 		if ScoreManager:
