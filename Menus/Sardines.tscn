@@ -48,6 +48,7 @@ animations = [{
 }]
 
 [node name="Sardines" type="Node2D" unique_id=46643488]
+z_index = 10
 script = ExtResource("1_tdta7")
 
 [node name="Sardines" type="Area2D" parent="." unique_id=917850277]

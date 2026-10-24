@@ -18,11 +18,6 @@ var current_index: int = 0
 
 # --- ENDLESS MODE SETTINGS ---
 var is_endless_mode: bool = false
-# Index 1 (Store) = 39.0s, Index 2 (Street) = 55.0s
-var endless_durations: Dictionary = {
-	1: 39.0,
-	2: 53.0
-}
 
 # --- CANCELLATION TRACKING ---
 var active_timer: SceneTreeTimer = null
@@ -33,7 +28,6 @@ func reset():
 	is_moving = start_moving
 	current_index = starting_index 
 	
-	# Invalidate any in-flight transitions or pending timers
 	transition_id += 1
 	active_timer = null
 	
@@ -50,6 +44,7 @@ func reset():
 	_apply_state()
 	
 func _ready():
+	add_to_group("background_manager")
 	AudioManager.play_music(STREET)
 	is_moving = start_moving
 	current_index = starting_index 
@@ -72,7 +67,6 @@ func _on_start_pressed() -> void:
 
 func _on_endless_start_pressed() -> void:
 	is_endless_mode = true
-	# Start gameplay on Index 1 (Store)
 	_change_background(1)
 
 func start_sequence():
@@ -83,62 +77,75 @@ func start_sequence():
 	_change_background(next_index)
 
 func _start_timer_for_current_bg():
-	var wait_time = 5.0
-	
 	if is_endless_mode:
-		wait_time = endless_durations.get(current_index, 39.0)
-	else:
-		if current_index < durations.size():
-			wait_time = durations[current_index]
+		return
+
+	var wait_time = 5.0
+	if current_index < durations.size():
+		wait_time = durations[current_index]
 		
 	var current_trans_id = transition_id
 	
-	# Add 'false' as the second argument so the timer respects the paused state
 	active_timer = get_tree().create_timer(wait_time, false) 
 	
 	active_timer.timeout.connect(func():
-		# Only proceed if reset() hasn't been called in the meantime
 		if current_trans_id == transition_id:
 			_on_timer_finished()
 	)
+
 func _on_timer_finished():
-	var next_index: int
-	
 	if is_endless_mode:
-		# Toggle strictly between 1 (Store) and 2 (Street)
-		next_index = 2 if current_index == 1 else 1
-	else:
-		next_index = current_index + 1
-		if next_index >= backgrounds.size():
-			if loop_sequence:
-				next_index = 0
-			else:
-				print("Background sequence complete!")
-				sequence_finished.emit()
-				return 
+		return
+
+	var next_index: int = current_index + 1
+	if next_index >= backgrounds.size():
+		if loop_sequence:
+			next_index = 0
+		else:
+			print("Background sequence complete!")
+			sequence_finished.emit()
+			return 
 			
 	_change_background(next_index)
 
-func _change_background(target_index: int):
+# Triggered by ItemManager every 5/10 waves in Endless Mode
+func trigger_endless_wave_transition():
+	if not is_endless_mode:
+		return
+		
+	var next_index = 2 if current_index == 1 else 1
+	
+	# Pass ignore_pause = true so swipe_in process continues while tree pauses
+	await _change_background(next_index, true)
+
+func _change_background(target_index: int, freeze_during_wipe: bool = false):
 	var current_trans_id = transition_id + 1
 	transition_id = current_trans_id
 
-	await SceneTransition.swipe_in()
+	# Swipe in
+	await SceneTransition.swipe_in(freeze_during_wipe)
 	
-	# If reset() was called while swiped in, we must swipe back out 
-	# so the screen doesn't stay black, then abort.
 	if current_trans_id != transition_id:
-		await SceneTransition.swipe_out()
+		await SceneTransition.swipe_out(freeze_during_wipe)
 		return
+
+	# Freeze gameplay while the screen is fully covered
+	if freeze_during_wipe:
+		get_tree().paused = true
 
 	current_index = target_index
 	is_moving = true 
 	_apply_state()
 	background_changed.emit(current_index)
 	
-	await SceneTransition.swipe_out()
+	# --- SMOOTH RESUME: Unpause right as the screen starts uncovering ---
+	# This removes the post-transition lag frame entirely because 
+	# the game unfreezes seamlessly while the wipe is sliding off screen.
+	if freeze_during_wipe:
+		get_tree().paused = false
 	
-	# Abort if reset() was called while swiping out
+	await SceneTransition.swipe_out(freeze_during_wipe)
+	
 	if current_trans_id != transition_id:
 		return
 

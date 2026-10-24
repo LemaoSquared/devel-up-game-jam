@@ -83,6 +83,7 @@ animations = [{
 }]
 
 [node name="Object" type="Node2D" unique_id=1628574223]
+z_index = 10
 script = ExtResource("1_41brj")
 
 [node name="Treat" type="Area2D" parent="." unique_id=1941015391]

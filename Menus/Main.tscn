@@ -188,6 +188,26 @@ scale_min = 0.0
 scale_max = 5.0
 scale_curve = SubResource("CurveTexture_qn5f4")
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_bw4tf"]
+atlas = ExtResource("19_vwlca")
+region = Rect2(624, 464, 648, 576)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p28ye"]
+atlas = ExtResource("20_y8skh")
+region = Rect2(1200, 104, 656, 576)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rn8ig"]
+atlas = ExtResource("21_qn5f4")
+region = Rect2(64, 88, 664, 592)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vxi4q"]
+atlas = ExtResource("23_gqtna")
+region = Rect2(1200, 104, 656, 584)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gk31u"]
+atlas = ExtResource("24_x3k0m")
+region = Rect2(72, 104, 648, 576)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_qn5f4"]
 atlas = ExtResource("19_gg5gl")
 region = Rect2(0, 0, 96, 128)
@@ -600,6 +620,7 @@ anchor_mode = 0
 script = ExtResource("38_axd22")
 
 [node name="CameraEffects" type="CanvasLayer" parent="." unique_id=1124365466]
+layer = 55
 script = ExtResource("15_aai8a")
 
 [node name="FlashRect" type="ColorRect" parent="CameraEffects" unique_id=1467674545]
@@ -638,6 +659,7 @@ offset_bottom = 597.0
 texture = SubResource("GradientTexture2D_id0th")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
+layer = 60
 
 [node name="FadeRect" type="ColorRect" parent="CanvasLayer" unique_id=1786602749]
 anchors_preset = -1
@@ -1086,67 +1108,82 @@ script = ExtResource("22_phlfg")
 
 [node name="Polaroid_1" type="TextureRect" parent="Background" unique_id=1181744193]
 top_level = true
-layout_mode = 0
-offset_left = -884.0
-offset_top = 31.0
-offset_right = -220.88892
-offset_bottom = 404.0
-texture = ExtResource("19_vwlca")
-expand_mode = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.3761805
+anchor_top = 0.2995679
+anchor_right = -0.1461042
+anchor_bottom = 0.6545679
+offset_left = 0.35992432
+offset_top = -0.120010376
+offset_right = 398.42313
+offset_bottom = 345.84
+scale = Vector2(0.4, 0.4)
+texture = SubResource("AtlasTexture_bw4tf")
 metadata/_edit_use_anchors_ = true
 
 [node name="Polaroid_2" type="TextureRect" parent="Background" unique_id=817282495]
 top_level = true
-layout_mode = 0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.71875
+anchor_top = -0.050925925
+anchor_right = 0.71875
+anchor_bottom = 0.26234567
 offset_left = -1255.0
 offset_top = 231.0
 offset_right = -591.8889
 offset_bottom = 604.0
-texture = ExtResource("20_y8skh")
-expand_mode = 1
+scale = Vector2(0.4, 0.4)
+texture = SubResource("AtlasTexture_p28ye")
 metadata/_edit_use_anchors_ = true
 
 [node name="Polaroid_3" type="TextureRect" parent="Background" unique_id=2052868313]
 top_level = true
-layout_mode = 0
-offset_left = -390.0
-offset_top = 188.0
-offset_right = 273.11108
-offset_bottom = 561.0
-texture = ExtResource("21_qn5f4")
-expand_mode = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.37978473
+anchor_top = 0.2883704
+anchor_right = -0.14953473
+anchor_bottom = 0.65437037
+offset_left = -0.48797607
+offset_top = 0.13598633
+offset_right = 398.264
+offset_bottom = 354.968
+scale = Vector2(0.4, 0.4)
+texture = SubResource("AtlasTexture_rn8ig")
 metadata/_edit_use_anchors_ = true
 
 [node name="Polaroid_4" type="TextureRect" parent="Background" unique_id=237194222]
 top_level = true
 layout_mode = 1
 anchors_preset = -1
-anchor_left = -0.4826389
-anchor_top = 0.11419753
-anchor_right = -0.4826389
-anchor_bottom = 0.11419753
-offset_left = -390.0
-offset_top = 188.0
-offset_right = 273.11108
-offset_bottom = 561.0
-texture = ExtResource("23_gqtna")
-expand_mode = 1
+anchor_left = -0.3849306
+anchor_top = 0.30209878
+anchor_right = -0.15533336
+anchor_bottom = 0.66317284
+offset_left = -0.5599365
+offset_top = 0.23999023
+offset_right = 398.0551
+offset_bottom = 350.264
+scale = Vector2(0.4, 0.4)
+texture = SubResource("AtlasTexture_vxi4q")
 metadata/_edit_use_anchors_ = true
 
 [node name="Polaroid_5" type="TextureRect" parent="Background" unique_id=1137899098]
 top_level = true
 layout_mode = 1
 anchors_preset = -1
-anchor_left = -0.33333334
-anchor_top = -0.12808642
-anchor_right = -0.33333334
-anchor_bottom = -0.12808642
-offset_left = -390.0
-offset_top = 188.0
-offset_right = 273.11108
-offset_bottom = 561.0
-texture = ExtResource("24_x3k0m")
-expand_mode = 1
+anchor_left = -0.36988196
+anchor_top = 0.2998272
+anchor_right = -0.14475697
+anchor_bottom = 0.65451854
+offset_left = 0.104003906
+offset_top = -0.2880249
+offset_right = 388.76004
+offset_bottom = 345.87198
+scale = Vector2(0.4, 0.4)
+texture = SubResource("AtlasTexture_gk31u")
 metadata/_edit_use_anchors_ = true
 
 [node name="Entity" type="AnimatedSprite2D" parent="." unique_id=1100770989]
@@ -1280,15 +1317,17 @@ position = Vector2(-63, 571)
 position = Vector2(1216, 571)
 
 [node name="Transition2" type="CanvasLayer" parent="." unique_id=161198873]
+layer = 10
 
 [node name="Gradient" type="TextureRect" parent="Transition2" unique_id=1029427981]
+z_index = 5
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 1264.0
 offset_top = -40.0
-offset_right = 3112.0
-offset_bottom = 54.0
+offset_right = 4264.0
+offset_bottom = 702.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_5c5y6")
@@ -1327,6 +1366,7 @@ script = ExtResource("36_ffqtq")
 metadata/_edit_use_anchors_ = true
 
 [node name="EndlessModeUI" type="CanvasLayer" parent="." unique_id=918137950]
+layer = 15
 
 [node name="Lives" type="HBoxContainer" parent="EndlessModeUI" unique_id=687378709]
 z_index = 9

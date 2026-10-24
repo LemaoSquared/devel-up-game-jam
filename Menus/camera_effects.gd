@@ -112,7 +112,7 @@ func slide_random_polaroid() -> void:
 
 	# Setup target positioning dimensions
 	var hidden_x: float = -chosen_polaroid.size.x
-	var visible_x: float = 5.0 # Rest position inside the screen's left edge
+	var visible_x: float = 30.0 # Rest position inside the screen's left edge
 	
 	# Reset properties before starting the movement loop
 	chosen_polaroid.global_position.x = hidden_x

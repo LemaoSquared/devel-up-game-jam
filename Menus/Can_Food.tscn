@@ -85,6 +85,7 @@ animations = [{
 }]
 
 [node name="Can_Food" type="Node2D" unique_id=46643488]
+top_level = true
 script = ExtResource("1_0v02n")
 
 [node name="Can_Food" type="Area2D" parent="." unique_id=917850277]

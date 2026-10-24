@@ -48,6 +48,7 @@ animations = [{
 }]
 
 [node name="item_Regen" type="Node2D" unique_id=2042003166]
+top_level = true
 script = ExtResource("1_xwksl")
 
 [node name="Regen" type="Area2D" parent="." unique_id=1467465299]

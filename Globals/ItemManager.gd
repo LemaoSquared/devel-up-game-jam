@@ -995,12 +995,19 @@ func _handle_endless_mode_timeout() -> void:
 			ScoreManager.register_flawless_wave()
 			
 	else:
-		# Reset streak if they missed items during the wave batch
 		taptap_streak_waves = 0
 		
 	AudioManager.play_sound(NEXT_WAVE)
 		
 	current_wave_in_batch += 1
+
+	# --- TRIGGER TRANSITION EVERY 5 WAVES ---
+	var total_waves = (total_batches_played * 5) + current_wave_in_batch
+	if total_waves > 0 and total_waves % 5 == 0:
+		var bg_mgr = get_tree().get_first_node_in_group("background_manager")
+		if bg_mgr and bg_mgr.has_method("trigger_endless_wave_transition"):
+			await bg_mgr.trigger_endless_wave_transition()
+
 	_spawn_next_endless_wave()
 
 func _handle_story_mode_timeout() -> void:

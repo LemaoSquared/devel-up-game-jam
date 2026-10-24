@@ -41,7 +41,7 @@ func run_animation_test() -> void:
 
 func swipe_in(ignore_pause: bool = false) -> void:
 	if not is_instance_valid(transition_rect): return
-	
+	transition_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var screen_width = get_viewport().get_visible_rect().size.x
 	transition_rect.position.x = screen_width
 	

@@ -48,6 +48,7 @@ animations = [{
 }]
 
 [node name="item_Paw" type="Node2D" unique_id=2042003166]
+z_index = 10
 script = ExtResource("1_ftrq3")
 
 [node name="Paw" type="Area2D" parent="." unique_id=1467465299]
