@@ -103,3 +103,11 @@ self_modulate = Color(0.9999996, 0.7516539, 0.27617705, 1)
 position = Vector2(8.000008, -109)
 scale = Vector2(6.577778, 6.5777783)
 sprite_frames = SubResource("SpriteFrames_gmlkt")
+
+[node name="HoldBar" type="ProgressBar" parent="." unique_id=338249249]
+offset_left = -82.0
+offset_top = 102.0
+offset_right = 96.0
+offset_bottom = 114.0
+theme_override_font_sizes/font_size = 1
+value = 50.0

@@ -12,20 +12,20 @@ const TRASH_PARTICLE = preload("uid://bqldp717ro0a4")
 @export var fall_stagger_max: float = 1.5 
 @onready var string: ColorRect = $Shoes/String
 
-@export_group("Drop & Float Settings")
+@export_group("Drop & Hang Settings")
 enum SettleStyle { BOUNCE, SPRING, SWAY }
 @export var settle_style: SettleStyle = SettleStyle.BOUNCE
 @export var fall_duration: float = 0.5
 @export var settle_duration: float = 0.6
 @export var idle_sway_enabled: bool = true
-@export var idle_sway_amplitude_deg: float = 6.0
-@export var idle_sway_speed: float = 1.2
-@export var spawn_offset_y: float = -150.0 # Offset to raise the initial spawn position higher off-screen
+@export var idle_sway_amplitude_deg: float = 10.0  # Balanced, lively swinging arc
+@export var idle_sway_speed: float = 1.5           # Natural swinging rhythm
+@export var spawn_offset_y: float = -150.0         # Offset to raise initial drop position higher off-screen
 
 @export_group("Timeout Fall Settings")
 @export var fall_away_duration: float = 1.0
 @export var fall_away_spin_degrees: float = 90.0
-@export var fall_away_screen_buffer: float = 150.0   
+@export var fall_away_screen_buffer: float = 150.0    
 
 var is_popping: bool = false
 var is_hanging: bool = false
@@ -39,6 +39,11 @@ var active_drop_tween: Tween
 func _ready() -> void:
 	add_to_group("camera_targets")
 	$Shoes.input_pickable = false
+
+	# --- HANG DIVERSITY ---
+	idle_time = randf_range(0.0, 10.0)                # Unique starting phase in the wave cycle
+	idle_sway_amplitude_deg += randf_range(-2.0, 2.0) # Unique swing intensity variation
+	idle_sway_speed += randf_range(-0.3, 0.3)         # Unique swing frequency variation
 
 	var timer = get_tree().create_timer(pop_duration_seconds, false)
 	timer.timeout.connect(_on_duration_expired)
@@ -54,12 +59,19 @@ func spawn_drop_and_hang(target_global_pos: Vector2, anchor_global_pos: Vector2,
 	anchor_position = anchor_global_pos
 	hang_length = (target_global_pos - anchor_global_pos).length()
 	
-	# Start higher off-screen using spawn_offset_y to prevent initial bleeding onto screen
+	# --- PRE-CALCULATE PENDULUM ARC & ROTATION LANDING SPOT ---
+	# Calculates where the swing formula starts on frame 1 so the drop lands precisely in sync
+	var initial_angle_rad = deg_to_rad(idle_sway_amplitude_deg) * sin(idle_time * idle_sway_speed)
+	var true_arc_target = anchor_position + Vector2(sin(initial_angle_rad), cos(initial_angle_rad)) * hang_length
+	var target_rotation = initial_angle_rad * 0.8
+	
 	global_position = anchor_global_pos + Vector2(0, spawn_offset_y)
 	scale = Vector2.ONE
+	rotation = 0.0
 
 	active_drop_tween = create_tween()
 	active_drop_tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
+	active_drop_tween.set_parallel(true) # Tween position and rotation simultaneously
 
 	match settle_style:
 		SettleStyle.BOUNCE:
@@ -73,8 +85,11 @@ func spawn_drop_and_hang(target_global_pos: Vector2, anchor_global_pos: Vector2,
 			active_drop_tween.set_ease(Tween.EASE_OUT)
 
 	var total_duration = fall_duration + settle_duration
-	active_drop_tween.tween_property(self, "global_position", target_global_pos, total_duration).set_delay(delay)
-	active_drop_tween.tween_callback(func(): is_hanging = true)
+	active_drop_tween.tween_property(self, "global_position", true_arc_target, total_duration).set_delay(delay)
+	active_drop_tween.tween_property(self, "rotation", target_rotation, total_duration).set_delay(delay)
+	
+	# Enable swinging seamlessly the moment the parallel drop tween finishes
+	active_drop_tween.chain().tween_callback(func(): is_hanging = true)
 
 func _input(event: InputEvent) -> void:
 	if is_popping:
@@ -148,7 +163,7 @@ func fall_and_disappear() -> void:
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
 	tween.set_parallel(true)
 	tween.set_trans(Tween.TRANS_QUAD)
-	tween.set_ease(Tween.EASE_IN)   
+	tween.set_ease(Tween.EASE_IN)    
 
 	tween.tween_property(self, "global_position", fall_target, fall_away_duration)
 	tween.tween_property(self, "rotation", rotation + deg_to_rad(fall_away_spin_degrees), fall_away_duration)
@@ -174,7 +189,7 @@ func despawn() -> void:
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
 	tween.set_parallel(true)
 	tween.set_trans(Tween.TRANS_QUAD)
-	tween.set_ease(Tween.EASE_IN)   
+	tween.set_ease(Tween.EASE_IN)    
 	tween.tween_property(self, "global_position", fall_target, fall_away_duration)
 	tween.tween_property(self, "rotation", rotation + deg_to_rad(fall_away_spin_degrees), fall_away_duration)
 	tween.chain().tween_callback(queue_free)

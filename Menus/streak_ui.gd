@@ -13,7 +13,7 @@ extends TextureRect
 @export_group("Color Settings")
 @export var tap_color: Color = Color.PALE_GOLDENROD     # Color for x2 (Tap) streak
 @export var taptap_color: Color = Color.ALICE_BLUE      # Color for x3 (Taptap) streak
-@export var triple_tap_color: Color = Color.LIGHT_CORAL # Color for x4 (Triple Tap) streak
+@export var triple_tap_color: Color = Color.YELLOW # Color for x4 (Triple Tap) streak
 @export var tap_flash_color: Color = Color.WHITE        # Flash color on tap
 
 var target_position: Vector2

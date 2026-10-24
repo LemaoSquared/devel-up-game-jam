@@ -356,12 +356,12 @@ func play_story_pattern(number: int):
 
 	var item_count = []
 	match number:
-			1: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			2: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			3: item_count = [15, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			4: item_count = [15, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			5: item_count = [0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			6: item_count = [10, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			1: item_count = [12, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0]
+			2: item_count = [12, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0]
+			3: item_count = [15, 0, 4, 0, 0, 0, 3, 1, 0, 0, 0, 0]
+			4: item_count = [15, 0, 4, 0, 0, 0, 4, 1, 0, 0, 0, 0]
+			5: item_count = [0, 15, 0, 0, 0, 0, 5, 2, 0, 0, 0, 0]
+			6: item_count = [10, 5, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0]
 			7: item_count = [12, 12, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 			8: item_count = [0, 24, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 			9: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -832,7 +832,7 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 					elif "score" in ScoreManager:
 						ScoreManager.score += blocked_score
 						
-				if FLOATING_LABEL:
+				if is_endless and FLOATING_LABEL:
 					var block_label = FLOATING_LABEL.instantiate()
 					get_tree().current_scene.add_child(block_label)
 					
@@ -851,7 +851,7 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 			
 		item_collected.emit(effective_item_type)
 		
-		if FLOATING_LABEL:
+		if is_endless and FLOATING_LABEL:
 			var label_instance = FLOATING_LABEL.instantiate()
 			get_tree().current_scene.add_child(label_instance)
 			
@@ -1050,7 +1050,13 @@ func register_spawned_object(obj: Node, obj_type = null) -> void:
 	spawned_objects.append(obj)
 
 func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col: int, delay_index: int) -> void:
-	var r: int = pattern_rows - 1
+	# CHANGE THIS: Instead of hardcoding the bottom row (pattern_rows - 1), 
+	# randomize 'r' so rats can spawn on any row from top (0) to bottom (pattern_rows - 1).
+	var r: int = randi_range(0, pattern_rows - 1)
+	
+	# OPTIONAL: If you only want them on middle-to-top rows, restrict the range like this:
+	# var r: int = randi_range(0, 2) # Rows 0, 1, and 2 (top/middle) instead of bottom rows 3 and 4
+
 	var dir: int
 	var target_end_x: float
 

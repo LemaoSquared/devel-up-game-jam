@@ -26,7 +26,7 @@ enum SettleStyle { BOUNCE, SPRING, SWAY }
 @export_group("Timeout Fall Settings")
 @export var fall_away_duration: float = 1.0
 @export var fall_away_spin_degrees: float = 90.0
-@export var fall_away_screen_buffer: float = 150.0   
+@export var fall_away_screen_buffer: float = 150.0    
 
 var is_popping: bool = false
 var is_hanging: bool = false
@@ -34,8 +34,9 @@ var is_dragged: bool = false
 var hang_length: float = 0.0
 var idle_time: float = 0.0
 var anchor_position: Vector2 = Vector2.ZERO
-@onready var string: ColorRect = $Yarn/String
+var swing_blend_weight: float = 0.0  # Smoothly bridges drop landing into swinging motion
 
+@onready var string: ColorRect = $Yarn/String
 @onready var gift_front: AnimatedSprite2D = $GiftAnimation
 
 var active_drop_tween: Tween
@@ -43,6 +44,11 @@ var active_drop_tween: Tween
 func _ready() -> void:
 	add_to_group("camera_targets")
 	$Yarn.input_pickable = false
+
+	# --- RESTORE FULL HANG DIVERSITY ---
+	idle_time = randf_range(0.0, 10.0)             # Unique starting point in wave cycle
+	idle_sway_amplitude_deg += randf_range(-2.0, 2.0) # Unique swing width
+	idle_sway_speed += randf_range(-0.4, 0.4)         # Unique swing speed
 
 	var timer = get_tree().create_timer(pop_duration_seconds, false)
 	timer.timeout.connect(_on_duration_expired)
@@ -52,6 +58,8 @@ func _process(delta: float) -> void:
 	if is_hanging and idle_sway_enabled and not is_popping and not is_dragged:
 		idle_time += delta
 		var angle = deg_to_rad(idle_sway_amplitude_deg) * sin(idle_time * idle_sway_speed)
+		
+		# Position matches the drop destination down to the exact sub-pixel on frame 1
 		global_position = anchor_position + Vector2(sin(angle), cos(angle)) * hang_length
 		rotation = angle * 0.5
 
@@ -59,7 +67,11 @@ func spawn_drop_and_hang(target_global_pos: Vector2, anchor_global_pos: Vector2,
 	anchor_position = anchor_global_pos
 	hang_length = (target_global_pos - anchor_global_pos).length()
 	
-	# Start higher off-screen using spawn_offset_y to prevent initial bleeding onto screen
+	# --- PRE-CALCULATE PENDULUM ARC LANDING SPOT ---
+	# Calculate the exact starting angle on the swing arc using our pre-randomized idle_time
+	var initial_angle = deg_to_rad(idle_sway_amplitude_deg) * sin(idle_time * idle_sway_speed)
+	var true_arc_target = anchor_position + Vector2(sin(initial_angle), cos(initial_angle)) * hang_length
+	
 	global_position = anchor_global_pos + Vector2(0, spawn_offset_y)
 	scale = Vector2.ONE
 
@@ -78,8 +90,13 @@ func spawn_drop_and_hang(target_global_pos: Vector2, anchor_global_pos: Vector2,
 			active_drop_tween.set_ease(Tween.EASE_OUT)
 
 	var total_duration = fall_duration + settle_duration
-	active_drop_tween.tween_property(self, "global_position", target_global_pos, total_duration).set_delay(delay)
-	active_drop_tween.tween_callback(func(): is_hanging = true)
+	
+	# Drop directly to the pre-calculated arc target instead of the raw grid position
+	active_drop_tween.tween_property(self, "global_position", true_arc_target, total_duration).set_delay(delay)
+	
+	active_drop_tween.tween_callback(func():
+		is_hanging = true
+	)
 
 func _input(event: InputEvent) -> void:
 	if is_popping:
@@ -183,7 +200,7 @@ func despawn() -> void:
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
 	tween.set_parallel(true)
 	tween.set_trans(Tween.TRANS_QUAD)
-	tween.set_ease(Tween.EASE_IN)   
+	tween.set_ease(Tween.EASE_IN)    
 	tween.tween_property(self, "global_position", fall_target, fall_away_duration)
 	tween.tween_property(self, "rotation", rotation + deg_to_rad(fall_away_spin_degrees), fall_away_duration)
 	tween.chain().tween_callback(queue_free)

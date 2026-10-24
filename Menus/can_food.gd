@@ -87,8 +87,6 @@ func _spawn_sardines() -> void:
 		push_error("Can_Food has no valid parent.")
 		return
 		
-	# First, tell ItemManager that the CAN ITSELF was completed successfully,
-	# so it gets removed from the wave tracking before we add sub-sardines.
 	popped_out.emit(self, true)
 
 	var count: int = 3
@@ -100,8 +98,12 @@ func _spawn_sardines() -> void:
 		sardine.sardine_index = i
 		sardine.total_sardines = count
 		sardine.spawn_delay = i * 0.07
+		
 		parent.add_child(sardine)
-		sardine.global_position = anim_sprite.global_position
+		
+		# --- FORCE GLOBAL POSITION MATCHING ---
+		sardine.global_position = global_position # Use the Can's exact global position
+		
 		ItemManager.register_spawned_object(sardine, ItemManager.Item.SARDINE)
 		sardine.launch()
 

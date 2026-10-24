@@ -22,7 +22,7 @@ func setup(amount: int, spawn_position: Vector2, multiplier: int = 1) -> void:
 		modulate = Color.FIREBRICK
 		magnitude = 1.4
 	elif multiplier == 4 and amount > 0:
-		modulate = Color.LIGHT_CORAL # Unique color for Taptap Streak
+		modulate = Color.YELLOW # Unique color for Taptap Streak
 		magnitude = 2.1
 	elif multiplier == 3 and amount > 0:
 		modulate = Color.ALICE_BLUE # Unique color for Taptap Streak

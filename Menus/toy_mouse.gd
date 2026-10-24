@@ -4,18 +4,22 @@ signal popped_out(obj: Node, was_clicked: bool)
 # POLAROID
 @export var polaroid_scene: PackedScene = preload("res://Menus/item_polaroid.tscn")
 @export var polaroid_texture: Texture2D
-@export var speed: float = 60.0          
-@export var speed_increase: float = 40.0 
-@export var jump_distance: float = 40.0  
-@export var jump_duration: float = 0.3   
-@export var jump_height: float = 20.0    
-@export var max_clicks: int = 3          
-@export var end_x: float = 1250.0
 @export var lifetime: float = 6.0
-var is_jumping: bool = false
+
+@export_group("Spawn Settings")
+@export var spawn_delay_min: float = 0.01
+@export var spawn_delay_max: float = 0.5
+@export var offscreen_x_offset: float = 200.0
+@export var min_y_offset: float = -140.0
+@export var max_y_offset: float = 0.0
+
+var speed: float = 0.0
+var is_active: bool = false
 var is_finished: bool = false
-var click_count: int = 0
-var direction: int = 1   
+var direction: int = 1   # 1 = Left-to-Right, -1 = Right-to-Left
+var end_x: float = 0.0
+var shake_tween: Tween = null
+
 @onready var area: Area2D = $toy_mouse
 @onready var animated_sprite: AnimatedSprite2D = $toy_mouse/Sprite2D
 @onready var anim_shadow: AnimatedSprite2D = $toy_mouse/Sprite2D2
@@ -37,33 +41,89 @@ func _ready() -> void:
 		anim_shadow.play("rat_toy")
 
 	area.input_pickable = false
+	scale = Vector2.ZERO # Start invisible/scaled down for the spawn delay pop-in
 	
-	# Changed 2nd argument from true to false so it pauses with the game
-	var life_timer = get_tree().create_timer(lifetime, false)
-	life_timer.timeout.connect(_on_lifetime_expired)
+	# Apply randomized vertical Y offset
+	position.y += randf_range(min_y_offset, max_y_offset)
 
-func set_direction(dir: int, target_end_x: float) -> void:
+# Called directly by ItemManager after initialization
+func set_direction(dir: int, _target_end_x: float) -> void:
 	direction = dir
-	end_x = target_end_x
 	
+	var viewport_width = get_viewport_rect().size.x
+	var start_x: float
+
+	if direction > 0:
+		start_x = -offscreen_x_offset
+		end_x = viewport_width + offscreen_x_offset
+	else:
+		start_x = viewport_width + offscreen_x_offset
+		end_x = -offscreen_x_offset
+
+	global_position.x = start_x
+
+	# Calculate speed required to traverse from start_x to end_x over the active lifetime
+	var total_distance = abs(end_x - start_x)
+	speed = total_distance / max(lifetime, 0.1)
+
 	var is_flipped = direction < 0
 	animated_sprite.flip_h = is_flipped
 	if anim_shadow:
 		anim_shadow.flip_h = is_flipped
 
-func _process(delta: float) -> void:
+	# --- SPAWN DELAY & POP-IN LOGIC ---
+	var spawn_delay = randf_range(spawn_delay_min, spawn_delay_max)
+	var delay_timer = get_tree().create_timer(spawn_delay, false)
+	delay_timer.timeout.connect(_on_spawn_delay_finished)
+
+func _on_spawn_delay_finished() -> void:
 	if is_finished:
 		return
-	if not is_jumping:
-		position.x += speed * direction * delta
+		
+	# Smooth scale pop-in when delay finishes
+	var pop_tween = create_tween()
+	pop_tween.set_trans(Tween.TRANS_BACK)
+	pop_tween.set_ease(Tween.EASE_OUT)
+	pop_tween.tween_property(self, "scale", Vector2.ONE, 0.25)
+	
+	pop_tween.finished.connect(func():
+		is_active = true
+		area.input_pickable = true
+		
+		# Start constant shaky effect and lifetime countdown once active
+		_start_shake_tween()
+		var life_timer = get_tree().create_timer(lifetime, false)
+		life_timer.timeout.connect(_on_lifetime_expired)
+	)
+
+# --- CONSTANT SHAKY EFFECT USING TWEEN ---
+func _start_shake_tween() -> void:
+	if shake_tween and shake_tween.is_valid():
+		shake_tween.kill()
+		
+	shake_tween = create_tween()
+	shake_tween.set_loops() # Infinite looping shake
+	shake_tween.set_parallel(false)
+	
+	# Rapid jittering offsets applied locally to the animated sprite for a twitchy toy feel
+	shake_tween.tween_property(animated_sprite, "position", Vector2(randf_range(-2.5, 2.5), randf_range(-2.5, 2.5)), 0.04)
+	shake_tween.tween_property(animated_sprite, "position", Vector2(randf_range(-2.5, 2.5), randf_range(-2.5, 2.5)), 0.04)
+	shake_tween.tween_property(animated_sprite, "position", Vector2.ZERO, 0.04)
+
+func _process(delta: float) -> void:
+	if not is_active or is_finished:
+		return
+		
+	position.x += speed * direction * delta
+	
 	if direction > 0 and position.x >= end_x:
 		_reach_end()
 	elif direction < 0 and position.x <= end_x:
 		_reach_end()
 
-# --- Multi-touch & Mouse Input Handling ---
+# --- 1-Click Fragile Input Handling ---
 func _input(event: InputEvent) -> void:
-	if is_finished:
+	if not is_active or is_finished:
 		return
 		
 	var click_pos = Vector2.ZERO
@@ -77,45 +137,36 @@ func _input(event: InputEvent) -> void:
 		is_triggered = true
 		
 	if is_triggered:
-		if global_position.distance_to(click_pos) < 64.0: # Adjust radius if needed
+		if global_position.distance_to(click_pos) < 64.0:
 			_on_clicked()
 
 func _on_clicked() -> void:
-	if is_jumping or is_finished:
+	if is_finished:
 		return
+	is_finished = true
+	is_active = false
+	area.input_pickable = false
+	
+	if shake_tween and shake_tween.is_valid():
+		shake_tween.kill()
+	
 	AudioManager.play_sound(MOUSE)
 	ParticleManager.spawn_particle(CLICK_PARTICLE, global_position)
-	click_count += 1
-	speed += speed_increase
-	if click_count >= max_clicks:
-		is_finished = true         
-		area.input_pickable = false
-		AudioManager.play_sound(GIFT)
-		gift.visible = true
-		gift.play("default")
-		await gift.animation_finished
-		_pop_and_disappear()
-	else:
-		_jump()
-
-func _jump() -> void:
-	is_jumping = true
-	var target_x = position.x + jump_distance * direction
-	var tween = create_tween()
-	tween.set_trans(Tween.TRANS_SINE)
-	tween.set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "position:x", target_x, jump_duration)
-	tween.parallel().tween_method(_apply_hop_arc, 0.0, 1.0, jump_duration)
-	tween.finished.connect(func(): is_jumping = false)
-
-func _apply_hop_arc(t: float) -> void:
-	animated_sprite.position.y = -sin(t * PI) * jump_height
+	
+	AudioManager.play_sound(GIFT)
+	gift.visible = true
+	gift.play("default")
+	await gift.animation_finished
+	_pop_and_disappear()
 
 func _pop_and_disappear() -> void:
 	is_finished = true
-	is_jumping = true
+	is_active = false
 	area.input_pickable = false
 	
+	if shake_tween and shake_tween.is_valid():
+		shake_tween.kill()
+		
 	animated_sprite.stop()
 	if anim_shadow:
 		anim_shadow.stop()
@@ -132,8 +183,12 @@ func _pop_and_disappear() -> void:
 
 func _reach_end() -> void:
 	is_finished = true
+	is_active = false
 	area.input_pickable = false
 	
+	if shake_tween and shake_tween.is_valid():
+		shake_tween.kill()
+		
 	animated_sprite.stop()
 	if anim_shadow:
 		anim_shadow.stop()
@@ -148,11 +203,14 @@ func _reach_end() -> void:
 	
 func _on_lifetime_expired() -> void:
 	if is_finished:
-		return   # already popped or reached end — nothing to do
+		return
 	is_finished = true
-	is_jumping = true
+	is_active = false
 	area.input_pickable = false
 	
+	if shake_tween and shake_tween.is_valid():
+		shake_tween.kill()
+		
 	animated_sprite.stop()
 	if anim_shadow:
 		anim_shadow.stop()
@@ -177,12 +235,11 @@ func transform_to_polaroid() -> void:
 	if photo_sprite != null and polaroid_texture != null:
 		photo_sprite.texture = polaroid_texture
 
-	# Guarantee Polaroid Data & Connect Signal
 	polaroid.set_meta("item_type", 9)
 	polaroid.set("is_polaroid", true)
 
 	if ItemManager.has_method("register_spawned_object"):
-		ItemManager.register_spawned_object(polaroid, 9) # 9 is Item.POLAROID
+		ItemManager.register_spawned_object(polaroid, 9)
 
 	if polaroid.has_method("appear"):
 		polaroid.appear()
