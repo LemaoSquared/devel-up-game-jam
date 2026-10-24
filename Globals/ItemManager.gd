@@ -18,6 +18,7 @@ const SUCCESSFUL_BLOCK = preload("uid://dhptrcr3hkkdm")
 @export var regen: PackedScene = preload("res://Menus/item_regen.tscn")
 @export var polaroid: PackedScene = preload("res://Menus/item_polaroid.tscn")
 @export var gloves: PackedScene = preload("res://Menus/item_gloves.tscn")
+@export var red_shoes: PackedScene = preload("res://Menus/item_red_shoes.tscn")
 @export var paw: PackedScene = preload("uid://dw3cnflry0n2i")
 
 const NEXT_WAVE = preload("uid://dnvvary85k2lr")
@@ -41,7 +42,8 @@ enum Item {
 	REGEN,     # 8
 	POLAROID,  # 9
 	GLOVES,    # 10
-	PAW        # 11
+	PAW,       # 11
+	RED_SHOES  # 12
 }
 
 @export_group("Animation Settings")
@@ -73,6 +75,9 @@ var taptap_streak_waves: int = 0
 
 # Pity System for HP Regen
 var regen_pity_counter: int = 0
+
+# Red Shoes Pity & Spawn Chance System (Starts at 10%, +10% per failure on Wave 3)
+var red_shoes_spawn_chance: float = 0.10
 
 # Pity & Equal Chance Pool for Camera, Gloves & Paw (33% each)
 var last_powerup_choice: int = -1
@@ -142,43 +147,43 @@ func _initialize_endless_batches() -> void:
 	beginner_batch = BatchData.new()
 	beginner_batch.batch_name = "Beginner Warmup"
 	beginner_batch.waves = [
-		[15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-		[11, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-		[9, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[7, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]   
+		[15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+		[11, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+		[9, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+		[7, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+		[5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   
 	]
 
 	var b1 = BatchData.new()
 	b1.batch_name = "Yarn Frenzy"
 	b1.waves = [
-		[10, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-		[0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-		[4, 8, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[2, 9, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0],  
-		[6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   
+		[10, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+		[0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+		[4, 8, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+		[2, 9, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0],  
+		[6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   
 	]
 	batch_pool.append(b1)
 
 	var b2 = BatchData.new()
 	b2.batch_name = "Yarn Blitz"
 	b2.waves = [
-		[8, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[4, 8, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[10, 5, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0], 
-		[2, 9, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   
+		[8, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+		[4, 8, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+		[10, 5, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0], 
+		[2, 9, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
+		[6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   
 	]
 	batch_pool.append(b2)
 	
 	var b3 = BatchData.new()
 	b3.batch_name = "Wildcard Wave"
 	b3.waves = [
-		[6, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0],
-		[0, 6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
-		[6, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-		[4, 4, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0],
-		[5, 5, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+		[6, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0],
+		[0, 6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
+		[6, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+		[4, 4, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0],
+		[5, 5, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
 	]
 	batch_pool.append(b3)
 
@@ -200,6 +205,7 @@ func start_endless() -> void:
 	total_batches_played = 0
 	current_wave_in_batch = 0
 	regen_pity_counter = 0
+	red_shoes_spawn_chance = 0.10
 	last_powerup_choice = -1
 	powerup_streak = 0
 	taptap_streak_waves = 0
@@ -224,6 +230,16 @@ func stop_endless() -> void:
 	is_endless = false
 	is_game_over = true
 	clear_objects()
+
+# --- RED SHOES SPAWN CHECK LOGIC ---
+func _check_red_shoes_spawn(wave_counts: Array) -> void:
+	if randf() < red_shoes_spawn_chance:
+		red_shoes_spawn_chance = 0.10
+		while wave_counts.size() <= Item.RED_SHOES:
+			wave_counts.append(0)
+		wave_counts[Item.RED_SHOES] += 1
+	else:
+		red_shoes_spawn_chance = min(1.0, red_shoes_spawn_chance + 0.10)
 
 # --- ENDLESS MODE SPAWN FLOW ---
 
@@ -255,6 +271,10 @@ func _spawn_next_endless_wave() -> void:
 	_prepare_wave_state()
 	
 	var wave_encoded_counts: Array = current_wave_queue[current_wave_in_batch].duplicate()
+
+	# Wave 3 of any batch (index 2) triggers Red Shoes check
+	if current_wave_in_batch == 2:
+		_check_red_shoes_spawn(wave_encoded_counts)
 
 	if current_wave_in_batch == 4:
 		_inject_fifth_wave_powerup(wave_encoded_counts)
@@ -339,6 +359,7 @@ func _spawn_encoded_array(item_count: Array) -> void:
 				9: spawn_random_pop_in_rect(Item.POLAROID, count, current_parent)
 				10: spawn_random_pop_in_rect(Item.GLOVES, count, current_parent)
 				11: spawn_random_pop_in_rect(Item.PAW, count, current_parent)
+				12: spawn_random_pop_in_rect(Item.RED_SHOES, count, current_parent)
 
 # --- STORY MODE SPAWNING ---
 
@@ -356,36 +377,40 @@ func play_story_pattern(number: int):
 
 	var item_count = []
 	match number:
-			1: item_count = [12, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0]
-			2: item_count = [12, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0]
-			3: item_count = [15, 0, 4, 0, 0, 0, 3, 1, 0, 0, 0, 0]
-			4: item_count = [15, 0, 4, 0, 0, 0, 4, 1, 0, 0, 0, 0]
-			5: item_count = [0, 15, 0, 0, 0, 0, 5, 2, 0, 0, 0, 0]
-			6: item_count = [10, 5, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0]
-			7: item_count = [12, 12, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			8: item_count = [0, 24, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			9: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-			10: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-			11: item_count = [8, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0]
-			12: item_count = [0, 8, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0]
-			13: item_count = [0, 16, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
-			14: item_count = [16, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
-			15: item_count = [0, 4, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0]
-			16: item_count = [4, 0, 4, 0, 0, 4, 0, 0, 0, 0, 0, 0]
-			17: item_count = [10, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0]
-			18: item_count = [0, 10, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0]
-			19: item_count = [0, 0, 0, 1, 0, 25, 0, 0, 0, 0, 0, 0]
-			20: item_count = [0, 0, 0, 1, 15, 0, 10, 0, 0, 0, 0, 0]
-			21: item_count = [0, 0, 6, 0, 0, 6, 0, 0, 0, 0, 0, 0]
-			22: item_count = [10, 0, 0, 0, 8, 0, 2, 0, 0, 0, 0, 0]
-			23: item_count = [10, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
-			24: item_count = [0, 10, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
-			25: item_count = [15, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-			26: item_count = [0, 15, 0, 1, 15, 0, 0, 0, 0, 0, 0, 0]
-			27: item_count = [8, 0, 8, 0, 0, 0, 0, 2, 0, 0, 0, 0]
-			28: item_count = [0, 8, 0, 0, 8, 0, 0, 2, 0, 0, 0, 0]
-			29: item_count = [0, 10, 10, 0, 0, 7, 0, 0, 0, 0, 0, 0]
-			30: item_count = [11, 0, 0, 0, 10, 0, 5, 0, 0, 0, 0, 0]
+			1: item_count = [12, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0]
+			2: item_count = [12, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0]
+			3: item_count = [15, 0, 4, 0, 0, 0, 3, 1, 0, 0, 0, 0, 1]
+			4: item_count = [15, 0, 4, 0, 0, 0, 4, 1, 0, 0, 0, 0, 1]
+			5: item_count = [0, 15, 0, 0, 0, 0, 5, 2, 0, 0, 0, 0, 1]
+			6: item_count = [10, 5, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 1]
+			7: item_count = [12, 12, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			8: item_count = [0, 24, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			9: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			10: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			11: item_count = [8, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0]
+			12: item_count = [0, 8, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0]
+			13: item_count = [0, 16, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0]
+			14: item_count = [16, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0]
+			15: item_count = [0, 4, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0]
+			16: item_count = [4, 0, 4, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
+			17: item_count = [10, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0]
+			18: item_count = [0, 10, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0]
+			19: item_count = [0, 0, 0, 1, 0, 25, 0, 0, 0, 0, 0, 0, 0]
+			20: item_count = [0, 0, 0, 1, 15, 0, 10, 0, 0, 0, 0, 0, 0]
+			21: item_count = [0, 0, 6, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0]
+			22: item_count = [10, 0, 0, 0, 8, 0, 2, 0, 0, 0, 0, 0, 0]
+			23: item_count = [10, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+			24: item_count = [0, 10, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+			25: item_count = [15, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			26: item_count = [0, 15, 0, 1, 15, 0, 0, 0, 0, 0, 0, 0, 0]
+			27: item_count = [8, 0, 8, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0]
+			28: item_count = [0, 8, 0, 0, 8, 0, 0, 2, 0, 0, 0, 0, 0]
+			29: item_count = [0, 10, 10, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0]
+			30: item_count = [11, 0, 0, 0, 10, 0, 5, 0, 0, 0, 0, 0, 0]
+
+	# Wave 3 of every story batch (patterns 3, 8, 13, 18, 23, 28) triggers Red Shoes check
+	if number % 5 == 3:
+		_check_red_shoes_spawn(item_count)
 
 	_spawn_encoded_array(item_count)
 	_start_wave_timer()
@@ -572,14 +597,18 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 		Item.POLAROID: obj = polaroid.instantiate()
 		Item.GLOVES: obj = gloves.instantiate()
 		Item.PAW: obj = paw.instantiate()
+		Item.RED_SHOES: obj = red_shoes.instantiate()
 	
-	if obj_type != Item.SACK:
+	if obj_type != Item.SACK and obj_type != Item.RED_SHOES:
 		if "lifetime" in obj:
 			obj.lifetime = time_duration_perBatch
 		elif "Duration" in obj:
 			obj.set("Duration", time_duration_perBatch)
 		elif "pop_duration_seconds" in obj:
 			obj.pop_duration_seconds = time_duration_perBatch
+	elif obj_type == Item.RED_SHOES:
+		if "total_lifetime" in obj:
+			obj.total_lifetime = time_duration_perBatch
 	
 	obj.set_meta("item_type", obj_type)
 	target_parent.add_child(obj)
@@ -606,7 +635,7 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 	if obj_type != Item.SACK:
 		wave_one_objects.append(obj)
 
-	if not has_own_launch:
+	if not has_own_launch and obj_type != Item.RED_SHOES:
 		match spawn_animation:
 			SpawnAnimation.POP_SCALE:
 				_animate_pop_scale(obj, pos, delay_index)
@@ -889,6 +918,9 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 					label_instance.setup_text("PAW!", Color.MAGENTA, spawn_pos)
 					_apply_paw_spatial_effect(spawn_pos)
 					
+				Item.RED_SHOES:
+					pass # Red Shoes handles its own points and floating label internally
+					
 				Item.POLAROID, Item.RAT:
 					if label_instance.has_method("setup"):
 						label_instance.setup(20 * mult, spawn_pos, mult)
@@ -913,7 +945,8 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 			item_type == Item.POLAROID or
 			item_type == Item.SACK or
 			item_type == Item.GLOVES or
-			item_type == Item.PAW
+			item_type == Item.PAW or
+			item_type == Item.RED_SHOES
 		)
 		if is_endless and not is_excluded_from_miss:
 			if current_wave_batch and not current_wave_batch.is_finished:
@@ -954,7 +987,8 @@ func _on_wave_timeout() -> void:
 					obj_type == Item.CAMERA or 
 					obj_type == Item.REGEN or
 					obj_type == Item.GLOVES or
-					obj_type == Item.PAW
+					obj_type == Item.PAW or
+					obj_type == Item.RED_SHOES
 				):
 					continue
 				
@@ -1050,12 +1084,7 @@ func register_spawned_object(obj: Node, obj_type = null) -> void:
 	spawned_objects.append(obj)
 
 func _spawn_rat_at(corner: Spawner, cell_size: Vector2, target_parent: Node, col: int, delay_index: int) -> void:
-	# CHANGE THIS: Instead of hardcoding the bottom row (pattern_rows - 1), 
-	# randomize 'r' so rats can spawn on any row from top (0) to bottom (pattern_rows - 1).
 	var r: int = randi_range(0, pattern_rows - 1)
-	
-	# OPTIONAL: If you only want them on middle-to-top rows, restrict the range like this:
-	# var r: int = randi_range(0, 2) # Rows 0, 1, and 2 (top/middle) instead of bottom rows 3 and 4
 
 	var dir: int
 	var target_end_x: float

@@ -1,0 +1,96 @@
+[gd_scene format=3 uid="uid://brpwd0fe1ipq4"]
+
+[ext_resource type="Script" uid="uid://b3bdl8dwgsq7u" path="res://Menus/item_red_shoes.gd" id="1_6y2bu"]
+[ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_6b624"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
+radius = 61.502033
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4srxo"]
+atlas = ExtResource("2_6b624")
+region = Rect2(114, 35, 38, 35)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_kgah6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4srxo")
+}],
+"loop": 2,
+"name": &"default",
+"speed": 4.0
+}, {
+"frames": [],
+"loop": 1,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
+[sub_resource type="Curve" id="Curve_rko1p"]
+_limits = [-200.0, 200.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, -95.38461), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ijthc"]
+curve = SubResource("Curve_rko1p")
+
+[sub_resource type="Curve" id="Curve_eek78"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.3670412, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_wqigk"]
+curve = SubResource("Curve_eek78")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_h7roj"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(42.74, 49.56, 1)
+emission_shape = 1
+emission_sphere_radius = 3.63
+spread = 180.0
+initial_velocity_min = 8.2
+initial_velocity_max = 40.989998
+gravity = Vector3(0, 0, 0)
+radial_accel_min = 7.3699975
+radial_accel_max = 13.929997
+radial_accel_curve = SubResource("CurveTexture_ijthc")
+scale_max = 5.0
+scale_curve = SubResource("CurveTexture_wqigk")
+color = Color(1, 1, 0, 1)
+
+[node name="Shoes" type="Node2D" unique_id=46643488]
+top_level = true
+script = ExtResource("1_6y2bu")
+
+[node name="Shoes" type="Area2D" parent="." unique_id=917850277]
+
+[node name="String" type="ColorRect" parent="Shoes" unique_id=721259691]
+offset_left = -1.0
+offset_top = -620.0
+offset_right = 1.0
+offset_bottom = -20.0
+color = Color(0.9098039, 0.8352941, 0.68235296, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Shoes" unique_id=800203798]
+position = Vector2(-6, 25)
+scale = Vector2(2, 2)
+shape = SubResource("CircleShape2D_frjpc")
+debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)
+
+[node name="Sprite2D2" type="AnimatedSprite2D" parent="Shoes" unique_id=1753425161]
+self_modulate = Color(0, 0, 0, 0.47058824)
+position = Vector2(49.233917, 50.531258)
+scale = Vector2(5.8553557, 5.855356)
+sprite_frames = SubResource("SpriteFrames_kgah6")
+frame_progress = 0.9922685
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="Shoes" unique_id=162635465]
+position = Vector2(40.574104, 38.765625)
+scale = Vector2(6.0705347, 6.070536)
+sprite_frames = SubResource("SpriteFrames_kgah6")
+frame_progress = 0.9922685
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Shoes" unique_id=477620655]
+position = Vector2(2, 2)
+amount = 16
+lifetime = 2.1599999999999997
+process_material = SubResource("ParticleProcessMaterial_h7roj")
