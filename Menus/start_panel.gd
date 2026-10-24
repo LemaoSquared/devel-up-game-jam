@@ -20,7 +20,6 @@ const KATKAT = preload("uid://dy575c21gytdn")
 @onready var label: Label = $Label
 @onready var entity: AnimatedSprite2D = $"../Entity"
 @onready var background_manager: Node2D = $"../BackgroundManager"
-@onready var pause_button: TextureButton = $"../Pause Button"
 
 @export var spawn_area: Control
 
@@ -128,8 +127,6 @@ func _on_start_pressed() -> void:
 		
 	pause_button.visible = true
 
-# --- START2 BUTTON LOGIC ---
-func _on_start2_hovered() -> void:
 
 # --- ENDLESS START BUTTON LOGIC ---
 func _on_endless_hovered() -> void:
