@@ -6,6 +6,14 @@ extends Node2D
 var playback: AudioStreamPlaybackPolyphonic
 var is_paused: bool = false
 
+# Audio Toggle States
+var is_sfx_muted: bool = false
+var is_bgm_muted: bool = false
+
+# Volume constants (0 dB = 100% volume, -80 dB = fully silent)
+const VOLUME_ON_DB: float = 0.0
+const VOLUME_OFF_DB: float = -80.0
+
 func _ready() -> void:
 	sfx_player.bus = "Master"
 	sfx_player.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -49,3 +57,25 @@ func resume_sfx() -> void:
 	if not sfx_player.playing:
 		sfx_player.play()
 		playback = sfx_player.get_stream_playback()
+
+# --- AUDIO TOGGLE FUNCTIONS ---
+
+## Toggles SFX on/off and returns the new muted state (true = off, false = on)
+func toggle_sfx() -> bool:
+	set_sfx_muted(!is_sfx_muted)
+	return is_sfx_muted
+
+## Toggles Music on/off and returns the new muted state (true = off, false = on)
+func toggle_music() -> bool:
+	set_music_muted(!is_bgm_muted)
+	return is_bgm_muted
+
+# --- DIRECT SETTERS ---
+
+func set_sfx_muted(muted: bool) -> void:
+	is_sfx_muted = muted
+	sfx_player.volume_db = VOLUME_OFF_DB if muted else VOLUME_ON_DB
+
+func set_music_muted(muted: bool) -> void:
+	is_bgm_muted = muted
+	bgm_player.volume_db = VOLUME_OFF_DB if muted else VOLUME_ON_DB

@@ -58,6 +58,7 @@ scale_curve = SubResource("CurveTexture_wqigk")
 color = Color(0, 0, 0, 1)
 
 [node name="Shoes" type="Node2D" unique_id=46643488]
+top_level = true
 script = ExtResource("1_rko1p")
 
 [node name="Shoes" type="Area2D" parent="." unique_id=917850277]

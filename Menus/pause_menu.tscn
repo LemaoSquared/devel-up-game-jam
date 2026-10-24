@@ -1,0 +1,227 @@
+[gd_scene format=3 uid="uid://cxgnia65dgs3n"]
+
+[ext_resource type="Script" uid="uid://ci73vbs5w8bbg" path="res://Menus/pause_menu.gd" id="1_rxubw"]
+[ext_resource type="Texture2D" uid="uid://c0f4vpjlnr35c" path="res://Assets/Color Pallette/string.png" id="2_wq2xl"]
+[ext_resource type="Texture2D" uid="uid://r6n3pi1yhebi" path="res://Assets/Aseprite Files/plain_polaroid_element.png" id="3_iptcy"]
+[ext_resource type="Texture2D" uid="uid://bp28rttgqcodq" path="res://Assets/Aseprite Files/clip.png" id="4_8dklf"]
+[ext_resource type="FontFile" uid="uid://cqwfub3g65jm6" path="res://Assets/Baby Night.otf" id="5_hod66"]
+[ext_resource type="Script" uid="uid://cojta4tda56wo" path="res://Menus/music_buttons.gd" id="6_iptcy"]
+[ext_resource type="Texture2D" uid="uid://bprmvr2pvub8c" path="res://Assets/Aseprite Files/musixfx_button.png" id="7_8dklf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hf7om"]
+atlas = ExtResource("3_iptcy")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r77ri"]
+atlas = ExtResource("3_iptcy")
+region = Rect2(0, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ad2kd"]
+atlas = ExtResource("7_8dklf")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g2mud"]
+atlas = ExtResource("7_8dklf")
+region = Rect2(0, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1o2bw"]
+atlas = ExtResource("7_8dklf")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_21plp"]
+atlas = ExtResource("7_8dklf")
+region = Rect2(48, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hgbm7"]
+atlas = ExtResource("7_8dklf")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7siyf"]
+atlas = ExtResource("7_8dklf")
+region = Rect2(0, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_godwh"]
+atlas = ExtResource("7_8dklf")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qnrpq"]
+atlas = ExtResource("7_8dklf")
+region = Rect2(48, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ag636"]
+atlas = ExtResource("3_iptcy")
+region = Rect2(0, 48, 48, 48)
+
+[node name="PauseMenu" type="CanvasLayer" unique_id=1692443393]
+process_mode = 3
+layer = 100
+script = ExtResource("1_rxubw")
+
+[node name="Background Dimming" type="ColorRect" parent="." unique_id=1587074945]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.23753911, 0.23753914, 0.23753911, 0.5019608)
+
+[node name="Hanger" type="Control" parent="." unique_id=175153867]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 72.0
+offset_bottom = 72.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="String" type="TextureRect" parent="Hanger" unique_id=1146486162]
+layout_mode = 0
+offset_top = 120.0
+offset_right = 1152.0
+offset_bottom = 160.0
+texture = ExtResource("2_wq2xl")
+
+[node name="Continue" type="TextureButton" parent="Hanger" unique_id=1582717258]
+layout_mode = 0
+offset_left = 126.0
+offset_top = 169.0
+offset_right = 452.15076
+offset_bottom = 433.0
+rotation = 0.034906585
+pivot_offset = Vector2(155.905, -23.785)
+texture_normal = SubResource("AtlasTexture_hf7om")
+texture_pressed = SubResource("AtlasTexture_r77ri")
+stretch_mode = 0
+
+[node name="Clip" type="TextureRect" parent="Hanger/Continue" unique_id=1787991797]
+layout_mode = 0
+offset_left = 141.07423
+offset_top = -79.29989
+offset_right = 189.07423
+offset_bottom = 13.700127
+texture = ExtResource("4_8dklf")
+
+[node name="Label" type="Label" parent="Hanger/Continue" unique_id=269961896]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 72.0
+offset_right = 304.0
+offset_bottom = 144.0
+theme_override_fonts/font = ExtResource("5_hod66")
+theme_override_font_sizes/font_size = 80
+text = "CONTINUE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Music" type="TextureButton" parent="Hanger" unique_id=349505664]
+layout_mode = 0
+offset_left = 512.0
+offset_top = 191.99998
+offset_right = 640.0
+offset_bottom = 301.0
+pivot_offset = Vector2(155.905, -23.785)
+toggle_mode = true
+stretch_mode = 0
+script = ExtResource("6_iptcy")
+off_texture = SubResource("AtlasTexture_ad2kd")
+off_hovered_texture = SubResource("AtlasTexture_g2mud")
+on_texture = SubResource("AtlasTexture_1o2bw")
+on_hovered_texture = SubResource("AtlasTexture_21plp")
+
+[node name="Clip" type="TextureRect" parent="Hanger/Music" unique_id=685179931]
+layout_mode = 0
+offset_left = 40.0
+offset_top = -79.99999
+offset_right = 88.0
+offset_bottom = 13.000023
+texture = ExtResource("4_8dklf")
+
+[node name="Label" type="Label" parent="Hanger/Music" unique_id=1255006463]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.000004
+offset_right = 112.0
+offset_bottom = 72.0
+theme_override_fonts/font = ExtResource("5_hod66")
+theme_override_font_sizes/font_size = 45
+text = "MUSIC"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SFX" type="TextureButton" parent="Hanger" unique_id=878193226]
+layout_mode = 0
+offset_left = 512.0
+offset_top = 312.0
+offset_right = 640.0
+offset_bottom = 421.0
+pivot_offset = Vector2(155.905, -23.785)
+toggle_mode = true
+stretch_mode = 0
+script = ExtResource("6_iptcy")
+off_texture = SubResource("AtlasTexture_hgbm7")
+off_hovered_texture = SubResource("AtlasTexture_7siyf")
+on_texture = SubResource("AtlasTexture_godwh")
+on_hovered_texture = SubResource("AtlasTexture_qnrpq")
+
+[node name="Clip" type="TextureRect" parent="Hanger/SFX" unique_id=329035837]
+self_modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = 32.0
+offset_top = -15.999992
+offset_right = 42.0
+offset_bottom = 3.0000076
+texture = ExtResource("4_8dklf")
+
+[node name="Clip2" type="TextureRect" parent="Hanger/SFX" unique_id=1323801794]
+self_modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = 88.0
+offset_top = -15.999992
+offset_right = 98.0
+offset_bottom = 3.0000076
+texture = ExtResource("4_8dklf")
+
+[node name="Label" type="Label" parent="Hanger/SFX" unique_id=1293352155]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 16.000004
+offset_right = 104.0
+offset_bottom = 73.0
+theme_override_fonts/font = ExtResource("5_hod66")
+theme_override_font_sizes/font_size = 45
+text = "SFX"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Quit" type="TextureButton" parent="Hanger" unique_id=505649524]
+layout_mode = 0
+offset_left = 690.0
+offset_top = 171.0
+offset_right = 1010.0
+offset_bottom = 435.0
+rotation = -0.034906585
+pivot_offset = Vector2(155.905, -23.785)
+texture_normal = SubResource("AtlasTexture_hf7om")
+texture_pressed = SubResource("AtlasTexture_ag636")
+stretch_mode = 0
+
+[node name="Clip" type="TextureRect" parent="Hanger/Quit" unique_id=268909707]
+layout_mode = 0
+offset_left = 136.0
+offset_top = -80.0
+offset_right = 184.0
+offset_bottom = 16.0
+texture = ExtResource("4_8dklf")
+
+[node name="Label2" type="Label" parent="Hanger/Quit" unique_id=1815131967]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 64.0
+offset_right = 296.0
+offset_bottom = 154.0
+theme_override_fonts/font = ExtResource("5_hod66")
+theme_override_font_sizes/font_size = 100
+text = "Quit"
+horizontal_alignment = 1
+vertical_alignment = 1

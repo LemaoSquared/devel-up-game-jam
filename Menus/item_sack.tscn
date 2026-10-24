@@ -59,6 +59,7 @@ animations = [{
 }]
 
 [node name="Object" type="Node2D" unique_id=780172524]
+top_level = true
 script = ExtResource("1_htlur")
 
 [node name="Sack" type="Area2D" parent="." unique_id=1417257225]

@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://ckxm50r2jq2qg"]
+
+[ext_resource type="Script" uid="uid://iv5rwri6hynx" path="res://Particles/Emitting_Particle.gd" id="1_45jau"]
+[ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="1_axh21"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_axh21"]
+atlas = ExtResource("1_axh21")
+region = Rect2(336, 176, 48, 48)
+
+[sub_resource type="Curve" id="Curve_5fomh"]
+_data = [Vector2(0.003759399, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_axh21"]
+curve = SubResource("Curve_5fomh")
+
+[sub_resource type="Curve" id="Curve_p33qg"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_36c8c"]
+curve = SubResource("Curve_p33qg")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kgah6"]
+particle_flag_disable_z = true
+angle_min = -17.89999
+angle_max = 25.000011
+spread = 180.0
+initial_velocity_min = 283.96
+initial_velocity_max = 508.75998
+gravity = Vector3(0, 500, 0)
+scale_min = 0.5
+scale_max = 1.5
+scale_curve = SubResource("CurveTexture_36c8c")
+alpha_curve = SubResource("CurveTexture_axh21")
+
+[node name="Particles" type="Node2D" unique_id=1635401699]
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1546279001]
+process_mode = 3
+top_level = true
+z_index = 1000
+position = Vector2(-2, 4)
+emitting = false
+amount = 16
+texture = SubResource("AtlasTexture_axh21")
+lifetime = 1.31
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_kgah6")
+script = ExtResource("1_45jau")

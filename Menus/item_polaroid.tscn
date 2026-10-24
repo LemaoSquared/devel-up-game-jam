@@ -44,6 +44,7 @@ animations = [{
 }]
 
 [node name="item_polaroid" type="Node2D" unique_id=753296624 groups=["camera_targets"]]
+top_level = true
 script = ExtResource("1_i15qm")
 
 [node name="Polaroid" type="Area2D" parent="." unique_id=832164131]
