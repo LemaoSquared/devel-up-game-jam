@@ -1,4 +1,5 @@
 extends Node2D
+
 signal popped_out(obj: Node, was_clicked: bool)
 
 # POLAROID
@@ -227,7 +228,13 @@ func transform_to_polaroid() -> void:
 	var polaroid := polaroid_scene.instantiate() as Node2D
 	get_parent().add_child(polaroid)
 
-	polaroid.global_position = global_position
+	# --- CLAMP POSITION INWARDS IF OFFSCREEN ---
+	var viewport_size = get_viewport_rect().size
+	var clamped_pos = global_position
+	clamped_pos.x = clamp(clamped_pos.x, 64.0, viewport_size.x - 64.0)
+	clamped_pos.y = clamp(clamped_pos.y, 64.0, viewport_size.y - 64.0)
+
+	polaroid.global_position = clamped_pos
 	polaroid.global_rotation = global_rotation
 	polaroid.scale = scale
 

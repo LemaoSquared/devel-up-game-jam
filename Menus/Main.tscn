@@ -1357,6 +1357,17 @@ position = Vector2(1216, 571)
 [node name="Transition2" type="CanvasLayer" parent="." unique_id=161198873]
 layer = 10
 
+[node name="TutorialLabel" type="Label" parent="Transition2" unique_id=2130771760]
+top_level = true
+offset_left = 49.0
+offset_top = 181.0
+offset_right = 408.0
+offset_bottom = 221.0
+theme_override_fonts/font = ExtResource("29_qn5f4")
+theme_override_font_sizes/font_size = 43
+text = "Click Items to Wrap Them"
+metadata/_edit_use_anchors_ = true
+
 [node name="Gradient" type="TextureRect" parent="Transition2" unique_id=1029427981]
 z_index = 5
 anchors_preset = 15
@@ -1369,16 +1380,6 @@ offset_bottom = 702.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_5c5y6")
-
-[node name="TutorialLabel" type="Label" parent="." unique_id=2130771760]
-offset_left = 49.0
-offset_top = 181.0
-offset_right = 408.0
-offset_bottom = 221.0
-theme_override_fonts/font = ExtResource("29_qn5f4")
-theme_override_font_sizes/font_size = 43
-text = "Click Items to Wrap Them"
-metadata/_edit_use_anchors_ = true
 
 [node name="Version Label" type="Label" parent="." unique_id=1849655685]
 offset_left = 994.0

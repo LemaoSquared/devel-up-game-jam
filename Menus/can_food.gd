@@ -1,5 +1,6 @@
 extends Node2D
-signal popped_out(obj, was_clicked: bool)
+
+signal popped_out(obj: Node, was_clicked: bool)
 
 # SARDINES
 @export var sardine_scene: PackedScene = preload("res://Menus/Sardines.tscn")
@@ -118,28 +119,65 @@ func _pop_opened_can() -> void:
 	tween.tween_callback(queue_free)
 
 func transform_to_polaroid() -> void:
-	var polaroid := polaroid_scene.instantiate() as Node2D
-	get_parent().add_child(polaroid)
-
-	polaroid.global_position = global_position
-	polaroid.global_rotation = global_rotation
-	polaroid.scale = scale
-
-	var photo_sprite := polaroid.get_node_or_null("Polaroid/Sprite2D") as Sprite2D
-	if photo_sprite != null and polaroid_texture != null:
-		photo_sprite.texture = polaroid_texture
-
-	# Guarantee Polaroid Data & Connect Signal
-	polaroid.set_meta("item_type", 9)
-	polaroid.set("is_polaroid", true)
-
-	if ItemManager.has_method("register_spawned_object"):
-		ItemManager.register_spawned_object(polaroid, 9) # 9 is Item.POLAROID
-
-	if polaroid.has_method("appear"):
-		polaroid.appear()
+	if is_finished:
+		return
+	is_finished = true
+	click_area.input_pickable = false
+	
+	var parent := get_parent()
+	if parent == null:
+		push_error("Can_Food has no valid parent.")
+		queue_free()
+		return
 
 	popped_out.emit(self, true)
+
+	# Spawn 3 Polaroids in place of the sardines using the fan spread logic
+	var count: int = 3
+	var spacing_x: float = 90.0
+	var upward_distance: float = 80.0
+	var offsets := SardineItem.get_fan_offsets(count, spacing_x, upward_distance)
+
+	for i in range(count):
+		if polaroid_scene == null:
+			continue
+			
+		var polaroid := polaroid_scene.instantiate() as Node2D
+		if polaroid == null:
+			continue
+			
+		parent.add_child(polaroid)
+		polaroid.global_position = global_position
+		polaroid.global_rotation = global_rotation
+		polaroid.scale = Vector2.ZERO
+
+		var photo_sprite := polaroid.get_node_or_null("Polaroid/Sprite2D") as Sprite2D
+		if photo_sprite != null and polaroid_texture != null:
+			photo_sprite.texture = polaroid_texture
+
+		polaroid.set_meta("item_type", 9)
+		polaroid.set("is_polaroid", true)
+
+		if ItemManager.has_method("register_spawned_object"):
+			ItemManager.register_spawned_object(polaroid, 9)
+
+		if polaroid.has_method("appear"):
+			polaroid.appear()
+
+		# Animate out to fan positions with delay matching the sardine spread pattern
+		var target_pos = global_position + offsets[i]
+		var spread_tween = polaroid.create_tween()
+		spread_tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
+		spread_tween.set_trans(Tween.TRANS_BACK)
+		spread_tween.set_ease(Tween.EASE_OUT)
+		spread_tween.set_parallel(true)
+		
+		if i * 0.07 > 0.0:
+			spread_tween.tween_interval(i * 0.07)
+			
+		spread_tween.tween_property(polaroid, "global_position", target_pos, 0.5)
+		spread_tween.tween_property(polaroid, "scale", Vector2.ONE, 0.3).from(Vector2.ZERO)
+
 	queue_free()
 
 func _on_lifetime_expired() -> void:

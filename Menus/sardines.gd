@@ -7,6 +7,10 @@ const GIFT = preload("uid://fojbgtm48t6b")
 const CLICK_PARTICLE = preload("uid://d3v5eteyxeame")
 const FLOATING_LABEL = preload("uid://cu8xcr7igstbj")
 
+# POLAROID
+@export var polaroid_scene: PackedScene = preload("res://Menus/item_polaroid.tscn")
+@export var polaroid_texture: Texture2D
+
 @export_group("Spread Settings")
 @export var spacing_x: float = 90.0
 @export var upward_distance: float = 80.0
@@ -33,10 +37,9 @@ var base_y: float = 0.0
 
 @onready var sardine_area: Area2D = $Sardines
 @onready var gift: AnimatedSprite2D = $GiftAnimation
-@onready var sprite: Node2D = $Sprite2D if has_node("Sprite2D") else self # Fallback reference for flipping
 
 func _ready() -> void:
-	# Ensure they don't start at zero scale/invisible if launched immediately
+	add_to_group("camera_targets") # Group registration for camera power-ups
 	scale = Vector2.ONE
 	visible = true
 
@@ -48,24 +51,34 @@ func launch() -> void:
 		return
 
 	has_launched = true
-	
-	# Fallback: make sure scale and visibility are correct right before spreading
 	visible = true
 	scale = Vector2.ONE
 	
+	# --- CALCULATE DIRECTION & FACE IN ADVANCE BEFORE SPREADING ---
+	var viewport_width = get_viewport_rect().size.x
+	var offsets := get_fan_offsets(total_sardines, spacing_x, upward_distance)
+	var target_pos = global_position
+	
+	if sardine_index >= 0 and sardine_index < offsets.size():
+		target_pos += offsets[sardine_index]
+
+	var dist_to_left_edge = target_pos.x                      
+	var dist_to_right_edge = viewport_width - target_pos.x    
+
+	if dist_to_left_edge > dist_to_right_edge:
+		swim_direction = -1  # Left edge is farther, swim left
+	else:
+		swim_direction = 1   # Right edge is farther, swim right
+
+	if has_node("Sprite2D"):
+		$Sprite2D.flip_h = (swim_direction < 0)
+	if has_node("GiftAnimation"):
+		$GiftAnimation.flip_h = (swim_direction < 0)
+
 	await _spread_apart()
 
 	if is_finished:
 		return
-
-	# Determine escape direction based on initial world position relative to screen center
-	var viewport_width = get_viewport_rect().size.x
-	if global_position.x < viewport_width / 2.0:
-		swim_direction = -1  # Left side swims left off-screen
-	else:
-		swim_direction = 1   # Right side swims right off-screen
-
-	scale.x = abs(scale.x) * swim_direction
 
 	base_y = global_position.y
 	is_swimming = true
@@ -87,7 +100,6 @@ func start_tilting_loop(obj: Node2D) -> void:
 	tween.tween_property(obj, "rotation", tilt_angle, duration * 2.0)
 	tween.tween_property(obj, "rotation", 0.0, duration)
 
-
 func _process(delta: float) -> void:
 	if not is_swimming or is_finished:
 		return
@@ -97,10 +109,10 @@ func _process(delta: float) -> void:
 	# Horizontal swimming movement
 	global_position.x += swim_speed * swim_direction * delta
 
-	# Vertical Sine Wave oscillation (swimming bobbing effect)
+	# Vertical Sine Wave oscillation
 	global_position.y = base_y + sin(time_alive * wave_frequency) * wave_amplitude
 
-	# Check if it has escaped past the screen bounds
+	# Check screen escape
 	var viewport_width = get_viewport_rect().size.x
 	if swim_direction > 0 and global_position.x > viewport_width + offscreen_padding:
 		_escape_offscreen()
@@ -114,7 +126,7 @@ func _escape_offscreen() -> void:
 	is_swimming = false
 	sardine_area.input_pickable = false
 	
-	popped_out.emit(self, false) # Count as missed/escaped
+	popped_out.emit(self, false)
 	queue_free()
 
 func _spread_apart() -> void:
@@ -142,7 +154,7 @@ func _spread_apart() -> void:
 	tween.set_parallel(true)
 
 	tween.tween_property(self, "global_position", target_position, spread_duration)
-	tween.tween_property(self, "scale", Vector2(abs(scale.x) if scale.x != 0 else 1.0, 1.0), 0.3)
+	tween.tween_property(self, "scale", Vector2.ONE, 0.3)
 
 	await tween.finished
 
@@ -193,7 +205,6 @@ func pop_out(was_clicked: bool = false) -> void:
 	if was_clicked:
 		ScoreManager.add_points(5)
 		
-		# Spawn +5 floating label only in Endless Mode
 		if is_inside_tree() and "is_endless" in ItemManager and ItemManager.is_endless and FLOATING_LABEL:
 			var label = FLOATING_LABEL.instantiate()
 			get_tree().current_scene.add_child(label)
@@ -210,6 +221,40 @@ func pop_out(was_clicked: bool = false) -> void:
 	tween.tween_property(self, "position:y", position.y - 15.0, 0.25)
 
 	tween.chain().tween_callback(queue_free)
+
+func transform_to_polaroid() -> void:
+	if is_finished:
+		return
+	is_finished = true
+	is_swimming = false
+	sardine_area.input_pickable = false
+
+	if polaroid_scene == null or get_parent() == null:
+		queue_free()
+		return
+
+	var polaroid := polaroid_scene.instantiate() as Node2D
+	get_parent().add_child(polaroid)
+
+	polaroid.global_position = global_position
+	polaroid.global_rotation = global_rotation
+	polaroid.scale = scale
+
+	var photo_sprite := polaroid.get_node_or_null("Polaroid/Sprite2D") as Sprite2D
+	if photo_sprite != null and polaroid_texture != null:
+		photo_sprite.texture = polaroid_texture
+
+	polaroid.set_meta("item_type", 9)
+	polaroid.set("is_polaroid", true)
+
+	if ItemManager.has_method("register_spawned_object"):
+		ItemManager.register_spawned_object(polaroid, 9)
+
+	if polaroid.has_method("appear"):
+		polaroid.appear()
+
+	popped_out.emit(self, true)
+	queue_free()
 
 func _on_lifetime_expired() -> void:
 	if is_finished:

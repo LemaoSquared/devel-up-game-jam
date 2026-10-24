@@ -76,7 +76,7 @@ var taptap_streak_waves: int = 0
 # Pity System for HP Regen
 var regen_pity_counter: int = 0
 
-# Red Shoes Pity & Spawn Chance System (Starts at 10%, +10% per failure on Wave 3)
+# Red Shoes Pity & Spawn Chance System (Starts at 10%, +20% per failure on Wave 3)
 var red_shoes_spawn_chance: float = 0.10
 
 # Pity & Equal Chance Pool for Camera, Gloves & Paw (33% each)
@@ -231,7 +231,7 @@ func stop_endless() -> void:
 	is_game_over = true
 	clear_objects()
 
-# --- RED SHOES SPAWN CHECK LOGIC ---
+# --- RED SHOES SPAWN CHECK LOGIC (20% Ramp-Up per Failure) ---
 func _check_red_shoes_spawn(wave_counts: Array) -> void:
 	if randf() < red_shoes_spawn_chance:
 		red_shoes_spawn_chance = 0.10
@@ -239,7 +239,7 @@ func _check_red_shoes_spawn(wave_counts: Array) -> void:
 			wave_counts.append(0)
 		wave_counts[Item.RED_SHOES] += 1
 	else:
-		red_shoes_spawn_chance = min(1.0, red_shoes_spawn_chance + 0.10)
+		red_shoes_spawn_chance = min(1.0, red_shoes_spawn_chance + 0.20)
 
 # --- ENDLESS MODE SPAWN FLOW ---
 
@@ -367,6 +367,11 @@ func play_story_pattern(number: int):
 	if is_game_over or is_endless:
 		return
 		
+	glove_active = false
+	var player_entity := get_tree().get_first_node_in_group("player")
+	if player_entity and player_entity.has_method("set_gloves_active"):
+		player_entity.set_gloves_active(false)
+		
 	time_duration_perBatch = base_time_duration_perBatch
 		
 	_isolate_previous_wave()
@@ -377,12 +382,12 @@ func play_story_pattern(number: int):
 
 	var item_count = []
 	match number:
-			1: item_count = [12, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0]
-			2: item_count = [12, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0]
-			3: item_count = [15, 0, 4, 0, 0, 0, 3, 1, 0, 0, 0, 0, 1]
-			4: item_count = [15, 0, 4, 0, 0, 0, 4, 1, 0, 0, 0, 0, 1]
-			5: item_count = [0, 15, 0, 0, 0, 0, 5, 2, 0, 0, 0, 0, 1]
-			6: item_count = [10, 5, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 1]
+			1: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			2: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			3: item_count = [15, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			4: item_count = [15, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			5: item_count = [0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			6: item_count = [10, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 			7: item_count = [12, 12, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 			8: item_count = [0, 24, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 			9: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -407,10 +412,6 @@ func play_story_pattern(number: int):
 			28: item_count = [0, 8, 0, 0, 8, 0, 0, 2, 0, 0, 0, 0, 0]
 			29: item_count = [0, 10, 10, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0]
 			30: item_count = [11, 0, 0, 0, 10, 0, 5, 0, 0, 0, 0, 0, 0]
-
-	# Wave 3 of every story batch (patterns 3, 8, 13, 18, 23, 28) triggers Red Shoes check
-	if number % 5 == 3:
-		_check_red_shoes_spawn(item_count)
 
 	_spawn_encoded_array(item_count)
 	_start_wave_timer()
@@ -599,7 +600,8 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 		Item.PAW: obj = paw.instantiate()
 		Item.RED_SHOES: obj = red_shoes.instantiate()
 	
-	if obj_type != Item.SACK and obj_type != Item.RED_SHOES:
+	# Sack now shares the dynamic wave timer duration like other items
+	if obj_type != Item.RED_SHOES:
 		if "lifetime" in obj:
 			obj.lifetime = time_duration_perBatch
 		elif "Duration" in obj:
@@ -624,6 +626,11 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 			obj.camera_activated.connect(func():
 				is_converting_to_polaroid = true
 				camera_effects.activate_camera_effect()
+				
+				for item in wave_one_objects.duplicate():
+					if is_instance_valid(item) and item.has_method("transform_to_polaroid"):
+						item.transform_to_polaroid()
+						
 				get_tree().create_timer(0.5, false, true, true).timeout.connect(func():
 					is_converting_to_polaroid = false
 				)
@@ -632,8 +639,8 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 	obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
 	spawned_objects.append(obj)
 	
-	if obj_type != Item.SACK:
-		wave_one_objects.append(obj)
+	# Sack is now included in wave_one_objects tracking so its timeout/leftover state is properly evaluated
+	wave_one_objects.append(obj)
 
 	if not has_own_launch and obj_type != Item.RED_SHOES:
 		match spawn_animation:
@@ -697,7 +704,6 @@ func _inflict_damage() -> void:
 	if is_invincible:
 		return
 
-	# Reset taptap wave counter upon taking damage
 	taptap_streak_waves = 0
 
 	last_broken_streak = 0
@@ -919,7 +925,18 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 					_apply_paw_spatial_effect(spawn_pos)
 					
 				Item.RED_SHOES:
-					pass # Red Shoes handles its own points and floating label internally
+					var red_shoes_score = 250 * mult
+					if ScoreManager:
+						if ScoreManager.has_method("add_score"):
+							ScoreManager.add_score(red_shoes_score)
+						elif "score" in ScoreManager:
+							ScoreManager.score += red_shoes_score
+					if label_instance.has_method("setup"):
+						label_instance.setup(red_shoes_score, spawn_pos, mult)
+					
+				Item.SACK:
+					if label_instance.has_method("setup"):
+						label_instance.setup(25 * mult, spawn_pos, mult)
 					
 				Item.POLAROID, Item.RAT:
 					if label_instance.has_method("setup"):
@@ -932,7 +949,7 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 				Item.GARBAGE, Item.SHOES:
 					if label_instance.has_method("setup"):
 						label_instance.setup(-30, spawn_pos, 1)
-					
+						
 				_: 
 					if label_instance.has_method("setup"):
 						label_instance.setup(5 * mult, spawn_pos, mult)
@@ -970,7 +987,8 @@ func _on_wave_timeout() -> void:
 			remaining_leniency_waves = max(1, 1 + int(last_broken_streak / 5))
 
 	if is_endless:
-		var uncollected_valid_gifts_exist: bool = false
+		# --- UPDATED ENDLESS MODE HP / LEFTOVER GIFT EVALUATION ---
+		var uncollected_penalty_count: int = 0
 		
 		for obj in wave_one_objects:
 			if is_instance_valid(obj):
@@ -980,6 +998,8 @@ func _on_wave_timeout() -> void:
 					continue
 
 				var obj_type = obj.get_meta("item_type", -1)
+				
+				# Exclude non-damaging items or hazards handled separately
 				if (
 					obj_type == Item.GARBAGE or 
 					obj_type == Item.SHOES or 
@@ -992,10 +1012,21 @@ func _on_wave_timeout() -> void:
 				):
 					continue
 				
-				uncollected_valid_gifts_exist = true
-				break
+				# Sardine Cans: +1 damage/gift if un-opened
+				if obj_type == Item.SARDINE:
+					uncollected_penalty_count += 1
+					continue
+					
+				# Sacks: +1 damage/gift for the sack itself if left unopened
+				if obj_type == Item.SACK:
+					uncollected_penalty_count += 1
+					continue
+
+				# Standard Cat Treats & Yarns count as 1 penalty each
+				uncollected_penalty_count += 1
 		
-		if uncollected_valid_gifts_exist or (current_wave_batch and current_wave_batch.has_missed_item):
+		# Apply damage once for accumulated leftover gifts, respecting invincibility frames
+		if uncollected_penalty_count > 0 or (current_wave_batch and current_wave_batch.has_missed_item):
 			_inflict_damage()
 
 		_handle_endless_mode_timeout()
@@ -1011,7 +1042,6 @@ func _handle_endless_mode_timeout() -> void:
 		is_flawless = false
 
 	if LivesManager.lives >= lives_at_wave_start and is_flawless:
-		# 1. Capture current multiplier BEFORE registering the new flawless wave
 		var current_mult: int = 1
 		if ScoreManager:
 			if "current_multiplier" in ScoreManager:
@@ -1019,11 +1049,9 @@ func _handle_endless_mode_timeout() -> void:
 			elif "multiplier" in ScoreManager:
 				current_mult = ScoreManager.multiplier
 
-		# 2. Register the wave progress with ScoreManager
 		if ScoreManager and ScoreManager.has_method("register_flawless_wave"):
 			ScoreManager.register_flawless_wave()
 
-		# 3. Increment streak counter ONLY if the wave was completed while already at x3
 		if current_mult == 3:
 			taptap_streak_waves += 1
 			if taptap_streak_waves >= 3:
@@ -1031,14 +1059,12 @@ func _handle_endless_mode_timeout() -> void:
 		else:
 			taptap_streak_waves = 0
 	else:
-		# Reset flawless counter if damage was taken or an item was missed
 		taptap_streak_waves = 0
 		
 	AudioManager.play_sound(NEXT_WAVE)
 		
 	current_wave_in_batch += 1
 
-	# --- TRIGGER TRANSITION EVERY 5 WAVES ---
 	var total_waves = (total_batches_played * 5) + current_wave_in_batch
 	if total_waves > 0 and total_waves % 5 == 0:
 		var bg_mgr = get_tree().get_first_node_in_group("background_manager")

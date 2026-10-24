@@ -1,7 +1,7 @@
 extends TextureRect
 
 const STREET = preload("uid://c6xk46jpedco4")
-@onready var tutorial_label: Label = $"../TutorialLabel"
+@onready var tutorial_label: Label = $"../Transition2/TutorialLabel"
 @onready var endless_mode_ui: CanvasLayer = $"../EndlessModeUI"
 @onready var pause_button: TextureButton = $"../PauseButton"
 

@@ -8,18 +8,14 @@ const SACK_OPEN = preload("uid://d3nlvoeoqtbyp")
 const SACK_PARTICLE = preload("uid://bncb0rx7oecq0")
 const FLOATING_LABEL = preload("uid://cu8xcr7igstbj")
 
-# Preload Cat Treat Scene for spawning on burst
-@export var treat_scene: PackedScene = preload("uid://dopbjbokm0whf")
-
 # POLAROID
 @export var polaroid_scene: PackedScene = preload("res://Menus/item_polaroid.tscn")
 @export var polaroid_texture: Texture2D
 
 @export_group("Hold Settings")
-@export var hold_duration_required: float = 0.5
+@export var hold_duration_required: float = 0.75
 @export var treat_spawn_count: int = 5
-@export var treat_burst_radius: float = 120.0
-@export var success_points: int = 25
+@export var treat_burst_radius: float = 140.0
 
 @export_group("Sack Regions")
 @export var sack_regions: Array[Rect2] = [
@@ -35,7 +31,7 @@ const FLOATING_LABEL = preload("uid://cu8xcr7igstbj")
 @onready var fish_particles: GPUParticles2D = $FishParticles
 @onready var sack_shadow: Sprite2D = $Sack/Sprite2D2
 
-const Duration: float = 12.0
+const Duration: float = 6.0
 
 var is_popping: bool = false
 var is_transforming: bool = false
@@ -54,8 +50,8 @@ const HOLD_SCALE: float = 1.0
 func _ready() -> void:
 	add_to_group("camera_targets")
 
+	scale = Vector2(BASE_SCALE, BASE_SCALE)
 	sack.input_pickable = false
-	scale = Vector2(BASE_SCALE, BASE_SCALE) # Make it initially smaller
 
 	if hold_bar:
 		hold_bar.visible = false
@@ -83,26 +79,21 @@ func _process(delta: float) -> void:
 	hold_timer += delta
 	var progress = clamp(hold_timer / hold_duration_required, 0.0, 1.0)
 	
-	# Update HoldBar progress value (0 to 100)
 	if hold_bar:
 		hold_bar.value = progress * 100.0
 
-	# Progressively scale up from the smaller base size while holding
 	var target_scale = lerp(BASE_SCALE, HOLD_SCALE, progress)
 	scale = Vector2(target_scale, target_scale)
 
-	# Update sprite regions based on hold progress
 	update_sack_sprite_by_progress(progress)
 
 	if hold_timer >= hold_duration_required:
 		_on_hold_completed()
 
-# --- Touch & Mouse Hold Handling (Mobile Touch Supportive) ---
 func _input(event: InputEvent) -> void:
 	if is_popping:
 		return
 
-	# Mobile Touch Press / Release
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			if global_position.distance_to(event.position) < 64.0 and not is_holding:
@@ -111,16 +102,14 @@ func _input(event: InputEvent) -> void:
 		elif event.index == active_touch_index:
 			_release_holding()
 
-	# Mobile Touch Drag (cancel if dragged off item radius)
 	elif event is InputEventScreenDrag and event.index == active_touch_index:
 		if global_position.distance_to(event.position) > 80.0:
 			_release_holding()
 
-	# Mouse Press / Release (for desktop testing)
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			if global_position.distance_to(event.position) < 64.0 and not is_holding:
-				active_touch_index = -999 # Special index for mouse
+				active_touch_index = -999 
 				_start_holding()
 		elif active_touch_index == -999:
 			_release_holding()
@@ -159,7 +148,6 @@ func _start_erratic_shake() -> void:
 	shake_tween = create_tween()
 	shake_tween.set_loops()
 	
-	# Rapid, unpredictable local offsets
 	shake_tween.tween_property(sack_sprite, "position", Vector2(randf_range(-3.0, 3.0), randf_range(-3.0, 3.0)), 0.03)
 	shake_tween.tween_property(sack_sprite, "position", Vector2(randf_range(-3.0, 3.0), randf_range(-3.0, 3.0)), 0.03)
 	shake_tween.tween_property(sack_sprite, "position", Vector2.ZERO, 0.03)
@@ -179,7 +167,6 @@ func _rewind_holding_progress() -> void:
 	rewind_tween.set_trans(Tween.TRANS_QUAD)
 	rewind_tween.set_ease(Tween.EASE_OUT)
 
-	# Reset scale back to the smaller base size and rewind progress
 	rewind_tween.tween_property(self, "scale", Vector2(BASE_SCALE, BASE_SCALE), 0.25)
 	rewind_tween.tween_method(update_sack_sprite_by_progress, start_progress, 0.0, 0.25)
 	
@@ -207,31 +194,18 @@ func _on_hold_completed() -> void:
 	_stop_erratic_shake()
 	sack.input_pickable = false
 
+	# Play Gift Wrap explosion animation sound & particle effects
 	AudioManager.play_sound(SACK_OPEN)
 	ParticleManager.spawn_particle(SACK_PARTICLE, global_position)
 
-	# --- AWARD POINTS AND SPAWN FLOATING SCORE LABEL ---
-	ScoreManager.add_points(success_points)
-	if FLOATING_LABEL:
-		var label = FLOATING_LABEL.instantiate()
-		get_tree().current_scene.add_child(label)
-		if label.has_method("setup"):
-			label.setup(success_points, global_position)
-	# ---------------------------------------------------
-
-	# Burst Cat Treats immediately around proximity
-	_burst_cat_treats()
-
-	# --- BRIEF WHITE FLASH & SHRINK TO ZERO ---
 	popped_out.emit(self, true)
 
 	var tween = create_tween()
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
 	tween.set_parallel(true)
 	
-	# Bright white flash tint
 	tween.tween_property(self, "modulate", Color(4.0, 4.0, 4.0, 1.0), 0.08)
-	tween.tween_property(self, "scale", scale * 1.25, 0.08) # slight pop outward
+	tween.tween_property(self, "scale", scale * 1.25, 0.08)
 
 	var shrink_tween = create_tween()
 	shrink_tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
@@ -242,42 +216,6 @@ func _on_hold_completed() -> void:
 	shrink_tween.tween_property(self, "scale", Vector2.ZERO, 0.2).set_delay(0.08)
 	shrink_tween.tween_property(self, "modulate:a", 0.0, 0.2).set_delay(0.08)
 	shrink_tween.chain().tween_callback(queue_free)
-
-func _burst_cat_treats() -> void:
-	if treat_scene == null:
-		return
-
-	var parent_node = get_parent()
-	if parent_node == null:
-		return
-
-	var angle_step = TAU / float(treat_spawn_count)
-
-	for i in range(treat_spawn_count):
-		var treat_instance = treat_scene.instantiate() as Node2D
-		if treat_instance == null:
-			continue
-
-		parent_node.add_child(treat_instance)
-		treat_instance.global_position = global_position
-
-		# Determine target position on the radial circle
-		var angle = angle_step * i + randf_range(-0.15, 0.15)
-		var offset = Vector2(cos(angle), sin(angle)) * randf_range(treat_burst_radius * 0.7, treat_burst_radius)
-		var target_pos = global_position + offset
-
-		# Animate treats launching outwards from the sack
-		var burst_tween = treat_instance.create_tween()
-		burst_tween.set_trans(Tween.TRANS_BACK)
-		burst_tween.set_ease(Tween.EASE_OUT)
-		burst_tween.set_parallel(true)
-
-		burst_tween.tween_property(treat_instance, "global_position", target_pos, 0.4)
-		burst_tween.tween_property(treat_instance, "scale", Vector2.ONE, 0.3).from(Vector2.ZERO)
-
-		# Register with ItemManager if active
-		if ItemManager.has_method("register_spawned_object"):
-			ItemManager.register_spawned_object(treat_instance, ItemManager.Item.TREAT)
 
 func _on_duration_expired() -> void:
 	if is_popping:
@@ -326,25 +264,48 @@ func transform_to_polaroid() -> void:
 
 	_stop_erratic_shake()
 
-	var polaroid := polaroid_scene.instantiate() as Node2D
-	get_parent().add_child(polaroid)
-	polaroid.global_position = global_position
-	polaroid.global_rotation = global_rotation
-	polaroid.scale = scale
+	if polaroid_scene != null and get_parent() != null:
+		var parent_node = get_parent()
+		var screen_center = get_viewport_rect().size * 0.5
+		var dir_to_center = screen_center - global_position
+		var base_angle = dir_to_center.angle()
+		var spread_arc = deg_to_rad(60.0)
 
-	var photo_sprite := polaroid.get_node_or_null("Polaroid/Sprite2D") as Sprite2D
-	if photo_sprite != null and polaroid_texture != null:
-		photo_sprite.texture = polaroid_texture
+		for i in range(treat_spawn_count):
+			var polaroid := polaroid_scene.instantiate() as Node2D
+			if polaroid == null:
+				continue
 
-	polaroid.set_meta("item_type", 9)
-	polaroid.set("is_polaroid", true)
+			parent_node.add_child(polaroid)
+			polaroid.global_position = global_position 
+			polaroid.scale = Vector2.ZERO
 
-	if ItemManager.has_method("register_spawned_object"):
-		ItemManager.register_spawned_object(polaroid, 9)
+			var t = float(i) / float(treat_spawn_count - 1) if treat_spawn_count > 1 else 0.5
+			var angle_offset = lerp(-spread_arc * 0.5, spread_arc * 0.5, t)
+			var final_angle = base_angle + angle_offset + randf_range(-0.05, 0.05)
+			var target_pos = global_position + Vector2(cos(final_angle), sin(final_angle)) * randf_range(treat_burst_radius * 0.8, treat_burst_radius * 1.2)
 
-	if polaroid.has_method("appear"):
-		polaroid.appear()
-	
+			var photo_sprite := polaroid.get_node_or_null("Polaroid/Sprite2D") as Sprite2D
+			if photo_sprite != null and polaroid_texture != null:
+				photo_sprite.texture = polaroid_texture
+
+			polaroid.set_meta("item_type", 9)
+			polaroid.set("is_polaroid", true)
+
+			if ItemManager.has_method("register_spawned_object"):
+				ItemManager.register_spawned_object(polaroid, 9)
+
+			if polaroid.has_method("appear"):
+				polaroid.appear()
+
+			var burst_tween = polaroid.create_tween()
+			burst_tween.set_trans(Tween.TRANS_BACK)
+			burst_tween.set_ease(Tween.EASE_OUT)
+			burst_tween.set_parallel(true)
+
+			burst_tween.tween_property(polaroid, "global_position", target_pos, 0.4)
+			burst_tween.tween_property(polaroid, "scale", Vector2.ONE, 0.3)
+
 	popped_out.emit(self, true)
 	queue_free()
 

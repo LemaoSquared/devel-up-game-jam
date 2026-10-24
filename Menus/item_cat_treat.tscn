@@ -108,6 +108,6 @@ animation = &"1"
 
 [node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=1318743194]
 visible = false
-position = Vector2(5.684342e-14, -33)
-scale = Vector2(2.4277778, 2.4277778)
+position = Vector2(3.1874955, -28.041672)
+scale = Vector2(2.5694444, 2.5694444)
 sprite_frames = SubResource("SpriteFrames_85mbi")

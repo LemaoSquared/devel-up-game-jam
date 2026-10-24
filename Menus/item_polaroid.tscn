@@ -74,6 +74,6 @@ region_rect = Rect2(328, 168, 65, 62)
 
 [node name="GiftAnimation" type="AnimatedSprite2D" parent="." unique_id=933783865]
 visible = false
-position = Vector2(-5.684342e-14, -40)
-scale = Vector2(3.0222223, 3.0222223)
+position = Vector2(-1.000001, -33)
+scale = Vector2(3.2222226, 3.2222226)
 sprite_frames = SubResource("SpriteFrames_ixl3m")
