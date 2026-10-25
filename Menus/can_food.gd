@@ -190,6 +190,7 @@ func _on_lifetime_expired() -> void:
 	tween.set_ease(Tween.EASE_IN)
 	tween.tween_property(self, "modulate:a", 0.0, 0.25)
 	tween.finished.connect(func():
-		popped_out.emit(self, false)
+		# Pass 'true' or remove the emit so ItemManager's miss logic doesn't double-penalize
+		popped_out.emit(self, true)
 		queue_free()
 	)

@@ -100,6 +100,7 @@ var is_converting_to_polaroid: bool = false
 class WaveBatch:
 	var has_missed_item: bool = false
 	var is_finished: bool = false
+	var active_sardine_cans: int = 0
 
 var current_wave_batch: WaveBatch = null
 
@@ -144,49 +145,142 @@ func _exit_tree() -> void:
 func _initialize_endless_batches() -> void:
 	batch_pool.clear()
 
+# Array mapping: 
+#[0:TREAT, 
+#1:YARN, 
+#2:GARBAGE, 
+#3:CAMERA, 
+#4:SHOES, 
+#5:SARDINE, 
+#6:RAT, 
+#7:SACK, 
+#8:REGEN, 
+#9:POLAROID, 
+#10:GLOVES, 
+#11:PAW, 
+#12:RED_SHOES]
+
 	beginner_batch = BatchData.new()
 	beginner_batch.batch_name = "Beginner Warmup"
+	
 	beginner_batch.waves = [
-		[15, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], 
-		[11, 2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], 
-		[9, 3, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],  
-		[7, 4, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],  
-		[5, 5, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]   
-	]
+		[15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #75
+		[5, 10, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #75
+		[10, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  #75
+		[0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  #75
+		[8, 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   #75
+	] #375
 
 	var b1 = BatchData.new()
-	b1.batch_name = "Yarn Frenzy"
+	b1.batch_name = "Gifts From Above"
 	b1.waves = [
-		[10, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-		[0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-		[4, 8, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[2, 9, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   
-	]
+		[0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #75
+		[0, 5, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0], #25
+		[0, 10, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], #50
+		[0, 1, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0],  #5
+		[0, 9, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0]   #45
+	] #200
 	batch_pool.append(b1)
 
 	var b2 = BatchData.new()
-	b2.batch_name = "Yarn Blitz"
+	b2.batch_name = "Schools of Fish"
 	b2.waves = [
-		[8, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[4, 8, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[10, 5, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0], 
-		[2, 9, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   
-	]
+		[0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0], #60 
+		[0, 0, 5, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],  #30
+		[1, 0, 5, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], #20
+		[1, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0, 0, 0],  #30
+		[3, 0, 0, 0, 5, 3, 0, 0, 0, 0, 0, 0, 0] #60  
+	] #200
 	batch_pool.append(b2)
 	
 	var b3 = BatchData.new()
-	b3.batch_name = "Wildcard Wave"
+	b3.batch_name = "Gift Crossing"
 	b3.waves = [
-		[6, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0],
-		[0, 6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
-		[6, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-		[4, 4, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0],
-		[5, 5, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
-	]
+		[0, 0, 0, 0, 2, 0, 4, 0, 0, 0, 0, 0, 0], #40
+		[0, 0, 1, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0], #60
+		[0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0], #50
+		[0, 0, 20, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], #10
+		[0, 0, 1, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0] #40
+	] #200
 	batch_pool.append(b3)
+	
+	var b4 = BatchData.new()
+	b4.batch_name = "Sack Attack"
+	b4.waves = [
+		[0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0], #50
+		[5, 0, 0, 0, 5, 0, 0, 1, 0, 0, 0, 0, 0], #50
+		[0, 1, 5, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0],  #50
+		[0, 0, 5, 0, 5, 0, 0, 1, 0, 0, 0, 0, 0],  #25
+		[2, 0, 2, 0, 4, 1, 0, 0, 0, 0, 0, 0, 0]   #25
+	] #200
+	batch_pool.append(b4)
+	
+	var b5 = BatchData.new()
+	b5.batch_name = "Treats and Yarns"
+	b5.waves = [
+		[10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #50
+		[5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #50
+		[5, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  #25
+		[4, 1, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0],  #25
+		[5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   #75
+	] #200
+	batch_pool.append(b5)
+	
+	var b6 = BatchData.new()
+	b6.batch_name = "Mouse Panic"
+	b6.waves = [
+		[0, 0, 0, 0, 1, 0, 10, 0, 0, 0, 0, 1, 0], #100
+		[0, 0, 6, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0], #30
+		[0, 0, 10, 0, 5, 0, 1, 0, 0, 0, 0, 0, 0],  #10
+		[0, 0, 15, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],  #20
+		[0, 0, 8, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0]   #40
+	] #200
+	batch_pool.append(b6)
+	
+	var b7 = BatchData.new()
+	b7.batch_name = "No Trash Zone"
+	b7.waves = [
+		[4, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0], #50
+		[0, 0, 0, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0], #25
+		[0, 4, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],  #50
+		[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],  #25
+		[5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   #25
+	] #200
+	batch_pool.append(b7)
 
+	var b8 = BatchData.new()
+	b8.batch_name = "Garbage Collection"
+	b8.waves = [
+		[0, 0, 20, 0, 10, 0, 1, 0, 0, 0, 0, 0, 0], #10
+		[0, 0, 10, 0, 10, 0, 3, 0, 0, 0, 0, 0, 0], #30
+		[2, 0, 10, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0],  #10
+		[0, 0, 5, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0],  #50
+		[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]   #100
+	] #200
+	batch_pool.append(b8)
+	
+	var b9 = BatchData.new()
+	b9.batch_name = "Trick or Treats"
+	b9.waves = [
+		[4, 0, 5, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0], #40
+		[5, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0, 0, 0], #40
+		[8, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  #40
+		[6, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0],  #30
+		[10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   #75
+	] #200
+	batch_pool.append(b8)
+	
+	var b10 = BatchData.new()
+	b10.batch_name = "Sack and Sardines"
+	b10.waves = [
+		[0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0], #40
+		[0, 0, 3, 0, 3, 1, 0, 1, 0, 0, 0, 0, 0], #40
+		[0, 0, 3, 0, 3, 1, 0, 1, 0, 0, 0, 0, 0],  #40
+		[0, 0, 6, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0],  #40
+		[0, 0, 0, 0, 6, 1, 0, 1, 0, 0, 0, 0, 0]   #40
+	] #200
+	batch_pool.append(b10)
+	
 func _refill_batch_bag() -> void:
 	if batch_pool.is_empty():
 		push_error("ItemManager: No succeeding batches defined in batch_pool!")
@@ -601,7 +695,6 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 		Item.PAW: obj = paw.instantiate()
 		Item.RED_SHOES: obj = red_shoes.instantiate()
 	
-	# Sack now shares the dynamic wave timer duration like other items
 	if obj_type != Item.RED_SHOES:
 		if "lifetime" in obj:
 			obj.lifetime = time_duration_perBatch
@@ -617,6 +710,10 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 	target_parent.add_child(obj)
 	obj.add_to_group("active_gifts")
 	obj.global_position = pos
+	
+	# Track sardine cans specifically for open vs unopened wave timer evaluations
+	if obj_type == Item.SARDINE and current_wave_batch:
+		current_wave_batch.active_sardine_cans += 1
 	
 	var has_own_launch: bool = obj.has_method("launch")
 	if has_own_launch:
@@ -640,8 +737,6 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 			
 	obj.popped_out.connect(_on_object_popped_out.bind(obj_type))
 	spawned_objects.append(obj)
-	
-	# Sack is now included in wave_one_objects tracking so its timeout/leftover state is properly evaluated
 	wave_one_objects.append(obj)
 
 	if not has_own_launch and obj_type != Item.RED_SHOES:
@@ -884,6 +979,8 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 		
 		var is_sardine_can: bool = (effective_item_type == Item.SARDINE and not (obj is SardineItem))
 		if is_sardine_can:
+			if current_wave_batch and current_wave_batch.active_sardine_cans > 0:
+				current_wave_batch.active_sardine_cans -= 1
 			return 
 			
 		item_collected.emit(effective_item_type)
@@ -989,8 +1086,14 @@ func _on_wave_timeout() -> void:
 			remaining_leniency_waves = max(1, 1 + int(last_broken_streak / 5))
 
 	if is_endless:
-		# --- UPDATED ENDLESS MODE HP / LEFTOVER GIFT EVALUATION ---
 		var uncollected_penalty_count: int = 0
+		
+		# Factor in un-opened sardine cans from this batch
+		if current_wave_batch:
+			uncollected_penalty_count += current_wave_batch.active_sardine_cans
+			
+			# CRITICAL FIX: Clear them out immediately after evaluating so they don't carry over to the next wave
+			current_wave_batch.active_sardine_cans = 0
 		
 		for obj in wave_one_objects:
 			if is_instance_valid(obj):
@@ -1010,13 +1113,9 @@ func _on_wave_timeout() -> void:
 					obj_type == Item.REGEN or
 					obj_type == Item.GLOVES or
 					obj_type == Item.PAW or
-					obj_type == Item.RED_SHOES
+					obj_type == Item.RED_SHOES or
+					obj_type == Item.SARDINE
 				):
-					continue
-				
-				# Sardine Cans: +1 damage/gift if un-opened
-				if obj_type == Item.SARDINE:
-					uncollected_penalty_count += 1
 					continue
 					
 				# Sacks: +1 damage/gift for the sack itself if left unopened

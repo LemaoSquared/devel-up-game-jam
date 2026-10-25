@@ -62,7 +62,7 @@ func launch() -> void:
 	if sardine_index >= 0 and sardine_index < offsets.size():
 		target_pos += offsets[sardine_index]
 
-	var dist_to_left_edge = target_pos.x                      
+	var dist_to_left_edge = target_pos.x                     
 	var dist_to_right_edge = viewport_width - target_pos.x    
 
 	if dist_to_left_edge > dist_to_right_edge:
