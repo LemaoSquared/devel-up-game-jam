@@ -20,6 +20,7 @@ layer = 100
 script = ExtResource("1_53viq")
 
 [node name="Gradient" type="TextureRect" parent="." unique_id=1997589652]
+z_index = 40
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

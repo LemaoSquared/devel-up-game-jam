@@ -32,6 +32,7 @@ region = Rect2(624, 472, 648, 560)
 
 [node name="GameOver Screen" type="Node2D" unique_id=341467045]
 process_mode = 3
+z_index = 30
 script = ExtResource("1_ikqa8")
 
 [node name="ColorRect" type="TextureRect" parent="." unique_id=164002361]

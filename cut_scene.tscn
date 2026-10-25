@@ -8,6 +8,7 @@ process_mode = 3
 script = ExtResource("1_we0jh")
 
 [node name="Background" type="ColorRect" parent="." unique_id=555787150]
+z_index = 20
 offset_right = 1150.0
 offset_bottom = 650.0
 

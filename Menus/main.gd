@@ -43,8 +43,33 @@ func _on_game_start_enable_pause() -> void:
 func _on_story_mode_completed() -> void:
 	PauseManager.disable_pause()
 	ScoreManager.try_update_high_score()
+	
+	# Clear standard wave items
+	if ItemManager.has_method("clear_objects"):
+		ItemManager.clear_objects()
+		
+	# Force-destroy any lingering gift-wrapped items or animations frozen on screen
+	for node in get_tree().get_nodes_in_group("gift_items"): # Or check by method/class
+		if is_instance_valid(node):
+			node.queue_free()
+			
+	# Alternatively, free any node currently playing gift animations by class/name check:
+	for child in get_tree().current_scene.find_children("*", "", true, false):
+		if child is AnimatedSprite2D and ("gift" in child.name.to_lower() or child.animation == "default"):
+			# If it's a child node of an item finishing its wrap animation, free its parent or the node itself
+			var parent = child.get_parent()
+			if parent and not parent is Node2D and parent.name == "Main": # Adjust depending on your root node
+				pass
+			elif parent and parent.has_method("queue_free"):
+				parent.queue_free()
+
 	if ItemManager.has_method("stop_spawning"):
 		ItemManager.stop_spawning()
+
+	for gift in get_tree().get_nodes_in_group("active_gifts"):
+		if is_instance_valid(gift):
+			gift.queue_free()
+		
 	await _run_game_over_sequence(true)
 
 func _on_lives_depleted() -> void:

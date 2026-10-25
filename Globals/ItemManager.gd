@@ -147,11 +147,11 @@ func _initialize_endless_batches() -> void:
 	beginner_batch = BatchData.new()
 	beginner_batch.batch_name = "Beginner Warmup"
 	beginner_batch.waves = [
-		[15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-		[11, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-		[9, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[7, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  
-		[5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   
+		[15, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], 
+		[11, 2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], 
+		[9, 3, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],  
+		[7, 4, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],  
+		[5, 5, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]   
 	]
 
 	var b1 = BatchData.new()
@@ -382,36 +382,37 @@ func play_story_pattern(number: int):
 
 	var item_count = []
 	match number:
-			1: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			2: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			3: item_count = [15, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			4: item_count = [15, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			5: item_count = [0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			6: item_count = [10, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			7: item_count = [12, 12, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			8: item_count = [0, 24, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			9: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			10: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			11: item_count = [8, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0]
-			12: item_count = [0, 8, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0]
-			13: item_count = [0, 16, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0]
-			14: item_count = [16, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0]
-			15: item_count = [0, 4, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0]
-			16: item_count = [4, 0, 4, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
-			17: item_count = [10, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0]
-			18: item_count = [0, 10, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0]
-			19: item_count = [0, 0, 0, 1, 0, 25, 0, 0, 0, 0, 0, 0, 0]
-			20: item_count = [0, 0, 0, 1, 15, 0, 10, 0, 0, 0, 0, 0, 0]
-			21: item_count = [0, 0, 6, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0]
-			22: item_count = [10, 0, 0, 0, 8, 0, 2, 0, 0, 0, 0, 0, 0]
-			23: item_count = [10, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
-			24: item_count = [0, 10, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
-			25: item_count = [15, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-			26: item_count = [0, 15, 0, 1, 15, 0, 0, 0, 0, 0, 0, 0, 0]
-			27: item_count = [8, 0, 8, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0]
-			28: item_count = [0, 8, 0, 0, 8, 0, 0, 2, 0, 0, 0, 0, 0]
-			29: item_count = [0, 10, 10, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0]
-			30: item_count = [11, 0, 0, 0, 10, 0, 5, 0, 0, 0, 0, 0, 0]
+# Array mapping: [0:TREAT, 1:YARN, 2:GARBAGE, 3:CAMERA, 4:SHOES, 5:SARDINE, 6:RAT, 7:SACK, 8:REGEN, 9:POLAROID, 10:GLOVES, 11:PAW, 12:RED_SHOES]
+		1: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		2: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		3: item_count = [15, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		4: item_count = [15, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		5: item_count = [0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		6: item_count = [10, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		7: item_count = [8, 8, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		8: item_count = [0, 16, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		9: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		10: item_count = [0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+		11: item_count = [5, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0]
+		12: item_count = [0, 5, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0]
+		13: item_count = [0, 16, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0]
+		14: item_count = [16, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0]
+		15: item_count = [0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 0, 0, 0]
+		16: item_count = [6, 0, 6, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0]
+		17: item_count = [10, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0]
+		18: item_count = [0, 10, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0]
+		19: item_count = [0, 0, 0, 1, 10, 5, 0, 0, 0, 0, 0, 0, 0]
+		20: item_count = [0, 0, 10, 1, 0, 0, 15, 0, 0, 0, 0, 0, 0]
+		21: item_count = [0, 0, 4, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0]
+		22: item_count = [4, 4, 0, 0, 4, 0, 6, 0, 0, 0, 0, 0, 0]
+		23: item_count = [5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+		24: item_count = [0, 5, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+		25: item_count = [0, 0, 5, 1, 5, 0, 0, 5, 0, 0, 0, 0, 0] 
+		26: item_count = [0, 0, 5, 1, 5, 5, 0, 2, 0, 0, 0, 0, 0] 
+		27: item_count = [6, 0, 6, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0] 
+		28: item_count = [0, 0, 2, 0, 4, 5, 0, 1, 0, 0, 0, 0, 0] 
+		29: item_count = [0, 0, 6, 0, 0, 0, 10, 2, 0, 0, 0, 0, 0] 
+		30: item_count = [10, 10, 0, 0, 4, 0, 5, 0, 0, 0, 0, 0, 0] 
 
 	_spawn_encoded_array(item_count)
 	_start_wave_timer()
@@ -614,6 +615,7 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 	
 	obj.set_meta("item_type", obj_type)
 	target_parent.add_child(obj)
+	obj.add_to_group("active_gifts")
 	obj.global_position = pos
 	
 	var has_own_launch: bool = obj.has_method("launch")
@@ -940,7 +942,7 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 					
 				Item.POLAROID, Item.RAT:
 					if label_instance.has_method("setup"):
-						label_instance.setup(20 * mult, spawn_pos, mult)
+						label_instance.setup(10 * mult, spawn_pos, mult)
 					
 				Item.TREAT, Item.YARN, Item.SARDINE:
 					if label_instance.has_method("setup"):

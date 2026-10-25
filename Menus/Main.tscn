@@ -1359,6 +1359,7 @@ layer = 10
 
 [node name="TutorialLabel" type="Label" parent="Transition2" unique_id=2130771760]
 top_level = true
+z_index = 22
 offset_left = 49.0
 offset_top = 181.0
 offset_right = 408.0

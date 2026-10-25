@@ -48,7 +48,6 @@ animations = [{
 }]
 
 [node name="item_Glove" type="Node2D" unique_id=2042003166]
-z_index = 10
 script = ExtResource("1_y1bxd")
 
 [node name="Glove" type="Area2D" parent="." unique_id=1467465299]

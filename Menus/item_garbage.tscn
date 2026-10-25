@@ -53,7 +53,6 @@ scale_curve = SubResource("CurveTexture_wqigk")
 color = Color(0, 0, 0, 1)
 
 [node name="Object" type="Node2D" unique_id=46643488]
-z_index = 10
 script = ExtResource("1_7bpuo")
 
 [node name="Garbage" type="Area2D" parent="." unique_id=917850277]
