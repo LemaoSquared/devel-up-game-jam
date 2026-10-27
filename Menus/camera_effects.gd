@@ -5,6 +5,8 @@ var effect_running: bool = false
 @onready var heal_rect: TextureRect = $HealRect
 @onready var glove_rect: TextureRect = $GloveRect
 @onready var block_rect: TextureRect = $BlockRect
+@onready var paw_rect: TextureRect = $PawRect
+@onready var red_shoes_rect: TextureRect = $RedShoesRect
 
 const SLOW_TIME_SCALE: float = 0.25
 const SLOW_MOTION_DURATION: float = 0.7
@@ -53,6 +55,18 @@ func _ready() -> void:
 		glove_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		glove_rect.visible = false
 	
+	# Initialize PawRect
+	if paw_rect:
+		paw_rect.modulate.a = 0.0
+		paw_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		paw_rect.visible = false
+		
+	# Initialize RedShoesRect
+	if red_shoes_rect:
+		red_shoes_rect.modulate.a = 0.0
+		red_shoes_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		red_shoes_rect.visible = false
+		
 	# Position all 5 polaroids off-screen left at startup
 	var polaroids = [polaroid_1, polaroid_2, polaroid_3, polaroid_4, polaroid_5]
 	for p in polaroids:
@@ -244,3 +258,25 @@ func trigger_block_effect() -> void:
 	
 	# Clean up visibility toggle when finished
 	tween.tween_callback(func(): block_rect.visible = false)
+
+
+# --- Paw Powerup Vignette Effect ---
+func trigger_paw_effect() -> void:
+	if not paw_rect:
+		return
+		
+	# Snap to fully visible instantly, matching the smooth block/glove style
+	paw_rect.visible = true
+	paw_rect.modulate.a = 1.0 
+	
+	var tween := create_tween()
+	tween.set_ignore_time_scale(true) # Ensures it runs smoothly during slow-mo or hitstop
+	tween.set_trans(Tween.TRANS_QUAD)
+	tween.set_ease(Tween.EASE_OUT)
+	
+	# Hold briefly or fade out nicely (0.25 seconds total duration, matching quick red shoes / glove style)
+	tween.tween_interval(0.2)
+	tween.tween_property(paw_rect, "modulate:a", 0.0, 1.0)
+	
+	# Clean up visibility toggle when finished
+	tween.tween_callback(func(): paw_rect.visible = false)

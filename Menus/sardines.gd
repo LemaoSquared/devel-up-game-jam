@@ -34,6 +34,7 @@ var spawn_delay: float = 0.0
 var swim_direction: int = 1  # 1 = Swim Right, -1 = Swim Left
 var time_alive: float = 0.0
 var base_y: float = 0.0
+var _last_position_y: float = 0.0
 
 @onready var sardine_area: Area2D = $Sardines
 @onready var gift: AnimatedSprite2D = $GiftAnimation
@@ -81,6 +82,7 @@ func launch() -> void:
 		return
 
 	base_y = global_position.y
+	_last_position_y = base_y
 	is_swimming = true
 
 	var life_timer := get_tree().create_timer(lifetime, false)
@@ -104,13 +106,19 @@ func _process(delta: float) -> void:
 	if not is_swimming or is_finished:
 		return
 
+	# Detect if an external force (like the Paw power-up) has moved this node's Y position abruptly
+	if abs(global_position.y - _last_position_y) > 2.0 and not is_zero_approx(global_position.y - _last_position_y):
+		# Adjust base_y so the sine wave stays centered around the new moved position instead of snapping back
+		base_y += (global_position.y - _last_position_y)
+
 	time_alive += delta
 
 	# Horizontal swimming movement
 	global_position.x += swim_speed * swim_direction * delta
 
-	# Vertical Sine Wave oscillation
+	# Vertical Sine Wave oscillation centered safely around updated base_y
 	global_position.y = base_y + sin(time_alive * wave_frequency) * wave_amplitude
+	_last_position_y = global_position.y
 
 	# Check screen escape
 	var viewport_width = get_viewport_rect().size.x

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="2_6b624"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_frjpc"]
-radius = 76.60451
+radius = 106.5
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4srxo"]
 atlas = ExtResource("2_6b624")
@@ -91,6 +91,6 @@ frame_progress = 0.9922685
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="Shoes" unique_id=477620655]
 position = Vector2(2, 2)
-amount = 16
+amount = 64
 lifetime = 2.1599999999999997
 process_material = SubResource("ParticleProcessMaterial_h7roj")

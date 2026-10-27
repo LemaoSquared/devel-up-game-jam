@@ -84,6 +84,23 @@ gradient = SubResource("Gradient_vu3rj")
 fill = 1
 fill_from = Vector2(0.48634812, 0.4795222)
 
+[sub_resource type="Gradient" id="Gradient_phlfg"]
+colors = PackedColorArray(0, 0, 0, 0, 0.99999994, 0.90014255, 0.6621615, 0.74509805)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_0kuc2"]
+gradient = SubResource("Gradient_phlfg")
+fill = 1
+fill_from = Vector2(0.48634812, 0.4795222)
+
+[sub_resource type="Gradient" id="Gradient_rfmlb"]
+offsets = PackedFloat32Array(0, 0.9982639)
+colors = PackedColorArray(0, 0, 0, 0, 1, 1, 1, 0.4)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_bhakv"]
+gradient = SubResource("Gradient_rfmlb")
+fill = 1
+fill_from = Vector2(0.48634812, 0.4795222)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i0d87"]
 shader = ExtResource("2_yng6g")
 shader_parameter/pixelation = 16.0
@@ -683,6 +700,18 @@ offset_top = 62.0
 offset_right = 1164.0
 offset_bottom = 597.0
 texture = SubResource("GradientTexture2D_id0th")
+
+[node name="PawRect" type="TextureRect" parent="CameraEffects" unique_id=626240133]
+offset_top = 62.0
+offset_right = 1164.0
+offset_bottom = 597.0
+texture = SubResource("GradientTexture2D_0kuc2")
+
+[node name="RedShoesRect" type="TextureRect" parent="CameraEffects" unique_id=141871372]
+offset_top = 62.0
+offset_right = 1164.0
+offset_bottom = 597.0
+texture = SubResource("GradientTexture2D_bhakv")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=621758755]
 layer = 60
@@ -1394,6 +1423,7 @@ horizontal_alignment = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="PauseButton" type="TextureButton" parent="." unique_id=1294662200]
+z_index = 100
 offset_left = 1045.0
 offset_top = 55.0
 offset_right = 1141.0

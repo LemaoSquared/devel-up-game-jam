@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cwsffhfhs7eko" path="res://Assets/Object Assets/Gift_Sheet.png" id="3_ucqv3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_htlur"]
-size = Vector2(96.5, 102.5)
+size = Vector2(123.25, 135.25)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8upip"]
 atlas = ExtResource("1_jnwkv")
@@ -65,7 +65,7 @@ script = ExtResource("1_htlur")
 [node name="Sack" type="Area2D" parent="." unique_id=1417257225]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Sack" unique_id=1127696186]
-position = Vector2(6, 2)
+position = Vector2(6, 11)
 scale = Vector2(2, 2)
 shape = SubResource("RectangleShape2D_htlur")
 debug_color = Color(0.99999994, 0.77514356, 0.16315532, 0.41960785)

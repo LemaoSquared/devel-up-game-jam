@@ -58,7 +58,8 @@ enum Item {
 @export var enable_drop_wave: bool = true
 @export var spawn_count: int = 10
 
-var time_duration_perBatch: float = 6.0
+# Buffed initial duration from 6.0 to 5.0 seconds
+var time_duration_perBatch: float = 5.0
 var spawned_objects: Array[Node] = []
 var wave_one_objects: Array[Node] = []
 var drop_wave_triggered: bool = false
@@ -113,9 +114,9 @@ class BatchData:
 	var waves: Array = []
 
 var is_endless: bool = false
-var base_time_duration_perBatch: float = 6.0  
+var base_time_duration_perBatch: float = 5.0  # Buffed base floor/starting point to match 5.0s
 @export var batch_speed_step: float = 0.5        
-@export var max_timer_reduction: float = 3.5  # Lowers the wave timer floor to 2.5s (6.0 - 3.5)
+@export var max_timer_reduction: float = 2.5  # Adjusted floor limit accordingly (5.0 - 2.5 = 2.5s minimum cap)
 
 var total_batches_played: int = 0
 var current_wave_in_batch: int = 0
@@ -175,21 +176,21 @@ func _initialize_endless_batches() -> void:
 	b1.batch_name = "Gifts From Above"
 	b1.waves = [
 		[0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #75
-		[0, 5, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0], #25
-		[0, 10, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], #50
-		[0, 1, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0],  #5
-		[0, 9, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0]   #45
+		[0, 5, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0], #25
+		[0, 10, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0], #50
+		[0, 1, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0],  #5
+		[0, 9, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0]   #45
 	] #200
 	batch_pool.append(b1)
 
 	var b2 = BatchData.new()
 	b2.batch_name = "Schools of Fish"
 	b2.waves = [
-		[0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0], #60 
-		[0, 0, 5, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],  #30
-		[1, 0, 5, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], #20
-		[1, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0, 0, 0],  #30
-		[3, 0, 0, 0, 5, 3, 0, 0, 0, 0, 0, 0, 0] #60  
+		[6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0], #60 
+		[0, 0, 3, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],  #30
+		[1, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], #20
+		[1, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0],  #30
+		[6, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0] #60  
 	] #200
 	batch_pool.append(b2)
 	
@@ -197,9 +198,9 @@ func _initialize_endless_batches() -> void:
 	b3.batch_name = "Gift Crossing"
 	b3.waves = [
 		[0, 0, 0, 0, 2, 0, 4, 0, 0, 0, 0, 0, 0], #40
-		[0, 0, 1, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0], #60
+		[0, 0, 1, 0, 0, 2, 3, 0, 0, 0, 0, 0, 0], #60
 		[0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0], #50
-		[0, 0, 20, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], #10
+		[0, 0, 10, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], #10
 		[0, 0, 1, 0, 1, 2, 1, 0, 0, 0, 0, 0, 0] #40
 	] #200
 	batch_pool.append(b3)
@@ -208,10 +209,10 @@ func _initialize_endless_batches() -> void:
 	b4.batch_name = "Sack Attack"
 	b4.waves = [
 		[0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0], #50
-		[5, 0, 0, 0, 5, 0, 0, 1, 0, 0, 0, 0, 0], #50
-		[0, 1, 5, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0],  #50
-		[0, 0, 5, 0, 5, 0, 0, 1, 0, 0, 0, 0, 0],  #25
-		[2, 0, 2, 0, 4, 1, 0, 0, 0, 0, 0, 0, 0]   #25
+		[5, 0, 0, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0], #50
+		[0, 1, 3, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0],  #50
+		[0, 0, 1, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0],  #25
+		[2, 0, 3, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0]   #25
 	] #200
 	batch_pool.append(b4)
 	
@@ -229,11 +230,11 @@ func _initialize_endless_batches() -> void:
 	var b6 = BatchData.new()
 	b6.batch_name = "Mouse Panic"
 	b6.waves = [
-		[0, 0, 0, 0, 1, 0, 10, 0, 0, 0, 0, 1, 0], #100
-		[0, 0, 6, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0], #30
-		[0, 0, 10, 0, 5, 0, 1, 0, 0, 0, 0, 0, 0],  #10
-		[0, 0, 15, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],  #20
-		[0, 0, 8, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0]   #40
+		[10, 0, 0, 0, 1, 0, 5, 0, 0, 0, 0, 1, 0], #100
+		[0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0], #30
+		[0, 0, 5, 0, 5, 0, 1, 0, 0, 0, 0, 0, 0],  #10
+		[0, 0, 7, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],  #20
+		[0, 0, 4, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0]   #40
 	] #200
 	batch_pool.append(b6)
 	
@@ -251,9 +252,9 @@ func _initialize_endless_batches() -> void:
 	var b8 = BatchData.new()
 	b8.batch_name = "Garbage Collection"
 	b8.waves = [
-		[0, 0, 20, 0, 10, 0, 1, 0, 0, 0, 0, 0, 0], #10
-		[0, 0, 10, 0, 10, 0, 3, 0, 0, 0, 0, 0, 0], #30
-		[2, 0, 10, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0],  #10
+		[0, 0, 10, 0, 5, 0, 1, 0, 0, 0, 0, 0, 0], #10
+		[0, 0, 5, 0, 5, 0, 3, 0, 0, 0, 0, 0, 0], #30
+		[2, 0, 5, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0],  #10
 		[0, 0, 5, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0],  #50
 		[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]   #100
 	] #200
@@ -268,16 +269,16 @@ func _initialize_endless_batches() -> void:
 		[6, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0],  #30
 		[10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   #75
 	] #200
-	batch_pool.append(b8)
+	batch_pool.append(b9)
 	
 	var b10 = BatchData.new()
 	b10.batch_name = "Sack and Sardines"
 	b10.waves = [
 		[0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0], #40
-		[0, 0, 3, 0, 3, 1, 0, 1, 0, 0, 0, 0, 0], #40
-		[0, 0, 3, 0, 3, 1, 0, 1, 0, 0, 0, 0, 0],  #40
-		[0, 0, 6, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0],  #40
-		[0, 0, 0, 0, 6, 1, 0, 1, 0, 0, 0, 0, 0]   #40
+		[0, 0, 1, 0, 2, 1, 0, 1, 0, 0, 0, 0, 0], #40
+		[0, 0, 2, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0],  #40
+		[0, 0, 3, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0],  #40
+		[0, 0, 0, 0, 3, 1, 0, 1, 0, 0, 0, 0, 0]   #40
 	] #200
 	batch_pool.append(b10)
 	
@@ -726,8 +727,14 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 				is_converting_to_polaroid = true
 				camera_effects.activate_camera_effect()
 				
+				# ONLY target current active items in the wave_one_objects array
 				for item in wave_one_objects.duplicate():
 					if is_instance_valid(item) and item.has_method("transform_to_polaroid"):
+						var item_type = item.get_meta("item_type", -1)
+						if item_type == Item.SARDINE and current_wave_batch:
+							if current_wave_batch.active_sardine_cans > 0:
+								current_wave_batch.active_sardine_cans -= 1
+								
 						item.transform_to_polaroid()
 						
 				get_tree().create_timer(0.5, false, true, true).timeout.connect(func():
@@ -1023,6 +1030,10 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 					label_instance.setup_text("PAW!", Color.MAGENTA, spawn_pos)
 					_apply_paw_spatial_effect(spawn_pos)
 					
+					var camera_effects := get_tree().get_first_node_in_group("camera_effects")
+					if camera_effects and camera_effects.has_method("trigger_paw_effect"):
+						camera_effects.trigger_paw_effect()
+					
 				Item.RED_SHOES:
 					var red_shoes_score = 250 * mult
 					if ScoreManager:
@@ -1088,11 +1099,8 @@ func _on_wave_timeout() -> void:
 	if is_endless:
 		var uncollected_penalty_count: int = 0
 		
-		# Factor in un-opened sardine cans from this batch
 		if current_wave_batch:
 			uncollected_penalty_count += current_wave_batch.active_sardine_cans
-			
-			# CRITICAL FIX: Clear them out immediately after evaluating so they don't carry over to the next wave
 			current_wave_batch.active_sardine_cans = 0
 		
 		for obj in wave_one_objects:
@@ -1104,11 +1112,11 @@ func _on_wave_timeout() -> void:
 
 				var obj_type = obj.get_meta("item_type", -1)
 				
-				# Exclude non-damaging items or hazards handled separately
+				# Treat Polaroids, converted items, and harmless objects as completely safe (0 penalty)
 				if (
+					obj_type == Item.POLAROID or
 					obj_type == Item.GARBAGE or 
 					obj_type == Item.SHOES or 
-					obj_type == Item.POLAROID or 
 					obj_type == Item.CAMERA or 
 					obj_type == Item.REGEN or
 					obj_type == Item.GLOVES or
@@ -1118,15 +1126,12 @@ func _on_wave_timeout() -> void:
 				):
 					continue
 					
-				# Sacks: +1 damage/gift for the sack itself if left unopened
 				if obj_type == Item.SACK:
 					uncollected_penalty_count += 1
 					continue
 
-				# Standard Cat Treats & Yarns count as 1 penalty each
 				uncollected_penalty_count += 1
 		
-		# Apply damage once for accumulated leftover gifts, respecting invincibility frames
 		if uncollected_penalty_count > 0 or (current_wave_batch and current_wave_batch.has_missed_item):
 			_inflict_damage()
 

@@ -1,8 +1,7 @@
 extends Node2D
 
 signal popped_out(obj: Node, was_clicked: bool)
-#const PAW_PARTICLE = preload("uid://b1e6bon8ifbuk")
-#const PAW_SOUND = preload("uid://dl4pnno0q6i3k")
+const PAW_SOUND = preload("res://SFX/Paw.wav")
 
 var is_popping: bool = false
 
@@ -48,16 +47,16 @@ func collect_paw() -> void:
 	if is_popping:
 		return
 
-	var cat_paw_node := get_tree().get_first_node_in_group("cat_paw") # Or use a direct path
+	var cat_paw_node := get_tree().get_first_node_in_group("cat_paw") 
 	if cat_paw_node and cat_paw_node.has_method("play_paw_swipe"):
 		cat_paw_node.play_paw_swipe()
-	#AudioManager.play_sound(PAW_SOUND)
-	#ParticleManager.spawn_particle(PAW_PARTICLE, global_position)
+		
+	AudioManager.play_sound(PAW_SOUND)
 	
 	is_popping = true
 	paw_area.input_pickable = false
 
-	# --- PAW POWER-UP SPATIAL CONTROL EFFECT ---
+	# --- BUFFED PAW POWER-UP SPATIAL CONTROL EFFECT ---
 	var paw_pos = global_position
 	var current_scene = get_tree().current_scene
 	
@@ -88,15 +87,16 @@ func collect_paw() -> void:
 				tween.set_ease(Tween.EASE_OUT)
 				
 				if is_hazard:
-					# Push shoes/garbage farther away
-					var target_pos = item_pos + (dir * 140.0)
-					tween.tween_property(node, "global_position", target_pos, 0.3)
+					# Significantly buffed hazard repulsion (pushed out to 240.0 units away quickly)
+					var target_pos = item_pos + (dir * 240.0)
+					tween.tween_property(node, "global_position", target_pos, 0.25)
 					
 					# Update anchor so it stays and sways from its NEW pushed position
 					if node.has_method("update_anchor_position"):
 						tween.tween_callback(func(): node.update_anchor_position(target_pos))
 					elif node.has_method("end_drag"):
 						tween.tween_callback(func(): node.end_drag(false))
+
 
 				else:
 					# Pull regular gifts closer toward the paw's position (35% distance remaining)

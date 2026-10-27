@@ -1,9 +1,10 @@
 extends Node2D
 
+@onready var red_shoes_rect: TextureRect = $CameraEffects/RedShoesRect
 signal popped_out(obj: Node, was_clicked: bool)
 
-const TRASH = preload("uid://bnyi53tue8oe2")
-const TRASH_PARTICLE = preload("uid://bqldp717ro0a4")
+const RED_SHOES = preload("uid://tf58kq3fxh2b")
+const SACK_PARTICLE = preload("uid://bncb0rx7oecq0")
 const FLOATING_LABEL = preload("uid://cu8xcr7igstbj")
 
 @export var polaroid_scene: PackedScene = preload("res://Menus/item_polaroid.tscn")
@@ -26,6 +27,7 @@ var anchor_position: Vector2 = Vector2.ZERO
 
 var start_angle_rad: float = 0.0
 var target_angle_rad: float = 0.0
+
 
 func _ready() -> void:
 	add_to_group("camera_targets")
@@ -55,6 +57,7 @@ func _ready() -> void:
 	current_angle = start_angle_rad
 	update_position_from_angle(current_angle)
 
+
 func _process(delta: float) -> void:
 	if is_popping:
 		return
@@ -62,13 +65,13 @@ func _process(delta: float) -> void:
 	elapsed_time += delta
 	var lifetime_ratio = elapsed_time / total_lifetime
 	
-	if lifetime_ratio < 0.5:
-		# --- PHASE 1: Gentle idle sway on its starting side (First 1/2 of life) ---
+	if lifetime_ratio < (1.0 / 3.0):
+		# --- PHASE 1: Gentle idle sway on its starting side (First 1/3 prep time) ---
 		var idle_sway = deg_to_rad(3.0) * sin(elapsed_time * 4.0)
 		current_angle = start_angle_rad + idle_sway
 	else:
-		# --- PHASE 2: Swift pendulum swing across the whole screen (Final 1/2 of life) ---
-		var phase_progress = (lifetime_ratio - 0.5) / 0.5 # 0.0 to 1.0 over last 1/2
+		# --- PHASE 2: Swift pendulum swing across the whole screen (Final 2/3 swing time) ---
+		var phase_progress = (lifetime_ratio - (1.0 / 3.0)) / (2.0 / 3.0) # 0.0 to 1.0 over last 2/3
 		
 		# Smoothly whip across the entire screen from one side to the other
 		current_angle = lerp(start_angle_rad, target_angle_rad, ease(phase_progress, -2.5))
@@ -79,9 +82,11 @@ func _process(delta: float) -> void:
 	if elapsed_time >= total_lifetime:
 		despawn_offscreen()
 
+
 func update_position_from_angle(angle: float) -> void:
 	global_position = anchor_position + Vector2(sin(angle), cos(angle)) * hang_length
 	rotation = angle * 0.8
+
 
 func _input(event: InputEvent) -> void:
 	if is_popping:
@@ -101,23 +106,74 @@ func _input(event: InputEvent) -> void:
 		if global_position.distance_to(click_pos) < 64.0: 
 			trigger_click()
 
+
 func trigger_click() -> void:
 	if is_popping:
 		return
 		
 	is_popping = true
-	AudioManager.play_sound(TRASH)
-	ParticleManager.spawn_particle(TRASH_PARTICLE, global_position)
+	AudioManager.play_sound(RED_SHOES)
+	ParticleManager.spawn_particle(SACK_PARTICLE, global_position)
 	
-	# Award 250 points and spawn floating label
+	# --- CINEMATIC POLISH EFFECT (MIRRORS GLOVE HAZARD BLOCK) ---
+	if CameraManager and CameraManager.has_method("add_trauma"):
+		CameraManager.add_trauma(0.6)
+		
+	# 1. Hitstop/Time Freeze
+	Engine.time_scale = 0.0
+	var hitstop_timer = get_tree().create_timer(0.25, true, true, true)
+	hitstop_timer.timeout.connect(func():
+		if is_inside_tree():
+			Engine.time_scale = 1.0
+	)
+	
+	# 2. BGM Temporary Mute
+	var was_bgm_muted = AudioManager.is_bgm_muted
+	AudioManager.set_music_muted(true)
+	
+	var music_timer = get_tree().create_timer(0.25, true, true, true)
+	music_timer.timeout.connect(func():
+		if is_inside_tree():
+			AudioManager.set_music_muted(was_bgm_muted)
+	)
+	
+	# 3. Camera Effects (Red Shoes Vignette + White Flash)
+	var camera_effects := get_tree().get_first_node_in_group("camera_effects")
+	if camera_effects != null:
+		# Red Shoes Vignette Flash
+		var target_vignette = red_shoes_rect if red_shoes_rect else camera_effects.get_node_or_null("RedShoesRect")
+		if target_vignette is TextureRect or target_vignette is ColorRect:
+			target_vignette.visible = true
+			target_vignette.modulate.a = 1.0
+			var vig_tween = create_tween()
+			vig_tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
+			vig_tween.tween_property(target_vignette, "modulate:a", 0.0, 0.25).set_delay(0.05)
+			vig_tween.tween_callback(func(): target_vignette.visible = false)
+			
+		# White Screen Flash
+		var white_flash = camera_effects.get_node_or_null("WhiteFlash")
+		if white_flash is ColorRect or white_flash is TextureRect:
+			white_flash.visible = true
+			white_flash.modulate.a = 1.0
+			var flash_tween = create_tween()
+			flash_tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
+			flash_tween.tween_property(white_flash, "modulate:a", 0.0, 0.3)
+			flash_tween.tween_callback(func(): white_flash.visible = false)
+			
+	# 4. Award Points & Spawn Floating Text Label
 	ScoreManager.add_points(reward_points)
 	if FLOATING_LABEL:
 		var label = FLOATING_LABEL.instantiate()
 		get_tree().current_scene.add_child(label)
-		if label.has_method("setup"):
+		
+		if label.has_method("setup_text"):
+			label.setup_text("RED SHOES\n+250", Color.RED, global_position)
+		elif label.has_method("setup"):
 			label.setup(reward_points, global_position)
+			label.scale = Vector2(1.5, 1.5)
 			
 	pop_out(true)
+
 
 func pop_out(was_clicked: bool = false) -> void:
 	if string:
@@ -131,12 +187,14 @@ func pop_out(was_clicked: bool = false) -> void:
 	tween.tween_property(self, "scale", Vector2.ZERO, 0.3)
 	tween.tween_callback(queue_free)
 
+
 func despawn_offscreen() -> void:
 	if is_popping:
 		return
 	is_popping = true
 	popped_out.emit(self, false)
 	queue_free()
+
 
 func transform_to_polaroid() -> void:
 	if is_popping:
@@ -164,6 +222,7 @@ func transform_to_polaroid() -> void:
 
 	popped_out.emit(self, true)
 	queue_free()
+
 
 # --- STUBS FOR COMPATIBILITY ---
 func start_drag() -> void:
