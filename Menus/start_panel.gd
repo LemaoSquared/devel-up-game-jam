@@ -82,6 +82,7 @@ func _on_start_pressed() -> void:
 	bounce_tween.tween_property($Start, "position:y", $Start.position.y, 0.3).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 	
 	AudioManager.play_sound(SHOP_BELL)
+	ScoreManager.reset_score()
 	$Start.disabled = true
 	$EndlessStart.disabled = true
 	game_started.emit()
@@ -168,6 +169,7 @@ func _on_endless_start_pressed() -> void:
 	bounce_tween.tween_property($EndlessStart, "position:y", $EndlessStart.position.y, 0.3).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 
 	AudioManager.play_sound(SHOP_BELL)
+	ScoreManager.reset_score()
 	$Start.disabled = true
 	$EndlessStart.disabled = true
 	endless_started.emit()

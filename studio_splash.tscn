@@ -13,12 +13,14 @@ grow_vertical = 2
 script = ExtResource("1_t07cl")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=902173135]
+z_index = 10
 layout_mode = 0
 offset_right = 1156.0
 offset_bottom = 656.0
 color = Color(0, 0, 0, 1)
 
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=85350179]
+z_index = 20
 layout_mode = 0
 offset_left = 359.0
 offset_top = 192.0

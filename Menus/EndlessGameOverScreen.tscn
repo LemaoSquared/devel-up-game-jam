@@ -4,11 +4,189 @@
 [ext_resource type="Shader" uid="uid://d2jeis1lksurj" path="res://Shaders/pixelater.gdshader" id="2_sxpef"]
 [ext_resource type="Texture2D" uid="uid://byhccumq5oxra" path="res://Assets/MiddleRound_OutsideStore/L1_Background.png" id="3_iftl2"]
 [ext_resource type="FontFile" uid="uid://cqwfub3g65jm6" path="res://Assets/Baby Night.otf" id="4_1nhf6"]
+[ext_resource type="Texture2D" uid="uid://bpbg8jnw1nidl" path="res://Assets/Object Assets/ObjectsTextureAtlas.png" id="5_r7jjw"]
+[ext_resource type="Texture2D" uid="uid://b0m2w2mm7nwef" path="res://Assets/Object Assets/Yarn.png" id="6_sxpef"]
+[ext_resource type="Texture2D" uid="uid://b56c1ojyedeka" path="res://Assets/Polaroid Pictures/polaroid1 with calligraphy.png" id="7_iftl2"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2t4kf"]
 shader = ExtResource("2_sxpef")
 shader_parameter/pixelation = 16.0
 shader_parameter/controlEdges = false
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_41brj"]
+atlas = ExtResource("5_r7jjw")
+region = Rect2(49, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1k8l4"]
+atlas = ExtResource("5_r7jjw")
+region = Rect2(33, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_85mbi"]
+atlas = ExtResource("5_r7jjw")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1nhf6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_41brj")
+}],
+"loop": 1,
+"name": &"1",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1k8l4")
+}],
+"loop": 1,
+"name": &"2",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_85mbi")
+}],
+"loop": 1,
+"name": &"3",
+"speed": 5.0
+}]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_t07tu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_41brj")
+}],
+"loop": 1,
+"name": &"1",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1k8l4")
+}],
+"loop": 1,
+"name": &"2",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_85mbi")
+}],
+"loop": 1,
+"name": &"3",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sxpef"]
+atlas = ExtResource("5_r7jjw")
+region = Rect2(77.900024, 0, 41.59999, 10.700005)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_43urd"]
+atlas = ExtResource("5_r7jjw")
+region = Rect2(302, 76, 32, 19)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oecgo"]
+atlas = ExtResource("5_r7jjw")
+region = Rect2(334, 76, 32, 19)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_unieg"]
+atlas = ExtResource("5_r7jjw")
+region = Rect2(366, 76, 32, 19)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ex2s4"]
+atlas = ExtResource("5_r7jjw")
+region = Rect2(398, 76, 32, 19)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_iftl2"]
+animations = [{
+"frames": [],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_43urd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oecgo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_unieg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ex2s4")
+}],
+"loop": 0,
+"name": &"rat_toy",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4srxo"]
+atlas = ExtResource("5_r7jjw")
+region = Rect2(114, 35, 38, 35)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_b4qbb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4srxo")
+}],
+"loop": 2,
+"name": &"default",
+"speed": 4.0
+}, {
+"frames": [],
+"loop": 1,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7bpuo"]
+atlas = ExtResource("5_r7jjw")
+region = Rect2(175, 48, 57, 51)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_c7rhu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7bpuo")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d8mo5"]
+atlas = ExtResource("5_r7jjw")
+region = Rect2(114, 35, 38, 35)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7h3p5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d8mo5")
+}],
+"loop": 2,
+"name": &"default",
+"speed": 4.0
+}, {
+"frames": [],
+"loop": 1,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b4qbb"]
+shader = ExtResource("2_sxpef")
+shader_parameter/pixelation = 1.0
+shader_parameter/controlEdges = false
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c7rhu"]
+atlas = ExtResource("7_iftl2")
+region = Rect2(1208, 104, 640, 568)
 
 [node name="GameOver Screen" type="Node2D" unique_id=341467045]
 process_mode = 3
@@ -57,10 +235,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -312.0
-offset_top = 188.0
-offset_right = 308.0
-offset_bottom = 302.0
+offset_left = -314.0
+offset_top = 198.0
+offset_right = 306.0
+offset_bottom = 312.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.81960785, 0.47843137, 0.5647059, 1)
@@ -72,6 +250,299 @@ theme_override_fonts/font = ExtResource("4_1nhf6")
 theme_override_font_sizes/font_size = 116
 text = "replay"
 flat = true
+
+[node name="HBoxContainer" type="Control" parent="." unique_id=1690952150]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 772.0
+offset_top = 176.0
+offset_right = 772.0
+offset_bottom = 502.0
+
+[node name="Control" type="Control" parent="HBoxContainer" unique_id=930571705]
+anchors_preset = 0
+offset_bottom = 331.0
+
+[node name="Shadow" type="AnimatedSprite2D" parent="HBoxContainer/Control" unique_id=1412033659]
+self_modulate = Color(0, 0, 0, 0.40392157)
+position = Vector2(-288, 51.000008)
+scale = Vector2(3.5234382, 3.5234382)
+sprite_frames = SubResource("SpriteFrames_1nhf6")
+animation = &"1"
+
+[node name="Treat" type="AnimatedSprite2D" parent="HBoxContainer/Control" unique_id=1452444332]
+position = Vector2(-292, 45)
+scale = Vector2(3.8867183, 3.8867183)
+sprite_frames = SubResource("SpriteFrames_t07tu")
+animation = &"1"
+
+[node name="Treat_Count" type="Label" parent="HBoxContainer/Control" unique_id=289768183]
+layout_mode = 0
+offset_left = -242.0
+offset_top = 16.0
+offset_right = -95.0
+offset_bottom = 88.0
+theme_override_colors/font_color = Color(0.9985569, 0.9294451, 0.798358, 1)
+theme_override_fonts/font = ExtResource("4_1nhf6")
+theme_override_font_sizes/font_size = 80
+text = "180"
+vertical_alignment = 1
+
+[node name="Control2" type="Control" parent="HBoxContainer" unique_id=946588753]
+anchors_preset = 0
+offset_left = 4.0
+offset_right = 4.0
+offset_bottom = 331.0
+
+[node name="Shadow" type="Sprite2D" parent="HBoxContainer/Control2" unique_id=1497229457]
+modulate = Color(0, 0, 0, 0.49411765)
+position = Vector2(-293, 142)
+scale = Vector2(1.6875, 1.6875)
+texture = ExtResource("6_sxpef")
+
+[node name="Yarn" type="Sprite2D" parent="HBoxContainer/Control2" unique_id=1455971771]
+position = Vector2(-296, 137)
+scale = Vector2(1.65625, 1.65625)
+texture = ExtResource("6_sxpef")
+
+[node name="Yarn_Count" type="Label" parent="HBoxContainer/Control2" unique_id=1909880697]
+layout_mode = 0
+offset_left = -243.0
+offset_top = 100.0
+offset_right = -96.0
+offset_bottom = 172.0
+theme_override_colors/font_color = Color(0.9985569, 0.9294451, 0.798358, 1)
+theme_override_fonts/font = ExtResource("4_1nhf6")
+theme_override_font_sizes/font_size = 80
+text = "180"
+vertical_alignment = 1
+
+[node name="Control4" type="Control" parent="HBoxContainer" unique_id=23213218]
+anchors_preset = 0
+offset_left = 12.0
+offset_right = 12.0
+offset_bottom = 331.0
+
+[node name="Sprite2D2" type="Sprite2D" parent="HBoxContainer/Control4" unique_id=1964645118]
+modulate = Color(0, 0, 0, 0.33333334)
+position = Vector2(-302.00003, 221.99998)
+scale = Vector2(2.0218227, 2.2333333)
+texture = SubResource("AtlasTexture_sxpef")
+
+[node name="Sprite2D" type="Sprite2D" parent="HBoxContainer/Control4" unique_id=1648921892]
+position = Vector2(-305.27634, 217.45833)
+scale = Vector2(2.1328616, 2.2916653)
+texture = SubResource("AtlasTexture_sxpef")
+
+[node name="Sardine_Count" type="Label" parent="HBoxContainer/Control4" unique_id=1117987069]
+layout_mode = 0
+offset_left = -250.0
+offset_top = 187.0
+offset_right = -103.0
+offset_bottom = 259.0
+theme_override_colors/font_color = Color(0.9985569, 0.9294451, 0.798358, 1)
+theme_override_fonts/font = ExtResource("4_1nhf6")
+theme_override_font_sizes/font_size = 80
+text = "180"
+vertical_alignment = 1
+
+[node name="Control5" type="Control" parent="HBoxContainer" unique_id=849188648]
+anchors_preset = 0
+offset_left = 12.0
+offset_right = 12.0
+offset_bottom = 331.0
+
+[node name="Sprite2D2" type="AnimatedSprite2D" parent="HBoxContainer/Control5" unique_id=839002608]
+modulate = Color(0, 0, 0, 0.44705883)
+position = Vector2(-307.00003, 297)
+scale = Vector2(3.0789483, 3.0789483)
+sprite_frames = SubResource("SpriteFrames_iftl2")
+animation = &"rat_toy"
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="HBoxContainer/Control5" unique_id=1538444634]
+position = Vector2(-316.00003, 292)
+scale = Vector2(3.368421, 3.368421)
+sprite_frames = SubResource("SpriteFrames_iftl2")
+animation = &"rat_toy"
+
+[node name="Rat_Count" type="Label" parent="HBoxContainer/Control5" unique_id=461222760]
+layout_mode = 0
+offset_left = -250.0
+offset_top = 265.0
+offset_right = -103.0
+offset_bottom = 337.0
+theme_override_colors/font_color = Color(0.9985569, 0.9294451, 0.798358, 1)
+theme_override_fonts/font = ExtResource("4_1nhf6")
+theme_override_font_sizes/font_size = 80
+text = "180"
+vertical_alignment = 1
+
+[node name="Control6" type="Control" parent="HBoxContainer" unique_id=932544169]
+anchors_preset = 0
+offset_left = 12.0
+offset_right = 12.0
+offset_bottom = 331.0
+
+[node name="Sprite2D2" type="Sprite2D" parent="HBoxContainer/Control6" unique_id=1082337997]
+modulate = Color(0, 0, 0, 0.4)
+position = Vector2(-72, 54.000008)
+scale = Vector2(1.3348823, 1.3644626)
+texture = ExtResource("5_r7jjw")
+region_enabled = true
+region_rect = Rect2(0, 102.98089, 75, 58.52546)
+
+[node name="Sprite2D" type="Sprite2D" parent="HBoxContainer/Control6" unique_id=1227783179]
+position = Vector2(-77.95648, 48.138855)
+scale = Vector2(1.3878274, 1.4185809)
+texture = ExtResource("5_r7jjw")
+region_enabled = true
+region_rect = Rect2(0, 102.98089, 75, 58.52546)
+
+[node name="Sack_Count" type="Label" parent="HBoxContainer/Control6" unique_id=271301082]
+layout_mode = 0
+offset_left = -28.956482
+offset_top = 16.138855
+offset_right = 118.04352
+offset_bottom = 88.138855
+theme_override_colors/font_color = Color(0.9985569, 0.9294451, 0.798358, 1)
+theme_override_fonts/font = ExtResource("4_1nhf6")
+theme_override_font_sizes/font_size = 80
+text = "180"
+vertical_alignment = 1
+
+[node name="Control7" type="Control" parent="HBoxContainer" unique_id=2021695309]
+anchors_preset = 0
+offset_left = 12.0
+offset_right = 12.0
+offset_bottom = 331.0
+
+[node name="Sprite2D2" type="Sprite2D" parent="HBoxContainer/Control7" unique_id=402224695]
+modulate = Color(0.76383513, 0.75604, 0.91804814, 1)
+self_modulate = Color(0, 0, 0, 0.38431373)
+position = Vector2(-68.99999, 140.00002)
+scale = Vector2(1.0499998, 1.0499998)
+texture = ExtResource("5_r7jjw")
+region_enabled = true
+region_rect = Rect2(328, 168, 65, 62)
+
+[node name="Sprite2D" type="Sprite2D" parent="HBoxContainer/Control7" unique_id=208527960]
+modulate = Color(0.76383513, 0.75604, 0.91804814, 1)
+position = Vector2(-74.956474, 135.13889)
+scale = Vector2(1.1483867, 1.1483867)
+texture = ExtResource("5_r7jjw")
+region_enabled = true
+region_rect = Rect2(328, 168, 65, 62)
+
+[node name="Polaroid_Count" type="Label" parent="HBoxContainer/Control7" unique_id=1789179758]
+layout_mode = 0
+offset_left = -25.956482
+offset_top = 96.138855
+offset_right = 121.04352
+offset_bottom = 168.13885
+theme_override_colors/font_color = Color(1, 1, 0.4862745, 1)
+theme_override_fonts/font = ExtResource("4_1nhf6")
+theme_override_font_sizes/font_size = 80
+text = "180"
+vertical_alignment = 1
+
+[node name="Control8" type="Control" parent="HBoxContainer" unique_id=477003562]
+anchors_preset = 0
+offset_left = 12.0
+offset_right = 12.0
+offset_bottom = 331.0
+
+[node name="Sprite2D2" type="AnimatedSprite2D" parent="HBoxContainer/Control8" unique_id=1219199059]
+self_modulate = Color(0, 0, 0, 0.47058824)
+position = Vector2(-39.99999, 234)
+scale = Vector2(3.441963, 3.4419632)
+sprite_frames = SubResource("SpriteFrames_b4qbb")
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="HBoxContainer/Control8" unique_id=1295896169]
+position = Vector2(-43.99997, 229)
+scale = Vector2(3.8419628, 3.8419638)
+sprite_frames = SubResource("SpriteFrames_b4qbb")
+
+[node name="Red Shoe_Count" type="Label" parent="HBoxContainer/Control8" unique_id=540692740]
+layout_mode = 0
+offset_left = -22.956482
+offset_top = 178.13885
+offset_right = 124.04352
+offset_bottom = 250.13885
+theme_override_colors/font_color = Color(0.9999997, 0.14471757, 0.24150991, 1)
+theme_override_fonts/font = ExtResource("4_1nhf6")
+theme_override_font_sizes/font_size = 80
+text = "180"
+vertical_alignment = 1
+
+[node name="Control9" type="Control" parent="HBoxContainer" unique_id=1091597529]
+anchors_preset = 0
+offset_left = 12.0
+offset_right = 12.0
+offset_bottom = 331.0
+
+[node name="Sprite2D2" type="AnimatedSprite2D" parent="HBoxContainer/Control9" unique_id=142105822]
+self_modulate = Color(0, 0, 0, 0.42352942)
+position = Vector2(152.00003, 51.999996)
+scale = Vector2(1.4509805, 1.4509804)
+sprite_frames = SubResource("SpriteFrames_c7rhu")
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="HBoxContainer/Control9" unique_id=2087932158]
+self_modulate = Color(0.5443015, 0.68924344, 0.5232084, 1)
+position = Vector2(147, 47.000008)
+scale = Vector2(1.4901961, 1.4901961)
+sprite_frames = SubResource("SpriteFrames_c7rhu")
+
+[node name="Garbage_Count" type="Label" parent="HBoxContainer/Control9" unique_id=2107492472]
+layout_mode = 0
+offset_left = 187.0
+offset_top = 20.0
+offset_right = 334.0
+offset_bottom = 92.0
+theme_override_colors/font_color = Color(0.58884907, 0.21192372, 9.62615e-08, 1)
+theme_override_fonts/font = ExtResource("4_1nhf6")
+theme_override_font_sizes/font_size = 80
+text = "180"
+vertical_alignment = 1
+
+[node name="Control10" type="Control" parent="HBoxContainer" unique_id=581926174]
+anchors_preset = 0
+offset_left = 12.0
+offset_right = 12.0
+offset_bottom = 331.0
+
+[node name="Sprite2D2" type="AnimatedSprite2D" parent="HBoxContainer/Control10" unique_id=538758205]
+self_modulate = Color(0, 0, 0, 0.47058824)
+position = Vector2(175, 152)
+scale = Vector2(3.3999999, 3.4)
+sprite_frames = SubResource("SpriteFrames_7h3p5")
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="HBoxContainer/Control10" unique_id=724886332]
+modulate = Color(0.2720033, 0.5630717, 0.4888305, 1)
+position = Vector2(170, 147.99998)
+scale = Vector2(3.4267848, 3.4267855)
+sprite_frames = SubResource("SpriteFrames_7h3p5")
+
+[node name="Shoe_Count" type="Label" parent="HBoxContainer/Control10" unique_id=477883901]
+layout_mode = 0
+offset_left = 188.0
+offset_top = 94.0
+offset_right = 335.0
+offset_bottom = 166.0
+theme_override_colors/font_color = Color(0.58884907, 0.21192372, 9.62615e-08, 1)
+theme_override_fonts/font = ExtResource("4_1nhf6")
+theme_override_font_sizes/font_size = 80
+text = "180"
+vertical_alignment = 1
+
+[node name="Middle" type="TextureRect" parent="." unique_id=262674935]
+material = SubResource("ShaderMaterial_b4qbb")
+offset_left = 53.0
+offset_top = 205.99998
+offset_right = 373.0
+offset_bottom = 531.0
+rotation = -0.040142573
+texture = SubResource("AtlasTexture_c7rhu")
+expand_mode = 1
 
 [node name="ColorRect2" type="ColorRect" parent="." unique_id=1773615071]
 visible = false

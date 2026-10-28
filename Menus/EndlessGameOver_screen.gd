@@ -3,10 +3,19 @@ extends Node2D
 @onready var color_rect_2: ColorRect = $ColorRect2
 const STREET = preload("uid://c6xk46jpedco4")
 
+@onready var treat_count: Label = $HBoxContainer/Control/Treat_Count
+@onready var yarn_count: Label = $HBoxContainer/Control2/Yarn_Count
+@onready var sardine_count: Label = $HBoxContainer/Control4/Sardine_Count
+@onready var rat_count: Label = $HBoxContainer/Control5/Rat_Count
+@onready var sack_count: Label = $HBoxContainer/Control6/Sack_Count
+@onready var polaroid_count: Label = $HBoxContainer/Control7/Polaroid_Count
+@onready var red_shoe_count: Label = $"HBoxContainer/Control8/Red Shoe_Count"
+@onready var garbage_count: Label = $HBoxContainer/Control9/Garbage_Count
+@onready var shoe_count: Label = $HBoxContainer/Control10/Shoe_Count
+
 @onready var retry_button: Button = $ColorRect/retry 
 @onready var score_label: Label = $ColorRect/ScoreLabel
 @onready var highscore_label: Label = $ColorRect/HighScoreLabel
-
 
 const MAIN = preload("uid://fldj3nccgla6")
 
@@ -22,6 +31,19 @@ func _ready() -> void:
 	else:
 		highscore_label.text = "High Score: %d" % best
 	
+	# --- NEW: Populate Item Counts from ScoreManager ---
+	# (These will call upon the dedicated variables added to ScoreManager next[cite: 1])
+	treat_count.text = str(ScoreManager.treat_count)
+	yarn_count.text = str(ScoreManager.yarn_count)
+	sardine_count.text = str(ScoreManager.sardine_count)
+	rat_count.text = str(ScoreManager.rat_count)
+	sack_count.text = str(ScoreManager.sack_count)
+	polaroid_count.text = str(ScoreManager.polaroid_count)
+	red_shoe_count.text = str(ScoreManager.red_shoe_count)
+	garbage_count.text = str(ScoreManager.garbage_count)
+	shoe_count.text = str(ScoreManager.shoe_count)
+	# --------------------------------------------------
+
 	# --- NEW: Fade Out ColorRect2 on Scene Load ---
 	if color_rect_2:
 		color_rect_2.visible = true

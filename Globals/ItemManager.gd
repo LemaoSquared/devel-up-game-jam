@@ -149,20 +149,20 @@ func _initialize_endless_batches() -> void:
 	beginner_batch.batch_name = "Beginner Warmup"
 	
 	beginner_batch.waves = [
-		[10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #50
-		[0, 10, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #50
-		[5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  #50
-		[3, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  #50
-		[7, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   #50
+		[10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], #50
+		[0, 10, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], #50
+		[5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],  #50
+		[3, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],  #50
+		[7, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]   #50
 	] #200
 
 	var b1 = BatchData.new()
 	b1.batch_name = "Gifts From Above"
 	b1.waves = [
-		[0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #75
-		[0, 5, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0], #25
+		[0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #50
+		[0, 8, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0], #40
 		[0, 10, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0], #50
-		[0, 1, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0],  #5
+		[0, 3, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0],  #15
 		[0, 9, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0]   #45
 	] #200
 	batch_pool.append(b1)
@@ -374,7 +374,6 @@ func _select_endless_powerup() -> int:
 
 	# --- PAW TO CAMERA CONVERSION CONDITION ---
 	if chosen == Item.PAW:
-		# Count current valid gifts/hazards on screen (wave_one_objects)
 		var active_items_count = 0
 		for item in wave_one_objects:
 			if is_instance_valid(item):
@@ -462,7 +461,6 @@ func play_story_pattern(pair_number: int):
 	if player_entity and player_entity.has_method("set_gloves_active"):
 		player_entity.set_gloves_active(false)
 		
-	# Lock story mode timer explicitly to 6.0 seconds
 	time_duration_perBatch = 6.0
 		
 	_isolate_previous_wave()
@@ -472,13 +470,11 @@ func play_story_pattern(pair_number: int):
 	if pair_number > 15:
 		return
 
-	# Map each of the 15 pairs to a 50/50 choice between (pair_number * 2 - 1) and (pair_number * 2)
 	var base_pattern_index = ((pair_number - 1) * 2) + 1
 	var chosen_pattern = base_pattern_index + randi_range(0, 1)
 
 	var item_count = []
 	match chosen_pattern:
-# Array mapping: [0:TREAT, 1:YARN, 2:GARBAGE, 3:CAMERA, 4:SHOES, 5:SARDINE, 6:RAT, 7:SACK, 8:REGEN, 9:POLAROID, 10:GLOVES, 11:PAW, 12:RED_SHOES]
 		1: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		2: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		3: item_count = [15, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -713,7 +709,6 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 	obj.add_to_group("active_gifts")
 	obj.global_position = pos
 	
-	# Track sardine cans specifically for open vs unopened wave timer evaluations
 	if obj_type == Item.SARDINE and current_wave_batch:
 		current_wave_batch.active_sardine_cans += 1
 	
@@ -728,10 +723,14 @@ func _instantiate_object(pos: Vector2, target_parent: Node, delay_index: int, ob
 				is_converting_to_polaroid = true
 				camera_effects.activate_camera_effect()
 				
-				# ONLY target current active items in the wave_one_objects array
 				for item in wave_one_objects.duplicate():
 					if is_instance_valid(item) and item.has_method("transform_to_polaroid"):
 						var item_type = item.get_meta("item_type", -1)
+						
+						# Fully immune: Skip Red Shoes during camera flash
+						if item_type == Item.RED_SHOES:
+							continue
+						
 						if item_type == Item.SARDINE and current_wave_batch:
 							if current_wave_batch.active_sardine_cans > 0:
 								current_wave_batch.active_sardine_cans -= 1
@@ -801,7 +800,6 @@ func clear_objects() -> void:
 	missed_items_in_current_wave = 0
 	current_wave_batch = null
 
-# --- DAMAGE, CAMERA TRAUMA & STREAK-BASED SLOW-MOTION ---
 func _inflict_damage() -> void:
 	if not is_endless:
 		return
@@ -847,8 +845,8 @@ func _inflict_damage() -> void:
 	else:
 		Engine.time_scale = 0.5  
 		
-		var was_bgm_muted_before_hit: bool = AudioManager.is_bgm_muted
-		AudioManager.set_music_muted(true)
+		#var was_bgm_muted_before_hit: bool = AudioManager.is_bgm_muted
+		#AudioManager.set_music_muted(true)
 		
 		var slow_mo_duration = 0.3 + (last_broken_streak * 0.02)
 		
@@ -856,7 +854,7 @@ func _inflict_damage() -> void:
 		damage_timer.timeout.connect(func():
 			if not is_game_over:
 				Engine.time_scale = 1.0
-				AudioManager.set_music_muted(was_bgm_muted_before_hit)
+				#AudioManager.set_music_muted(was_bgm_muted_before_hit)
 		)
 		
 	if active_i_frame_timer and active_i_frame_timer.timeout.is_connected(_on_i_frame_timeout):
@@ -868,7 +866,6 @@ func _inflict_damage() -> void:
 func _on_i_frame_timeout() -> void:
 	is_invincible = false
 
-# --- SPATIAL MANIPULATION LOGIC FOR ITEM PAW ---
 func _apply_paw_spatial_effect(paw_pos: Vector2) -> void:
 	for obj in wave_one_objects:
 		if not is_instance_valid(obj) or not obj is Node2D:
@@ -877,6 +874,10 @@ func _apply_paw_spatial_effect(paw_pos: Vector2) -> void:
 			continue
 			
 		var item_type = obj.get_meta("item_type", -1)
+		
+		if item_type == Item.RED_SHOES:
+			continue
+			
 		var is_hazard = (item_type == Item.GARBAGE or item_type == Item.SHOES)
 		
 		var item_pos = obj.global_position
@@ -895,7 +896,7 @@ func _apply_paw_spatial_effect(paw_pos: Vector2) -> void:
 		else:
 			var target_pos = paw_pos + (to_item * 0.4)
 			tween.tween_property(obj, "global_position", target_pos, 0.3)
-
+			
 func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void:
 	if is_game_over or obj in scored_objects:
 		return  
@@ -903,9 +904,10 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 	spawned_objects.erase(obj)
 	wave_one_objects.erase(obj)
 
-	if is_converting_to_polaroid and item_type != Item.CAMERA:
+	if is_converting_to_polaroid and item_type != Item.CAMERA and item_type != Item.POLAROID:
 		return
 
+	# STRICT GATE: Only items explicitly clicked/caught by the player proceed here
 	if was_clicked:
 		var is_polaroid_item: bool = (item_type == Item.POLAROID)
 		if is_instance_valid(obj):
@@ -926,6 +928,12 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 		var is_hazard: bool = (effective_item_type == Item.GARBAGE or effective_item_type == Item.SHOES)
 				
 		if is_hazard:
+			if ScoreManager:
+				if effective_item_type == Item.GARBAGE:
+					ScoreManager.garbage_count += 1
+				elif effective_item_type == Item.SHOES:
+					ScoreManager.shoe_count += 1
+
 			if glove_active or is_blocking_hazards:
 				if not is_blocking_hazards:
 					glove_active = false
@@ -975,14 +983,28 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 			elif is_blocking_hazards:
 					return
 			else:
+				if ScoreManager:
+					ScoreManager.add_points(-30)
+				
 				_inflict_damage()
+				
+				if is_endless and FLOATING_LABEL:
+					var label_instance = FLOATING_LABEL.instantiate()
+					get_tree().current_scene.add_child(label_instance)
+					if label_instance.has_method("setup"):
+						label_instance.setup(-30, spawn_pos, 1)
+						
+				return
 		
 		var is_sardine_can: bool = (effective_item_type == Item.SARDINE and not (obj is SardineItem))
 		if is_sardine_can:
 			if current_wave_batch and current_wave_batch.active_sardine_cans > 0:
 				current_wave_batch.active_sardine_cans -= 1
+			if ScoreManager:
+				ScoreManager.add_points(5)
 			return 
 			
+		# Emit the collection signal to ScoreManager globally for all standard items
 		item_collected.emit(effective_item_type)
 		
 		if is_endless and FLOATING_LABEL:
@@ -1028,12 +1050,8 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 						camera_effects.trigger_paw_effect()
 					
 				Item.RED_SHOES:
+					# Emit signal explicitly so ScoreManager registers the collection and adds points via its dictionary
 					var red_shoes_score = 250 * mult
-					if ScoreManager:
-						if ScoreManager.has_method("add_score"):
-							ScoreManager.add_score(red_shoes_score)
-						elif "score" in ScoreManager:
-							ScoreManager.score += red_shoes_score
 					if label_instance.has_method("setup"):
 						label_instance.setup(red_shoes_score, spawn_pos, mult)
 					
@@ -1041,9 +1059,13 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 					if label_instance.has_method("setup"):
 						label_instance.setup(25 * mult, spawn_pos, mult)
 					
-				Item.POLAROID, Item.RAT:
+				Item.RAT:
 					if label_instance.has_method("setup"):
 						label_instance.setup(10 * mult, spawn_pos, mult)
+					
+				Item.POLAROID:
+					if label_instance.has_method("setup"):
+						label_instance.setup(20 * mult, spawn_pos, mult)
 					
 				Item.TREAT, Item.YARN, Item.SARDINE:
 					if label_instance.has_method("setup"):
@@ -1057,6 +1079,7 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 					if label_instance.has_method("setup"):
 						label_instance.setup(5 * mult, spawn_pos, mult)
 	else:
+		# Unclicked / Timeout Despawn block
 		var is_excluded_from_miss: bool = (
 			item_type == Item.GARBAGE or
 			item_type == Item.SHOES or
@@ -1192,13 +1215,11 @@ func _activate_triple_tap_streak() -> void:
 func _handle_story_mode_timeout() -> void:
 	current_pattern += 1
 	
-	# Story mode ends cleanly after wave 15
 	if current_pattern > 15:
 		is_game_over = true
 		clear_objects()
 		var scene_tree = get_tree()
 		if scene_tree.has_method("change_scene_to_file") and scene_tree.current_scene:
-			# Adjust or handle your victory/story completion transition screen here if needed
 			pass
 		return
 

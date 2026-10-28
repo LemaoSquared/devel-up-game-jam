@@ -11,13 +11,29 @@ extends Control
 
 var is_changing_scene: bool = false
 
+# --- MOVED TO THE TOP SO THEY ARE AVAILABLE IMMEDIATELY ---
+const CAN_FOOD = preload("uid://c5taqxs74p4e5")
+const ITEM_CAMERA = preload("uid://ixb0ggojn7t0")
+const ITEM_CAT_TREAT = preload("uid://dopbjbokm0whf")
+const ITEM_GARBAGE = preload("uid://brji5cukaog0e")
+const ITEM_POLAROID = preload("uid://cseyvipe7oolj")
+const ITEM_SACK = preload("uid://jwsabqug58lp")
+const ITEM_SHOES = preload("uid://ctjkipwa5ie5d")
+const ITEM_YARN = preload("uid://cgbbkrcpsj0dq")
+const SARDINES = preload("uid://cxer0bggywph6")
+const TOY_MOUSE = preload("uid://bp1cyo6ql5jf2")
+const STORY_BACKGROUND = preload("uid://bdih0pbvhnhv8")
+const MAIN = preload("uid://fldj3nccgla6")
+const FINAL_CUTSCENE = preload("uid://bqfwjyhkbhn82")
+const GAME_OVER_SCREEN = preload("uid://dh364flg18d2j")
+
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 	# Start completely invisible.
 	logo_container.modulate.a = 0.0
-
+	await warm_up_shaders()
 	play_splash_animation()
 
 
@@ -50,7 +66,9 @@ func play_splash_animation() -> void:
 	)
 
 	await tween.finished
-	await warm_up_shaders()
+	
+	# Warm up shaders while the background ColorRect still covers the screen
+	
 	change_to_main_scene()
 
 
@@ -68,24 +86,8 @@ func change_to_main_scene() -> void:
 		)
 
 
-const CAN_FOOD = preload("uid://c5taqxs74p4e5")
-const ITEM_CAMERA = preload("uid://ixb0ggojn7t0")
-const ITEM_CAT_TREAT = preload("uid://dopbjbokm0whf")
-const ITEM_GARBAGE = preload("uid://brji5cukaog0e")
-const ITEM_POLAROID = preload("uid://cseyvipe7oolj")
-const ITEM_SACK = preload("uid://jwsabqug58lp")
-const ITEM_SHOES = preload("uid://ctjkipwa5ie5d")
-const ITEM_YARN = preload("uid://cgbbkrcpsj0dq")
-const SARDINES = preload("uid://cxer0bggywph6")
-const TOY_MOUSE = preload("uid://bp1cyo6ql5jf2")
-const STORY_BACKGROUND = preload("uid://bdih0pbvhnhv8")
-const MAIN = preload("uid://fldj3nccgla6")
-const FINAL_CUTSCENE = preload("uid://bqfwjyhkbhn82")
-const GAME_OVER_SCREEN = preload("uid://dh364flg18d2j")
-
 func warm_up_shaders() -> void:
 	print("warming up")
-	# Group all preloaded scenes into an array to warm up
 	var item_scenes: Array[PackedScene] = [
 		CAN_FOOD,
 		ITEM_CAMERA,
@@ -98,24 +100,19 @@ func warm_up_shaders() -> void:
 		SARDINES,
 		TOY_MOUSE,
 		STORY_BACKGROUND,
-		MAIN,
 		FINAL_CUTSCENE,
 		GAME_OVER_SCREEN
 	]
 	
-	# Create an off-screen container (keep visible = true so WebGL forces compile!)
 	var warmup_container = Node2D.new()
 	warmup_container.position = Vector2(-9999, -9999)
 	get_tree().current_scene.add_child(warmup_container)
-	
 	for scene in item_scenes:
 		if scene:
 			var dummy = scene.instantiate()
 			warmup_container.add_child(dummy)
 			
-	# Wait 2 process frames so WebGL has enough render passes to compile shaders
 	await get_tree().process_frame
 	await get_tree().process_frame
 	
-	# Safely clear the dummy nodes now that their materials/shaders live in GPU memory
 	warmup_container.queue_free()
