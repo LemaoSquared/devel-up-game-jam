@@ -88,7 +88,7 @@ func collect_paw() -> void:
 				
 				if is_hazard:
 					# Significantly buffed hazard repulsion (pushed out to 240.0 units away quickly)
-					var target_pos = item_pos + (dir * 240.0)
+					var target_pos = item_pos + (dir * 360.0)
 					tween.tween_property(node, "global_position", target_pos, 0.25)
 					
 					# Update anchor so it stays and sways from its NEW pushed position

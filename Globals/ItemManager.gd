@@ -58,7 +58,6 @@ enum Item {
 @export var enable_drop_wave: bool = true
 @export var spawn_count: int = 10
 
-# Buffed initial duration from 6.0 to 5.0 seconds
 var time_duration_perBatch: float = 5.0
 var spawned_objects: Array[Node] = []
 var wave_one_objects: Array[Node] = []
@@ -114,9 +113,9 @@ class BatchData:
 	var waves: Array = []
 
 var is_endless: bool = false
-var base_time_duration_perBatch: float = 5.0  # Buffed base floor/starting point to match 5.0s
+var base_time_duration_perBatch: float = 5.0  
 @export var batch_speed_step: float = 0.5        
-@export var max_timer_reduction: float = 2.5  # Adjusted floor limit accordingly (5.0 - 2.5 = 2.5s minimum cap)
+@export var max_timer_reduction: float = 2.5  
 
 var total_batches_played: int = 0
 var current_wave_in_batch: int = 0
@@ -134,7 +133,7 @@ var batch_bag: Array[BatchData] = []
 var occupied_cells: Array[Vector2i] = []
 
 func _ready() -> void:
-	current_pattern = 1 + randi_range(0, 1)
+	current_pattern = 1
 	current_parent = get_tree().current_scene
 	base_time_duration_perBatch = time_duration_perBatch
 	_initialize_endless_batches()
@@ -146,31 +145,16 @@ func _exit_tree() -> void:
 func _initialize_endless_batches() -> void:
 	batch_pool.clear()
 
-# Array mapping: 
-#[0:TREAT, 
-#1:YARN, 
-#2:GARBAGE, 
-#3:CAMERA, 
-#4:SHOES, 
-#5:SARDINE, 
-#6:RAT, 
-#7:SACK, 
-#8:REGEN, 
-#9:POLAROID, 
-#10:GLOVES, 
-#11:PAW, 
-#12:RED_SHOES]
-
 	beginner_batch = BatchData.new()
 	beginner_batch.batch_name = "Beginner Warmup"
 	
 	beginner_batch.waves = [
-		[15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #75
-		[5, 10, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #75
-		[10, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  #75
-		[0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  #75
-		[8, 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   #75
-	] #375
+		[10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #50
+		[0, 10, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], #50
+		[5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  #50
+		[3, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  #50
+		[7, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]   #50
+	] #200
 
 	var b1 = BatchData.new()
 	b1.batch_name = "Gifts From Above"
@@ -187,10 +171,10 @@ func _initialize_endless_batches() -> void:
 	b2.batch_name = "Schools of Fish"
 	b2.waves = [
 		[6, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0], #60 
-		[0, 0, 3, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],  #30
-		[1, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], #20
-		[1, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0],  #30
-		[6, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0] #60  
+		[0, 0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],  #30
+		[1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], #20
+		[1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],  #30
+		[6, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0] #60  
 	] #200
 	batch_pool.append(b2)
 	
@@ -209,10 +193,10 @@ func _initialize_endless_batches() -> void:
 	b4.batch_name = "Sack Attack"
 	b4.waves = [
 		[0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0], #50
-		[5, 0, 0, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0], #50
-		[0, 1, 3, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0],  #50
-		[0, 0, 1, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0],  #25
-		[2, 0, 3, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0]   #25
+		[5, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0], #50
+		[0, 1, 2, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0],  #50
+		[0, 0, 1, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0],  #25
+		[2, 0, 2, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0]   #25
 	] #200
 	batch_pool.append(b4)
 	
@@ -230,9 +214,9 @@ func _initialize_endless_batches() -> void:
 	var b6 = BatchData.new()
 	b6.batch_name = "Mouse Panic"
 	b6.waves = [
-		[10, 0, 0, 0, 1, 0, 5, 0, 0, 0, 0, 1, 0], #100
+		[10, 8, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0], #100
 		[0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0], #30
-		[0, 0, 5, 0, 5, 0, 1, 0, 0, 0, 0, 0, 0],  #10
+		[0, 0, 3, 0, 3, 0, 1, 0, 0, 0, 0, 0, 0],  #10
 		[0, 0, 7, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],  #20
 		[0, 0, 4, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0]   #40
 	] #200
@@ -388,6 +372,17 @@ func _select_endless_powerup() -> int:
 
 	var chosen: int = pool.pick_random()
 
+	# --- PAW TO CAMERA CONVERSION CONDITION ---
+	if chosen == Item.PAW:
+		# Count current valid gifts/hazards on screen (wave_one_objects)
+		var active_items_count = 0
+		for item in wave_one_objects:
+			if is_instance_valid(item):
+				active_items_count += 1
+		
+		if active_items_count < 4:
+			chosen = Item.CAMERA
+
 	if chosen == last_powerup_choice:
 		powerup_streak += 1
 	else:
@@ -458,7 +453,7 @@ func _spawn_encoded_array(item_count: Array) -> void:
 
 # --- STORY MODE SPAWNING ---
 
-func play_story_pattern(number: int):
+func play_story_pattern(pair_number: int):
 	if is_game_over or is_endless:
 		return
 		
@@ -467,16 +462,22 @@ func play_story_pattern(number: int):
 	if player_entity and player_entity.has_method("set_gloves_active"):
 		player_entity.set_gloves_active(false)
 		
-	time_duration_perBatch = base_time_duration_perBatch
+	# Lock story mode timer explicitly to 6.0 seconds
+	time_duration_perBatch = 6.0
 		
 	_isolate_previous_wave()
 	_prepare_wave_state()
 	current_parent = get_tree().current_scene 
-	if number > 30:
+	
+	if pair_number > 15:
 		return
 
+	# Map each of the 15 pairs to a 50/50 choice between (pair_number * 2 - 1) and (pair_number * 2)
+	var base_pattern_index = ((pair_number - 1) * 2) + 1
+	var chosen_pattern = base_pattern_index + randi_range(0, 1)
+
 	var item_count = []
-	match number:
+	match chosen_pattern:
 # Array mapping: [0:TREAT, 1:YARN, 2:GARBAGE, 3:CAMERA, 4:SHOES, 5:SARDINE, 6:RAT, 7:SACK, 8:REGEN, 9:POLAROID, 10:GLOVES, 11:PAW, 12:RED_SHOES]
 		1: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 		2: item_count = [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -947,14 +948,6 @@ func _on_object_popped_out(obj: Node, was_clicked: bool, item_type: int) -> void
 						if not is_game_over:
 							Engine.time_scale = 1.0
 					)
-					
-					var was_bgm_muted = AudioManager.is_bgm_muted 
-					AudioManager.set_music_muted(true)
-					
-					var music_timer = get_tree().create_timer(0.25, true, true, true)
-					music_timer.timeout.connect(func():
-						AudioManager.set_music_muted(was_bgm_muted)
-					)
 				
 				ParticleManager.spawn_particle(BLOCKED_PARTICLE, spawn_pos)
 				AudioManager.play_sound(SUCCESSFUL_BLOCK) 
@@ -1089,14 +1082,14 @@ func _on_wave_timeout() -> void:
 	if current_wave_batch:
 		current_wave_batch.is_finished = true
 
-	if is_endless and LivesManager and "lives" in LivesManager:
-		var current_lives = LivesManager.lives
-		var lives_lost = lives_at_wave_start - current_lives
-		if lives_lost > 0:
-			leniency_bonus_value = lives_lost * 0.5 
-			remaining_leniency_waves = max(1, 1 + int(last_broken_streak / 5))
-
 	if is_endless:
+		if LivesManager and "lives" in LivesManager:
+			var current_lives = LivesManager.lives
+			var lives_lost = lives_at_wave_start - current_lives
+			if lives_lost > 0:
+				leniency_bonus_value = lives_lost * 0.5 
+				remaining_leniency_waves = max(1, 1 + int(last_broken_streak / 5))
+
 		var uncollected_penalty_count: int = 0
 		
 		if current_wave_batch:
@@ -1112,7 +1105,6 @@ func _on_wave_timeout() -> void:
 
 				var obj_type = obj.get_meta("item_type", -1)
 				
-				# Treat Polaroids, converted items, and harmless objects as completely safe (0 penalty)
 				if (
 					obj_type == Item.POLAROID or
 					obj_type == Item.GARBAGE or 
@@ -1199,13 +1191,18 @@ func _activate_triple_tap_streak() -> void:
 
 func _handle_story_mode_timeout() -> void:
 	current_pattern += 1
-	var pattern_base = ((current_pattern - 1) * 2) + 1
-	var chosen_pattern = pattern_base + randi_range(0, 1)
-
-	if current_pattern >= 29:
-		current_pattern = 1
+	
+	# Story mode ends cleanly after wave 15
+	if current_pattern > 15:
+		is_game_over = true
+		clear_objects()
+		var scene_tree = get_tree()
+		if scene_tree.has_method("change_scene_to_file") and scene_tree.current_scene:
+			# Adjust or handle your victory/story completion transition screen here if needed
+			pass
 		return
-	play_story_pattern(chosen_pattern)
+
+	play_story_pattern(current_pattern)
 
 func register_spawned_object(obj: Node, obj_type = null) -> void:
 	if obj == null:
