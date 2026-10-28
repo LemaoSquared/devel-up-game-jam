@@ -9,7 +9,12 @@ var current_multiplier: int = 1
 var flawless_waves: int = 0 
 
 const SAVE_PATH := "user://savedata.save"
-var high_score: int = 0
+var high_score: int = 0 # Endless mode
+var story_high_score: int = 0 # Story mode
+
+# Set by try_update_high_score() so the game over screen knows what just happened
+var last_run_endless: bool = false
+var last_run_new_record: bool = false
 
 var point_values := {
 	ItemManager.Item.TREAT: 5,
@@ -76,6 +81,7 @@ func reset_score() -> void:
 func load_high_score() -> void:
 	if not FileAccess.file_exists(SAVE_PATH):
 		high_score = 0
+		story_high_score = 0
 		return
 
 	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
@@ -89,12 +95,15 @@ func load_high_score() -> void:
 	var parsed = JSON.parse_string(content)
 	if typeof(parsed) == TYPE_DICTIONARY and parsed.has("high_score"):
 		high_score = int(parsed["high_score"])
+		story_high_score = int(parsed.get("story_high_score", 0))
 	else:
 		high_score = 0
+		story_high_score = 0
 		
 func save_high_score() -> void:
 	var data := {
-		"high_score": high_score
+		"high_score": high_score,
+		"story_high_score": story_high_score
 	}
 
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -104,10 +113,19 @@ func save_high_score() -> void:
 	file.store_string(JSON.stringify(data))
 	file.close()
 
-func try_update_high_score() -> bool:
-	if score > high_score:
+func get_high_score(endless: bool) -> int:
+	return high_score if endless else story_high_score
+
+func try_update_high_score(endless: bool) -> bool:
+	last_run_endless = endless
+	last_run_new_record = false
+	if endless and score > high_score:
 		high_score = score
+		last_run_new_record = true
 		high_score_changed.emit(high_score)
+	elif not endless and score > story_high_score:
+		story_high_score = score
+		last_run_new_record = true
+	if last_run_new_record:
 		save_high_score()
-		return true
-	return false
+	return last_run_new_record

@@ -56,6 +56,19 @@ text = "Score"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="HighScoreLabel" type="Label" parent="ColorRect" unique_id=1772928612]
+layout_mode = 0
+offset_left = 370.0
+offset_top = 100.0
+offset_right = 770.0
+offset_bottom = 172.0
+theme_override_colors/font_color = Color(0.90588236, 0.83137256, 0.6784314, 1)
+theme_override_fonts/font = ExtResource("3_j685f")
+theme_override_font_sizes/font_size = 50
+text = "High Score"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="retry" type="Button" parent="ColorRect" unique_id=370138902]
 process_mode = 3
 layout_mode = 1
@@ -82,32 +95,33 @@ flat = true
 
 [node name="Middle" type="TextureRect" parent="." unique_id=893753874]
 material = SubResource("ShaderMaterial_ovstn")
-offset_left = 416.0
-offset_top = 160.0
-offset_right = 736.0
-offset_bottom = 485.0
+offset_left = 417.0
+offset_top = 191.0
+offset_right = 737.0
+offset_bottom = 516.0
 texture = SubResource("AtlasTexture_5c5y6")
 expand_mode = 1
 
 [node name="Left" type="TextureRect" parent="." unique_id=2063061943]
-offset_left = 112.0
-offset_top = 32.0
+offset_left = 112.000015
+offset_top = 88.0
 offset_right = 432.0
-offset_bottom = 360.0
+offset_bottom = 416.0
 rotation = 0.26529005
 texture = SubResource("AtlasTexture_hf7om")
 expand_mode = 1
 
 [node name="Right" type="TextureRect" parent="." unique_id=385729521]
-offset_left = 736.0
-offset_top = 112.0
-offset_right = 1056.0
-offset_bottom = 440.0
+offset_left = 737.99994
+offset_top = 175.99995
+offset_right = 1058.0
+offset_bottom = 503.99994
 rotation = -0.2617994
 texture = SubResource("AtlasTexture_qup64")
 expand_mode = 1
 
 [node name="ColorRect2" type="ColorRect" parent="." unique_id=1773615071]
+visible = false
 offset_right = 1167.0
 offset_bottom = 659.0
 

@@ -1,0 +1,81 @@
+[gd_scene format=3 uid="uid://dmmakuhatk5dj"]
+
+[ext_resource type="Script" uid="uid://dxm5fk4836xla" path="res://Menus/EndlessGameOver_screen.gd" id="1_47rrg"]
+[ext_resource type="Shader" uid="uid://d2jeis1lksurj" path="res://Shaders/pixelater.gdshader" id="2_sxpef"]
+[ext_resource type="Texture2D" uid="uid://byhccumq5oxra" path="res://Assets/MiddleRound_OutsideStore/L1_Background.png" id="3_iftl2"]
+[ext_resource type="FontFile" uid="uid://cqwfub3g65jm6" path="res://Assets/Baby Night.otf" id="4_1nhf6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2t4kf"]
+shader = ExtResource("2_sxpef")
+shader_parameter/pixelation = 16.0
+shader_parameter/controlEdges = false
+
+[node name="GameOver Screen" type="Node2D" unique_id=341467045]
+process_mode = 3
+z_index = 30
+script = ExtResource("1_47rrg")
+
+[node name="ColorRect" type="TextureRect" parent="." unique_id=164002361]
+process_mode = 3
+material = SubResource("ShaderMaterial_2t4kf")
+offset_right = 1152.0
+offset_bottom = 648.0
+texture = ExtResource("3_iftl2")
+expand_mode = 1
+
+[node name="ScoreLabel" type="Label" parent="ColorRect" unique_id=1706508346]
+layout_mode = 0
+offset_left = 424.0
+offset_top = 40.0
+offset_right = 724.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.90588236, 0.83137256, 0.6784314, 1)
+theme_override_fonts/font = ExtResource("4_1nhf6")
+theme_override_font_sizes/font_size = 80
+text = "Score"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HighScoreLabel" type="Label" parent="ColorRect" unique_id=1772928612]
+layout_mode = 0
+offset_left = 370.0
+offset_top = 100.0
+offset_right = 770.0
+offset_bottom = 172.0
+theme_override_colors/font_color = Color(0.90588236, 0.83137256, 0.6784314, 1)
+theme_override_fonts/font = ExtResource("4_1nhf6")
+theme_override_font_sizes/font_size = 50
+text = "High Score"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="retry" type="Button" parent="ColorRect" unique_id=370138902]
+process_mode = 3
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -312.0
+offset_top = 188.0
+offset_right = 308.0
+offset_bottom = 302.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.81960785, 0.47843137, 0.5647059, 1)
+theme_override_colors/font_focus_color = Color(0.5762458, 0.27360624, 0.35757944, 1)
+theme_override_colors/font_pressed_color = Color(0.3120187, 0.62358475, 0.3233552, 1)
+theme_override_colors/font_hover_color = Color(0.5764706, 0.27450982, 0.35686275, 1)
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("4_1nhf6")
+theme_override_font_sizes/font_size = 116
+text = "replay"
+flat = true
+
+[node name="ColorRect2" type="ColorRect" parent="." unique_id=1773615071]
+visible = false
+offset_right = 1167.0
+offset_bottom = 659.0
+
+[connection signal="pressed" from="ColorRect/retry" to="." method="_on_button_pressed"]

@@ -5,6 +5,7 @@ const STREET = preload("uid://c6xk46jpedco4")
 
 @onready var retry_button: Button = $ColorRect/retry 
 @onready var score_label: Label = $ColorRect/ScoreLabel
+@onready var highscore_label: Label = $ColorRect/HighScoreLabel
 
 # 1. Grab your 3 simple TextureRects (Update these paths to match your scene!)
 @onready var pic_1: TextureRect = $Middle
@@ -17,7 +18,13 @@ const MAIN = preload("uid://fldj3nccgla6")
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	retry_button.pressed.connect(_retry_button_pressed)
+	# main.gd already called try_update_high_score() for the right mode
+	var best := ScoreManager.get_high_score(ScoreManager.last_run_endless)
 	score_label.text = "Score: %d" % ScoreManager.score
+	if ScoreManager.last_run_new_record:
+		highscore_label.text = "New High Score: %d!" % best
+	else:
+		highscore_label.text = "High Score: %d" % best
 	
 	# --- NEW: Fade Out ColorRect2 on Scene Load ---
 	if color_rect_2:

@@ -3,6 +3,7 @@ extends Node2D
 @onready var background_manager: Node2D = $BackgroundManager
 @onready var fade_rect: ColorRect = $CanvasLayer/FadeRect
 const GameOverScreen = preload("uid://dh364flg18d2j")
+const EndlessGameOverScreen = preload("uid://dmmakuhatk5dj")
 const CutsceneScene = preload("uid://bqfwjyhkbhn82")
 @onready var progress_bar: ProgressBar = $ProgressBar
 const BACKYARD = preload("uid://c13kxu5fitd1y")
@@ -42,7 +43,7 @@ func _on_game_start_enable_pause() -> void:
 
 func _on_story_mode_completed() -> void:
 	PauseManager.disable_pause()
-	ScoreManager.try_update_high_score()
+	ScoreManager.try_update_high_score(false) # Story
 	
 	# Clear standard wave items
 	if ItemManager.has_method("clear_objects"):
@@ -76,7 +77,7 @@ func _on_lives_depleted() -> void:
 	if !ItemManager.is_endless:
 		return
 	PauseManager.disable_pause()
-	ScoreManager.try_update_high_score()
+	ScoreManager.try_update_high_score(true) # Endless
 	ItemManager.stop_endless()
 	await _run_game_over_sequence(false)
 
@@ -95,7 +96,7 @@ func _run_game_over_sequence(show_cutscene: bool = true) -> void:
 	else:
 		await $Transition.Return()
 	endless_mode_ui.visible = false
-	var game_over := GameOverScreen.instantiate()
+	var game_over := (EndlessGameOverScreen if ScoreManager.last_run_endless else GameOverScreen).instantiate()
 	$Background.retreat_cinematic_bars()
 	add_child(game_over)
 	background_manager.reset()
