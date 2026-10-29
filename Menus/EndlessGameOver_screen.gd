@@ -2,6 +2,7 @@ extends Node2D
 
 @onready var color_rect_2: ColorRect = $ColorRect2
 const STREET = preload("uid://c6xk46jpedco4")
+@onready var pic_1: TextureRect = $Middle
 
 @onready var treat_count: Label = $HBoxContainer/Control/Treat_Count
 @onready var yarn_count: Label = $HBoxContainer/Control2/Yarn_Count
@@ -44,6 +45,7 @@ func _ready() -> void:
 	shoe_count.text = str(ScoreManager.shoe_count)
 	# --------------------------------------------------
 
+
 	# --- NEW: Fade Out ColorRect2 on Scene Load ---
 	if color_rect_2:
 		color_rect_2.visible = true
@@ -60,6 +62,9 @@ func _ready() -> void:
 		fade_tween.tween_callback(func(): color_rect_2.visible = false)
 	# ---------------------------------------------
 	
+	# 2. Run the simple animation
+	throw_pictures_on_table()
+	
 func _retry_button_pressed() -> void:
 	# --- CRITICAL FIX: Ensure the engine is fully unpaused before switching scenes ---
 	get_tree().paused = false
@@ -73,3 +78,29 @@ func _retry_button_pressed() -> void:
 	await get_tree().create_timer(0.4).timeout
 	AudioManager.play_music(STREET)
 	queue_free()
+	
+
+
+func throw_pictures_on_table() -> void:
+	# Put them in a quick list so we can loop through them 1, 2, 3
+	
+
+	
+	# Save where you placed them in the editor
+	var target_pos = pic_1.position
+	var target_rot = pic_1.rotation
+	var target_scale = pic_1.scale
+	
+	# Push them way off screen, make them big, and twist them a bit
+	pic_1.position.y -= 800
+	pic_1.scale = target_scale * 2.0
+	pic_1.rotation = target_rot - 1.0 
+	
+	# Tween them back to normal!
+	var tween = create_tween().set_parallel(true)
+	tween.set_ignore_time_scale(true) 
+	var delay = 0.25 # Delays the 2nd and 3rd picture slightly
+	
+	tween.tween_property(pic_1, "position", target_pos, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT).set_delay(delay)
+	tween.tween_property(pic_1, "rotation", target_rot, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT).set_delay(delay)
+	tween.tween_property(pic_1, "scale", target_scale, 0.5).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT).set_delay(delay)
